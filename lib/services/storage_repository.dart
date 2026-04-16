@@ -37,16 +37,16 @@ class StorageRepository {
     return uid;
   }
 
-  Reference farmerReceiptsRef(String farmerId) {
-    return _storage.ref('users/$_uid/farmers/$farmerId/receipts');
+  Reference shipmentReceiptsRef(String shipmentId) {
+    return _storage.ref('users/$_uid/shipments/$shipmentId/receipts');
   }
 
-  Future<String> uploadFarmerReceipt({
-    required String farmerId,
+  Future<String> uploadShipmentReceipt({
+    required String shipmentId,
     required String fileName,
     required Uint8List bytes,
   }) async {
-    final ref = farmerReceiptsRef(farmerId).child(fileName);
+    final ref = shipmentReceiptsRef(shipmentId).child(fileName);
     await ref.putData(
       bytes,
       SettableMetadata(contentDisposition: 'inline'),

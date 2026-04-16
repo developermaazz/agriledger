@@ -42,6 +42,13 @@ dependencies:
   firebase_messaging: ^16.2.0
   firebase_analytics: ^12.3.0
   firebase_crashlytics: ^5.2.0
+  shared_preferences: ^2.5.5
+  excel: ^4.0.6
+  pdf: ^3.12.0
+  printing: ^5.14.3
+  share_plus: ^13.0.0
+  intl: ^0.20.2
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +61,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
   firebase_core_platform_interface: ^6.0.3
+
+# Avoid win32 6.x native hook builds on machines without MSVC (flutter test).
+dependency_overrides:
+  win32: 5.5.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

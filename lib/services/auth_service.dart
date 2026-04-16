@@ -30,4 +30,6 @@ class AuthService {
   }
 
   Future<void> signOut() => _auth.signOut();
+
+  Future<UserCredential> signInAnonymously() => _auth.signInAnonymously();
 }

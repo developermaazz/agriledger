@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 24),
                 Text(
-                  'AgriLedger',
+                  'Fruit Ledger',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -90,8 +90,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _isRegisterMode
-                      ? 'Create an account to start tracking farmer balances.'
-                      : 'Sign in to manage your farmer ledger.',
+                      ? 'Create an account to sync shipments, cash, and labour.'
+                      : 'Sign in to manage fruit trading and finances.',
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),

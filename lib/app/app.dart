@@ -6,8 +6,12 @@ import 'app_router.dart';
 import 'app_theme.dart';
 import '../features/auth/presentation/auth_gate.dart';
 import '../services/auth_service.dart';
-import '../services/farmer_repository.dart';
-import '../services/ledger_repository.dart';
+import '../services/labour_repository.dart';
+import '../services/market_cash_repository.dart';
+import '../services/market_repository.dart';
+import '../services/serial_meta_repository.dart';
+import '../services/settings_repository.dart';
+import '../services/shipment_repository.dart';
 import '../services/storage_repository.dart';
 
 class MyApp extends StatelessWidget {
@@ -15,13 +19,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final serialMeta = SerialMetaRepository();
+    final marketRepo = MarketRepository();
+    final shipmentRepo = ShipmentRepository(serialMeta: serialMeta);
+    final labourRepo = LabourRepository(serialMeta: serialMeta);
+    final cashRepo = MarketCashRepository(marketRepository: marketRepo);
+
     return AppDependencies(
       authService: AuthService(),
-      farmerRepository: FarmerRepository(),
-      ledgerRepository: LedgerRepository(),
+      settingsRepository: SettingsRepository(),
+      serialMetaRepository: serialMeta,
+      marketRepository: marketRepo,
+      shipmentRepository: shipmentRepo,
+      marketCashRepository: cashRepo,
+      labourRepository: labourRepo,
       storageRepository: StorageRepository(),
       child: MaterialApp(
-        title: 'AgriLedger',
+        title: 'Fruit Ledger',
         debugShowCheckedModeBanner: false,
         navigatorKey: appNavigatorKey,
         theme: AppTheme.light(),

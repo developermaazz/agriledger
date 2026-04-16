@@ -1,0 +1,21 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "cashEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "date", "order": "ASCENDING" },
+        { "fieldPath": "serial", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "cashEntries",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "date", "order": "DESCENDING" },
+        { "fieldPath": "serial", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
