@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "945588906360",
+    "project_id": "agriledger-fd203",
+    "storage_bucket": "agriledger-fd203.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:945588906360:android:9d4fd41e643b863091808d",
+        "android_client_info": {
+          "package_name": "com.agriledger.agriledger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAXssHuUEApDdpVrrqwX-pKLakVP9rozg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

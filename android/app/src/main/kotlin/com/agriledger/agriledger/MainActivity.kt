@@ -1,4 +1,4 @@
-package com.agriledger.app.agri_ledger
+package com.agriledger.agriledger
 
 import io.flutter.embedding.android.FlutterActivity
 
