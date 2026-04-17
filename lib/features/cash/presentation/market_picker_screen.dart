@@ -15,15 +15,19 @@ class MarketPickerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final repo = AppDependencies.of(context).marketRepository;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: cs.surface,
       appBar: AppBar(
         title: Text(context.l10n.marketCashTitle),
+        scrolledUnderElevation: 0,
       ),
       floatingActionButton: FloatingActionButton.extended(
         heroTag: null,
+        elevation: 2,
         onPressed: () => _addMarket(context),
-        icon: const Icon(Icons.add),
+        icon: const Icon(Icons.add_rounded),
         label: Text(context.l10n.commonAdd),
       ),
       body: RefreshIndicator(
@@ -53,25 +57,23 @@ class MarketPickerScreen extends StatelessWidget {
                   subtitle: context.l10n.marketsEmptySubtitle,
                   action: FilledButton.icon(
                     onPressed: () => _addMarket(context),
-                    icon: const Icon(Icons.add),
+                    icon: const Icon(Icons.add_rounded),
                     label: Text(context.l10n.commonAdd),
                   ),
                 ),
               );
             }
-            return ListView.separated(
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: markets.length,
-            separatorBuilder: (context, _) => const Divider(height: 1),
-            itemBuilder: (context, i) {
-              final m = markets[i];
-              return ListTile(
-                title: Text(m.name),
-                subtitle: Text(context.l10n.marketsTapToOpenCashLedger),
-                trailing: PopupMenuButton<String>(
-                  tooltip: context.l10n.commonActions,
-                  onSelected: (v) async {
-                    if (v == 'open') {
+            return ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+              itemCount: markets.length,
+              itemBuilder: (context, i) {
+                final m = markets[i];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _MarketCard(
+                    market: m,
+                    onOpen: () {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
                           builder: (_) => MarketCashLedgerScreen(
@@ -80,29 +82,13 @@ class MarketPickerScreen extends StatelessWidget {
                           ),
                         ),
                       );
-                      return;
-                    }
-                    if (v == 'delete') {
-                      await _confirmDeleteMarket(context, m.id, m.name);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    PopupMenuItem(value: 'open', child: Text(context.l10n.commonOpen)),
-                    PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
-                  ],
-                  child: const Icon(Icons.more_vert),
-                ),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => MarketCashLedgerScreen(marketId: m.id, marketName: m.name),
-                    ),
-                  );
-                },
-                onLongPress: () => _confirmDeleteMarket(context, m.id, m.name),
-              );
-            },
-          );
+                    },
+                    onDelete: () =>
+                        _confirmDeleteMarket(context, m.id, m.name),
+                  ),
+                );
+              },
+            );
           },
         ),
       ),
@@ -122,8 +108,14 @@ class MarketPickerScreen extends StatelessWidget {
           context.l10n.marketsDeleteConfirmBody(marketName),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(context.l10n.commonCancel)),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(context.l10n.commonDelete)),
+          TextButton(
+            onPressed: () => Navigator.pop(c, false),
+            child: Text(context.l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(c, true),
+            child: Text(context.l10n.commonDelete),
+          ),
         ],
       ),
     );
@@ -135,8 +127,8 @@ class MarketPickerScreen extends StatelessWidget {
       if (!context.mounted) return;
       AppSnackBar.show(
         context,
-      message: context.l10n.marketDeleted(marketName),
-          type: AppSnackType.success,
+        message: context.l10n.marketDeleted(marketName),
+        type: AppSnackType.success,
       );
     } catch (e) {
       final msg = e is StateError ? e.message : e.toString();
@@ -157,11 +149,15 @@ class MarketPickerScreen extends StatelessWidget {
         title: Text(context.l10n.marketNewTitle),
         content: TextField(
           controller: controller,
+          autofocus: true,
           decoration: InputDecoration(labelText: context.l10n.marketNewHint),
           textCapitalization: TextCapitalization.words,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c), child: Text(context.l10n.commonCancel)),
+          TextButton(
+            onPressed: () => Navigator.pop(c),
+            child: Text(context.l10n.commonCancel),
+          ),
           FilledButton(
             onPressed: () => Navigator.pop(c, controller.text.trim()),
             child: Text(context.l10n.commonAdd),
@@ -192,6 +188,138 @@ class MarketPickerScreen extends StatelessWidget {
       context,
       message: context.l10n.marketAdded(name),
       type: AppSnackType.success,
+    );
+  }
+}
+
+class _MarketCard extends StatelessWidget {
+  const _MarketCard({
+    required this.market,
+    required this.onOpen,
+    required this.onDelete,
+  });
+
+  final Market market;
+  final VoidCallback onOpen;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+    final m = market;
+
+    return Material(
+      color: cs.surfaceContainerLow,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(
+          color: cs.outlineVariant.withValues(alpha: 0.45),
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onOpen,
+        onLongPress: onDelete,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(4, 12, 8, 12),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 52,
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                  color: cs.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: cs.primaryContainer.withValues(alpha: 0.65),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(
+                  Icons.storefront_rounded,
+                  color: cs.primary,
+                  size: 26,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      m.name,
+                      style: t.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      context.l10n.marketsTapToOpenCashLedger,
+                      style: t.bodySmall?.copyWith(
+                        color: cs.onSurfaceVariant,
+                        height: 1.25,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: cs.onSurfaceVariant,
+              ),
+              PopupMenuButton<String>(
+                tooltip: context.l10n.commonActions,
+                icon: Icon(
+                  Icons.more_vert_rounded,
+                  color: cs.onSurfaceVariant,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                onSelected: (v) {
+                  if (v == 'open') {
+                    onOpen();
+                  } else if (v == 'delete') {
+                    onDelete();
+                  }
+                },
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'open',
+                    child: Row(
+                      children: [
+                        Icon(Icons.open_in_new_rounded, size: 20, color: cs.primary),
+                        const SizedBox(width: 10),
+                        Text(context.l10n.commonOpen),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline_rounded, size: 20, color: cs.error),
+                        const SizedBox(width: 10),
+                        Text(context.l10n.commonDelete),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

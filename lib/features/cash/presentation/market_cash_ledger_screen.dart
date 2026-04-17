@@ -1,5 +1,7 @@
 import 'package:agri_ledger/shared/formatters/money.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 import '../../../app/app_dependencies.dart';
 import '../../../models/cash_entry.dart';
 import '../../../services/export_service.dart';
@@ -23,9 +25,12 @@ class MarketCashLedgerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cashRepo = AppDependencies.of(context).marketCashRepository;
+    final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: cs.surface,
       appBar: AppBar(
+        scrolledUnderElevation: 0,
         title: Text(marketName),
         actions: [
           IconButton(
@@ -35,12 +40,13 @@ class MarketCashLedgerScreen extends StatelessWidget {
               final file = await ExportService.exportCashExcel(marketName, list);
               await ExportService.shareFile(file);
             },
-            icon: const Icon(Icons.ios_share),
+            icon: const Icon(Icons.ios_share_rounded),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         heroTag: null,
+        elevation: 2,
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute<void>(
@@ -51,12 +57,11 @@ class MarketCashLedgerScreen extends StatelessWidget {
             ),
           );
         },
-        icon: const Icon(Icons.add),
+        icon: const Icon(Icons.add_rounded),
         label: Text(context.l10n.cashEntryButton),
       ),
       body: RefreshIndicator(
-        onRefresh: () =>
-            cashRepo.refreshCashEntriesFromServer(marketId),
+        onRefresh: () => cashRepo.refreshCashEntriesFromServer(marketId),
         child: StreamBuilder<List<CashEntry>>(
           stream: cashRepo.watchCashEntries(marketId),
           builder: (context, snap) {
@@ -74,27 +79,28 @@ class MarketCashLedgerScreen extends StatelessWidget {
                 ),
               );
             }
-            return ListView.separated(
-            physics: const AlwaysScrollableScrollPhysics(),
-            itemCount: rows.length,
-            separatorBuilder: (context, index) => const Divider(height: 1),
-            itemBuilder: (context, i) {
-              final e = rows[i];
-              return ListTile(
-                title: Text(
-                  context.l10n.cashLedgerListTitle(e.serial, _d(e.date)),
-                ),
-                subtitle: Text(
-                  context.l10n.cashLedgerRowSummary(
-                    MoneyFmt.of(e.cashAvailable),
-                    MoneyFmt.of(e.payments),
-                    MoneyFmt.of(e.balance),
-                  ),
-                ),
-                trailing: PopupMenuButton<String>(
-                  tooltip: context.l10n.commonActions,
-                  onSelected: (v) async {
-                    if (v == 'edit') {
+            return ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+              itemCount: rows.length,
+              itemBuilder: (context, i) {
+                final e = rows[i];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _CashEntryCard(
+                    entry: e,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => CashEntryDetailsScreen(
+                            marketId: marketId,
+                            marketName: marketName,
+                            entry: e,
+                          ),
+                        ),
+                      );
+                    },
+                    onEdit: () {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
                           builder: (_) => CashEntryFormScreen(
@@ -104,39 +110,17 @@ class MarketCashLedgerScreen extends StatelessWidget {
                           ),
                         ),
                       );
-                      return;
-                    }
-                    if (v == 'delete') {
-                      await _confirmDelete(context, e);
-                    }
-                  },
-                  itemBuilder: (context) => [
-                    PopupMenuItem(value: 'edit', child: Text(context.l10n.commonEdit)),
-                    PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
-                  ],
-                  child: const Icon(Icons.more_vert),
-                ),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => CashEntryDetailsScreen(
-                        marketId: marketId,
-                        marketName: marketName,
-                        entry: e,
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          );
+                    },
+                    onDelete: () => _confirmDelete(context, e),
+                  ),
+                );
+              },
+            );
           },
         ),
       ),
     );
   }
-
-  String _d(DateTime d) => d.toString().split(' ').first;
 
   Future<void> _confirmDelete(
     BuildContext context,
@@ -149,8 +133,14 @@ class MarketCashLedgerScreen extends StatelessWidget {
         title: Text(context.l10n.cashDeleteEntryTitle),
         content: Text(context.l10n.cashDeleteEntryBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(context.l10n.commonCancel)),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(context.l10n.commonDelete)),
+          TextButton(
+            onPressed: () => Navigator.pop(c, false),
+            child: Text(context.l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(c, true),
+            child: Text(context.l10n.commonDelete),
+          ),
         ],
       ),
     );
@@ -171,5 +161,177 @@ class MarketCashLedgerScreen extends StatelessWidget {
         type: AppSnackType.error,
       );
     }
+  }
+}
+
+class _CashEntryCard extends StatelessWidget {
+  const _CashEntryCard({
+    required this.entry,
+    required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  final CashEntry entry;
+  final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+    final e = entry;
+    final loc = Localizations.localeOf(context).toString();
+    final dateStr = DateFormat.yMMMd(loc).format(e.date);
+
+    return Material(
+      color: cs.surfaceContainerLow,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(
+          color: cs.outlineVariant.withValues(alpha: 0.45),
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                width: 5,
+                decoration: BoxDecoration(
+                  color: cs.secondary,
+                  borderRadius: const BorderRadius.horizontal(
+                    left: Radius.circular(17),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 12, 4, 12),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: cs.secondaryContainer.withValues(alpha: 0.55),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.account_balance_wallet_rounded,
+                          size: 22,
+                          color: cs.secondary,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              context.l10n.cashLedgerListTitle(e.serial, dateStr),
+                              style: t.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: -0.2,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              context.l10n.cashLedgerRowSummary(
+                                MoneyFmt.of(e.cashAvailable),
+                                MoneyFmt.of(e.payments),
+                                MoneyFmt.of(e.balance),
+                              ),
+                              style: t.bodySmall?.copyWith(
+                                color: cs.onSurfaceVariant,
+                                height: 1.35,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: cs.surfaceContainerHighest,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: cs.outlineVariant.withValues(alpha: 0.5),
+                              ),
+                            ),
+                            child: Text(
+                              MoneyFmt.of(e.cashAvailable),
+                              style: t.labelLarge?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.3,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: PopupMenuButton<String>(
+                  tooltip: context.l10n.commonActions,
+                  icon: Icon(
+                    Icons.more_vert_rounded,
+                    color: cs.onSurfaceVariant,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  onSelected: (v) {
+                    if (v == 'edit') {
+                      onEdit();
+                    } else if (v == 'delete') {
+                      onDelete();
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit_outlined, size: 20, color: cs.primary),
+                          const SizedBox(width: 10),
+                          Text(context.l10n.commonEdit),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete_outline, size: 20, color: cs.error),
+                          const SizedBox(width: 10),
+                          Text(context.l10n.commonDelete),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

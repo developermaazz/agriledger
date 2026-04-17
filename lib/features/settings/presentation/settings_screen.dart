@@ -74,111 +74,295 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+
     return Scaffold(
-      appBar: AppBar(title: Text(context.l10n.settingsTitle)),
+      backgroundColor: cs.surface,
+      appBar: AppBar(
+        title: Text(context.l10n.settingsTitle),
+        scrolledUnderElevation: 0,
+      ),
       body: _loading || _requireEmail == null
           ? const Center(child: CircularProgressIndicator.adaptive())
           : RefreshIndicator(
               onRefresh: _load,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
                 children: [
-                Text(
-                  context.l10n.settingsAppearance,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
+                  Text(
+                    context.l10n.settingsAppearance,
+                    style: t.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Material(
+                    color: cs.surfaceContainerLow,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      side: BorderSide(
+                        color: cs.outlineVariant.withValues(alpha: 0.45),
                       ),
-                ),
-                const SizedBox(height: 10),
-                Card(
-                  child: Column(
-                    children: [
-                      ListTile(
-                        leading: const Icon(Icons.color_lens_outlined),
-                        title: Text(context.l10n.settingsTheme),
-                        trailing: DropdownButtonHideUnderline(
-                          child: DropdownButton<ThemeMode>(
-                            value: _themeMode,
-                            items: [
-                              DropdownMenuItem(
-                                value: ThemeMode.system,
-                                child: Text(context.l10n.settingsThemeSystem),
-                              ),
-                              DropdownMenuItem(
-                                value: ThemeMode.light,
-                                child: Text(context.l10n.settingsThemeLight),
-                              ),
-                              DropdownMenuItem(
-                                value: ThemeMode.dark,
-                                child: Text(context.l10n.settingsThemeDark),
-                              ),
-                            ],
-                            onChanged: (v) {
-                              if (v != null) _setThemeMode(v);
-                            },
+                    ),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
+                          leading: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: cs.primaryContainer.withValues(alpha: 0.65),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.color_lens_outlined,
+                              color: cs.primary,
+                            ),
+                          ),
+                          title: Text(
+                            context.l10n.settingsTheme,
+                            style: t.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          trailing: DropdownButtonHideUnderline(
+                            child: DropdownButton<ThemeMode>(
+                              value: _themeMode,
+                              borderRadius: BorderRadius.circular(14),
+                              items: [
+                                DropdownMenuItem(
+                                  value: ThemeMode.system,
+                                  child: Text(context.l10n.settingsThemeSystem),
+                                ),
+                                DropdownMenuItem(
+                                  value: ThemeMode.light,
+                                  child: Text(context.l10n.settingsThemeLight),
+                                ),
+                                DropdownMenuItem(
+                                  value: ThemeMode.dark,
+                                  child: Text(context.l10n.settingsThemeDark),
+                                ),
+                              ],
+                              onChanged: (v) {
+                                if (v != null) _setThemeMode(v);
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                      const Divider(height: 1),
-                      ListTile(
-                        leading: const Icon(Icons.translate_outlined),
-                        title: Text(context.l10n.settingsLanguage),
-                        trailing: DropdownButtonHideUnderline(
-                          child: DropdownButton<String?>(
-                            value: _localeCode,
-                            items: [
-                              DropdownMenuItem(
-                                value: null,
-                                child: Text(context.l10n.settingsThemeSystem),
-                              ),
-                              DropdownMenuItem(
-                                value: 'en',
-                                child: Text(context.l10n.settingsLanguageEnglish),
-                              ),
-                              DropdownMenuItem(
-                                value: 'ur',
-                                child: Text(context.l10n.settingsLanguageUrdu),
-                              ),
-                            ],
-                            onChanged: (v) => _setLocale(v),
+                        Divider(
+                          height: 1,
+                          color: cs.outlineVariant.withValues(alpha: 0.35),
+                        ),
+                        ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
+                          leading: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: cs.secondaryContainer.withValues(alpha: 0.65),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.translate_outlined,
+                              color: cs.secondary,
+                            ),
+                          ),
+                          title: Text(
+                            context.l10n.settingsLanguage,
+                            style: t.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          trailing: DropdownButtonHideUnderline(
+                            child: DropdownButton<String?>(
+                              value: _localeCode,
+                              borderRadius: BorderRadius.circular(14),
+                              items: [
+                                DropdownMenuItem(
+                                  value: null,
+                                  child: Text(context.l10n.settingsThemeSystem),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'en',
+                                  child: Text(
+                                    context.l10n.settingsLanguageEnglish,
+                                  ),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'ur',
+                                  child: Text(
+                                    context.l10n.settingsLanguageUrdu,
+                                  ),
+                                ),
+                              ],
+                              onChanged: (v) => _setLocale(v),
+                            ),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Material(
+                    color: cs.surfaceContainerLow,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      side: BorderSide(
+                        color: cs.outlineVariant.withValues(alpha: 0.45),
                       ),
-                    ],
+                    ),
+                    child: SwitchListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      secondary: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: cs.tertiaryContainer.withValues(alpha: 0.65),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.mark_email_unread_outlined,
+                          color: cs.tertiary,
+                        ),
+                      ),
+                      title: Text(
+                        context.l10n.settingsRequireEmailTitle,
+                        style: t.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(
+                        context.l10n.settingsRequireEmailSubtitle,
+                        style: t.bodySmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                          height: 1.35,
+                        ),
+                      ),
+                      value: _requireEmail!,
+                      onChanged: (v) => _setRequire(v),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 14),
-                SwitchListTile(
-                  title: Text(context.l10n.settingsRequireEmailTitle),
-                  subtitle: Text(context.l10n.settingsRequireEmailSubtitle),
-                  value: _requireEmail!,
-                  onChanged: (v) => _setRequire(v),
-                ),
-                const Divider(),
-                ListTile(
-                  title: Text(context.l10n.settingsBackupTitle),
-                  subtitle: Text(context.l10n.settingsBackupSubtitle),
-                ),
-                ListTile(
-                  title: Text(context.l10n.settingsSignOut),
-                  trailing: const Icon(Icons.logout),
-                  onTap: () async {
-                    await AppDependencies.of(context).authService.signOut();
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                ),
-                ListTile(
-                  title: Text(context.l10n.settingsAccountType),
-                  subtitle: Text(
-                    FirebaseAuth.instance.currentUser?.isAnonymous == true
-                        ? context.l10n.settingsAccountTypeGuest
-                        : context.l10n.settingsAccountTypeEmail,
+                  const SizedBox(height: 16),
+                  Material(
+                    color: cs.surfaceContainerLow,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      side: BorderSide(
+                        color: cs.outlineVariant.withValues(alpha: 0.45),
+                      ),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: cs.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.cloud_outlined,
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                      title: Text(
+                        context.l10n.settingsBackupTitle,
+                        style: t.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(
+                        context.l10n.settingsBackupSubtitle,
+                        style: t.bodySmall?.copyWith(
+                          color: cs.onSurfaceVariant,
+                          height: 1.35,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  Material(
+                    color: cs.surfaceContainerLow,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      side: BorderSide(
+                        color: cs.outlineVariant.withValues(alpha: 0.45),
+                      ),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: cs.errorContainer.withValues(alpha: 0.45),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(Icons.logout_rounded, color: cs.error),
+                      ),
+                      title: Text(
+                        context.l10n.settingsSignOut,
+                        style: t.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: cs.error,
+                        ),
+                      ),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: () async {
+                        await AppDependencies.of(context).authService.signOut();
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Material(
+                    color: cs.surfaceContainerLow,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      side: BorderSide(
+                        color: cs.outlineVariant.withValues(alpha: 0.45),
+                      ),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: cs.primaryContainer.withValues(alpha: 0.5),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(Icons.badge_outlined, color: cs.primary),
+                      ),
+                      title: Text(
+                        context.l10n.settingsAccountType,
+                        style: t.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      subtitle: Text(
+                        FirebaseAuth.instance.currentUser?.isAnonymous == true
+                            ? context.l10n.settingsAccountTypeGuest
+                            : context.l10n.settingsAccountTypeEmail,
+                        style: t.bodyMedium?.copyWith(
+                          color: cs.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
     );
