@@ -47,6 +47,12 @@
   "authAlreadyHaveAccount": "پہلے سے اکاؤنٹ ہے؟ سائن اِن کریں",
   "authNewHere": "نئے ہیں؟ اکاؤنٹ بنائیں",
 
+  "creditsIntro": "محنت اور توجہ کے ساتھ",
+  "creditsAttributionPrefix": "ڈیزائن و ترقی: ",
+  "creditsAuthorName": "محمد معاذ علی",
+  "creditsAuthorLinkA11yHint": "ڈیولپر کی ویب سائٹ کھولیں",
+  "creditsLinkCouldNotOpen": "لنک نہیں کھل سکا۔ بعد میں کوشش کریں۔",
+
   "shipmentsTitle": "شپمنٹس",
   "shipmentsNewTitle": "نئی شپمنٹ",
   "shipmentsEditTitle": "شپمنٹ میں ترمیم",

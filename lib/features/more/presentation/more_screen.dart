@@ -4,6 +4,7 @@ import '../../../app/app_dependencies.dart';
 import '../../../services/firestore_refresh.dart';
 import '../../../services/export_service.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/widgets/developer_credit_footer.dart';
 import '../../reports/presentation/reports_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 
@@ -95,6 +96,8 @@ class MoreScreen extends StatelessWidget {
                 await ExportService.shareFile(file);
               },
             ),
+            const SizedBox(height: 8),
+            const DeveloperCreditFooter(compact: false),
           ],
         ),
       ),

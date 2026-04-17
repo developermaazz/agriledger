@@ -47,6 +47,12 @@
   "authAlreadyHaveAccount": "Already have an account? Sign in",
   "authNewHere": "New here? Create an account",
 
+  "creditsIntro": "Crafted with care",
+  "creditsAttributionPrefix": "Designed & developed by ",
+  "creditsAuthorName": "Muhammad Maaz Ali",
+  "creditsAuthorLinkA11yHint": "Opens the developer website",
+  "creditsLinkCouldNotOpen": "Could not open the link. Try again later.",
+
   "shipmentsTitle": "Shipments",
   "shipmentsNewTitle": "New shipment",
   "shipmentsEditTitle": "Edit shipment",

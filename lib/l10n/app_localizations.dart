@@ -350,6 +350,36 @@ abstract class AppLocalizations {
   /// **'New here? Create an account'**
   String get authNewHere;
 
+  /// No description provided for @creditsIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Crafted with care'**
+  String get creditsIntro;
+
+  /// No description provided for @creditsAttributionPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Designed & developed by '**
+  String get creditsAttributionPrefix;
+
+  /// No description provided for @creditsAuthorName.
+  ///
+  /// In en, this message translates to:
+  /// **'Muhammad Maaz Ali'**
+  String get creditsAuthorName;
+
+  /// No description provided for @creditsAuthorLinkA11yHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens the developer website'**
+  String get creditsAuthorLinkA11yHint;
+
+  /// No description provided for @creditsLinkCouldNotOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the link. Try again later.'**
+  String get creditsLinkCouldNotOpen;
+
   /// No description provided for @shipmentsTitle.
   ///
   /// In en, this message translates to:

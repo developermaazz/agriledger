@@ -137,6 +137,21 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authNewHere => 'نئے ہیں؟ اکاؤنٹ بنائیں';
 
   @override
+  String get creditsIntro => 'محنت اور توجہ کے ساتھ';
+
+  @override
+  String get creditsAttributionPrefix => 'ڈیزائن و ترقی: ';
+
+  @override
+  String get creditsAuthorName => 'محمد معاذ علی';
+
+  @override
+  String get creditsAuthorLinkA11yHint => 'ڈیولپر کی ویب سائٹ کھولیں';
+
+  @override
+  String get creditsLinkCouldNotOpen => 'لنک نہیں کھل سکا۔ بعد میں کوشش کریں۔';
+
+  @override
   String get shipmentsTitle => 'شپمنٹس';
 
   @override

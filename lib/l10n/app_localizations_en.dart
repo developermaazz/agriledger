@@ -137,6 +137,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authNewHere => 'New here? Create an account';
 
   @override
+  String get creditsIntro => 'Crafted with care';
+
+  @override
+  String get creditsAttributionPrefix => 'Designed & developed by ';
+
+  @override
+  String get creditsAuthorName => 'Muhammad Maaz Ali';
+
+  @override
+  String get creditsAuthorLinkA11yHint => 'Opens the developer website';
+
+  @override
+  String get creditsLinkCouldNotOpen =>
+      'Could not open the link. Try again later.';
+
+  @override
   String get shipmentsTitle => 'Shipments';
 
   @override

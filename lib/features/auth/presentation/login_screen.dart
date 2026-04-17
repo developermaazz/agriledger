@@ -5,6 +5,7 @@ import '../../../app/app_dependencies.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 import '../../../shared/widgets/app_brand.dart';
+import '../../../shared/widgets/developer_credit_footer.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -288,7 +289,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 20),
+                    const DeveloperCreditFooter(compact: true),
+                    const SizedBox(height: 12),
                   ],
                 ),
               ),
