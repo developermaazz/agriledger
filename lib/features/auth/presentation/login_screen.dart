@@ -55,7 +55,9 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       AppSnackBar.show(
         context,
-        message: _isRegisterMode ? context.l10n.authAccountCreated : context.l10n.authSignedIn,
+        message: _isRegisterMode
+            ? context.l10n.authAccountCreated
+            : context.l10n.authSignedIn,
         type: AppSnackType.success,
       );
     } on FirebaseAuthException catch (e) {
@@ -79,116 +81,245 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                const SizedBox(height: 24),
-                Text(
-                  context.l10n.appTitle,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _isRegisterMode
-                      ? context.l10n.authSubtitleRegister
-                      : context.l10n.authSubtitleLogin,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                ),
-                const SizedBox(height: 28),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          TextFormField(
-                            controller: _emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                              labelText: context.l10n.authEmailLabel,
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomCenter,
+            colors: [
+              cs.primaryContainer.withValues(alpha: 0.55),
+              cs.surface,
+              cs.surface,
+            ],
+            stops: const [0.0, 0.38, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 440),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const SizedBox(height: 12),
+                    Center(
+                      child: Container(
+                        width: 88,
+                        height: 88,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: cs.surface.withValues(alpha: 0.92),
+                          boxShadow: [
+                            BoxShadow(
+                              color: cs.primary.withValues(alpha: 0.12),
+                              blurRadius: 24,
+                              offset: const Offset(0, 8),
                             ),
-                            validator: (value) {
-                              final v = value?.trim() ?? '';
-                              if (v.isEmpty) {
-                                return context.l10n.authEmailRequired;
-                              }
-                              if (!v.contains('@')) {
-                                return context.l10n.authEmailInvalid;
-                              }
-                              return null;
-                            },
+                          ],
+                          border: Border.all(
+                            color: cs.outlineVariant.withValues(alpha: 0.45),
                           ),
-                          const SizedBox(height: 12),
-                          TextFormField(
-                            controller: _passwordController,
-                            obscureText: _obscurePassword,
-                            textInputAction: TextInputAction.done,
-                            onFieldSubmitted: (_) => _submit(),
-                            decoration: InputDecoration(
-                              labelText: context.l10n.authPasswordLabel,
-                              suffixIcon: IconButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _obscurePassword = !_obscurePassword;
-                                  });
-                                },
-                                icon: Icon(
-                                  _obscurePassword
-                                      ? Icons.visibility_outlined
-                                      : Icons.visibility_off_outlined,
-                                ),
-                              ),
-                            ),
-                            validator: (value) {
-                              final v = value ?? '';
-                              if (v.length < 6) {
-                                return context.l10n.authPasswordTooShort;
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: _isBusy ? null : _submit,
-                            child: Text(_isBusy
-                                ? context.l10n.authPleaseWait
-                                : (_isRegisterMode
-                                    ? context.l10n.authCreateAccount
-                                    : context.l10n.authSignIn)),
-                          ),
-                          const SizedBox(height: 8),
-                          TextButton(
-                            onPressed: _isBusy
-                                ? null
-                                : () {
-                                    setState(() {
-                                      _isRegisterMode = !_isRegisterMode;
-                                    });
-                                  },
-                            child: Text(
-                              _isRegisterMode
-                                  ? context.l10n.authAlreadyHaveAccount
-                                  : context.l10n.authNewHere,
-                            ),
-                          ),
-                        ],
+                        ),
+                        child: Icon(
+                          Icons.eco_rounded,
+                          size: 46,
+                          color: cs.primary,
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 24),
+                    Text(
+                      context.l10n.appTitle,
+                      textAlign: TextAlign.center,
+                      style: t.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.6,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      child: Text(
+                        _isRegisterMode
+                            ? context.l10n.authSubtitleRegister
+                            : context.l10n.authSubtitleLogin,
+                        key: ValueKey(_isRegisterMode),
+                        textAlign: TextAlign.center,
+                        style: t.bodyLarge?.copyWith(
+                          color: cs.onSurfaceVariant,
+                          height: 1.45,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 28),
+                    Material(
+                      color: cs.surfaceContainerLow,
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(22),
+                        side: BorderSide(
+                          color: cs.outlineVariant.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: cs.primaryContainer
+                                          .withValues(alpha: 0.65),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      _isRegisterMode
+                                          ? context.l10n.authCreateAccount
+                                          : context.l10n.authSignIn,
+                                      style: t.labelLarge?.copyWith(
+                                        color: cs.onPrimaryContainer,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 18),
+                              TextFormField(
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                textInputAction: TextInputAction.next,
+                                autofillHints: const [
+                                  AutofillHints.email,
+                                ],
+                                decoration: InputDecoration(
+                                  labelText: context.l10n.authEmailLabel,
+                                  prefixIcon: Icon(
+                                    Icons.alternate_email_rounded,
+                                    color: cs.primary,
+                                  ),
+                                ),
+                                validator: (value) {
+                                  final v = value?.trim() ?? '';
+                                  if (v.isEmpty) {
+                                    return context.l10n.authEmailRequired;
+                                  }
+                                  if (!v.contains('@')) {
+                                    return context.l10n.authEmailInvalid;
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 14),
+                              TextFormField(
+                                controller: _passwordController,
+                                obscureText: _obscurePassword,
+                                textInputAction: TextInputAction.done,
+                                autofillHints: _isRegisterMode
+                                    ? const [AutofillHints.newPassword]
+                                    : const [AutofillHints.password],
+                                onFieldSubmitted: (_) => _submit(),
+                                decoration: InputDecoration(
+                                  labelText: context.l10n.authPasswordLabel,
+                                  prefixIcon: Icon(
+                                    Icons.lock_outline_rounded,
+                                    color: cs.primary,
+                                  ),
+                                  suffixIcon: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        _obscurePassword = !_obscurePassword;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      _obscurePassword
+                                          ? Icons.visibility_outlined
+                                          : Icons.visibility_off_outlined,
+                                      color: cs.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  final v = value ?? '';
+                                  if (v.length < 6) {
+                                    return context.l10n.authPasswordTooShort;
+                                  }
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 22),
+                              FilledButton(
+                                onPressed: _isBusy ? null : _submit,
+                                style: FilledButton.styleFrom(
+                                  minimumSize: const Size.fromHeight(54),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                ),
+                                child: _isBusy
+                                    ? SizedBox(
+                                        height: 22,
+                                        width: 22,
+                                        child: CircularProgressIndicator.adaptive(
+                                          strokeWidth: 2.5,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            cs.onPrimary,
+                                          ),
+                                        ),
+                                      )
+                                    : Text(
+                                        _isRegisterMode
+                                            ? context.l10n.authCreateAccount
+                                            : context.l10n.authSignIn,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 0.2,
+                                        ),
+                                      ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextButton(
+                                onPressed: _isBusy
+                                    ? null
+                                    : () {
+                                        setState(() {
+                                          _isRegisterMode = !_isRegisterMode;
+                                        });
+                                      },
+                                child: Text(
+                                  _isRegisterMode
+                                      ? context.l10n.authAlreadyHaveAccount
+                                      : context.l10n.authNewHere,
+                                  style: t.labelLarge?.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
