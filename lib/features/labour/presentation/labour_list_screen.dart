@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../models/labour_job.dart';
+import '../../../shared/l10n/l10n.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import '../../../shared/widgets/status_badge.dart';
@@ -40,7 +41,7 @@ class _LabourListScreenState extends State<LabourListScreen> {
     final repo = AppDependencies.of(context).labourRepository;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Labour')),
+      appBar: AppBar(title: Text(context.l10n.labourTitle)),
       floatingActionButton: FloatingActionButton.extended(
         heroTag: null,
         onPressed: () {
@@ -49,7 +50,7 @@ class _LabourListScreenState extends State<LabourListScreen> {
           );
         },
         icon: const Icon(Icons.add),
-        label: const Text('Add'),
+        label: Text(context.l10n.commonAdd),
       ),
       body: Column(
         children: [
@@ -57,9 +58,9 @@ class _LabourListScreenState extends State<LabourListScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: TextField(
               controller: _search,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText: 'Search remarks',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: context.l10n.labourSearchHint,
               ),
             ),
           ),
@@ -68,15 +69,24 @@ class _LabourListScreenState extends State<LabourListScreen> {
             child: DropdownButtonFormField<String?>(
               // ignore: deprecated_member_use
               value: _status,
-              decoration: const InputDecoration(
-                labelText: 'Status',
+              decoration: InputDecoration(
+                labelText: context.l10n.commonStatus,
                 isDense: true,
               ),
-              items: const [
-                DropdownMenuItem(value: null, child: Text('All')),
-                DropdownMenuItem(value: RecordStatuses.pending, child: Text('Pending')),
-                DropdownMenuItem(value: RecordStatuses.completed, child: Text('Completed')),
-                DropdownMenuItem(value: RecordStatuses.overpaid, child: Text('Overpaid')),
+              items: [
+                DropdownMenuItem(value: null, child: Text(context.l10n.commonAll)),
+                DropdownMenuItem(
+                  value: RecordStatuses.pending,
+                  child: Text(context.l10n.commonPending),
+                ),
+                DropdownMenuItem(
+                  value: RecordStatuses.completed,
+                  child: Text(context.l10n.commonCompleted),
+                ),
+                DropdownMenuItem(
+                  value: RecordStatuses.overpaid,
+                  child: Text(context.l10n.commonOverpaid),
+                ),
               ],
               onChanged: (v) => setState(() => _status = v),
             ),
@@ -88,7 +98,7 @@ class _LabourListScreenState extends State<LabourListScreen> {
                 if (snap.hasError) {
                   return FirestoreErrorView(
                     error: snap.error!,
-                    title: 'Unable to load labour records',
+                    title: context.l10n.labourUnableToLoad,
                   );
                 }
                 if (!snap.hasData) {
@@ -106,9 +116,9 @@ class _LabourListScreenState extends State<LabourListScreen> {
                 }).toList();
 
                 if (list.isEmpty) {
-                  return const EmptyState(
-                    title: 'No labour records',
-                    subtitle: 'Track labour cost and payments.',
+                  return EmptyState(
+                    title: context.l10n.labourNoRecordsTitle,
+                    subtitle: context.l10n.labourNoRecordsSubtitle,
                   );
                 }
 
@@ -119,7 +129,12 @@ class _LabourListScreenState extends State<LabourListScreen> {
                     final j = list[i];
                     final locked = j.status == RecordStatuses.completed;
                     return ListTile(
-                      title: Text('#${j.serial} · ${j.remainingBalance.toStringAsFixed(2)} due'),
+                      title: Text(
+                        context.l10n.labourListTitle(
+                          '${j.serial}',
+                          j.remainingBalance.toStringAsFixed(2),
+                        ),
+                      ),
                       subtitle: Text(
                         '${j.dateStart.toString().split(' ').first} → ${j.dateEnd.toString().split(' ').first}',
                       ),
@@ -129,7 +144,7 @@ class _LabourListScreenState extends State<LabourListScreen> {
                           StatusBadge(status: j.status),
                           if (!locked)
                             PopupMenuButton<String>(
-                              tooltip: 'Actions',
+                              tooltip: context.l10n.commonActions,
                               onSelected: (v) async {
                                 if (v == 'edit') {
                                   Navigator.of(context).push(
@@ -143,9 +158,9 @@ class _LabourListScreenState extends State<LabourListScreen> {
                                 await _confirmDelete(j.id);
                                 }
                               },
-                              itemBuilder: (context) => const [
-                                PopupMenuItem(value: 'edit', child: Text('Edit')),
-                                PopupMenuItem(value: 'delete', child: Text('Delete')),
+                              itemBuilder: (context) => [
+                                PopupMenuItem(value: 'edit', child: Text(context.l10n.commonEdit)),
+                                PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
                               ],
                             ),
                         ],
@@ -177,11 +192,11 @@ class _LabourListScreenState extends State<LabourListScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Delete labour record?'),
-        content: const Text('This cannot be undone.'),
+        title: Text(context.l10n.labourDeleteConfirmTitle),
+        content: Text(context.l10n.labourDeleteConfirmBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Delete')),
+          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -193,7 +208,7 @@ class _LabourListScreenState extends State<LabourListScreen> {
       if (!mounted) return;
       AppSnackBar.show(
         context,
-        message: 'Labour record deleted',
+        message: context.l10n.labourDeleted,
         type: AppSnackType.success,
       );
     } catch (e) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/record_status.dart';
 import '../../../models/labour_job.dart';
+import '../../../shared/l10n/l10n.dart';
 import '../../../shared/widgets/status_badge.dart';
 
 class LabourDetailsScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class LabourDetailsScreen extends StatelessWidget {
     final j = job;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Labour #${j.serial}'),
+        title: Text('${context.l10n.labourTitle} #${j.serial}'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -39,20 +40,20 @@ class LabourDetailsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          _kv('Total cost', j.totalCost.toStringAsFixed(2)),
-          _kv('Received payment', j.receivedPayment.toStringAsFixed(2)),
-          _kv('Remaining balance', j.remainingBalance.toStringAsFixed(2)),
-          _kv('Status', _labelStatus(j.status)),
-          _kv('Remarks', j.remarks.isEmpty ? '-' : j.remarks),
+          _kv(context.l10n.labourTotalCostLabel, j.totalCost.toStringAsFixed(2)),
+          _kv(context.l10n.labourReceivedPaymentLabel, j.receivedPayment.toStringAsFixed(2)),
+          _kv(context.l10n.labourRemainingAuto, j.remainingBalance.toStringAsFixed(2)),
+          _kv(context.l10n.commonStatus, _labelStatus(context, j.status)),
+          _kv(context.l10n.labourRemarksLabel, j.remarks.isEmpty ? '-' : j.remarks),
         ],
       ),
     );
   }
 
-  String _labelStatus(String s) {
-    if (s == RecordStatuses.pending) return 'Pending';
-    if (s == RecordStatuses.completed) return 'Completed';
-    if (s == RecordStatuses.overpaid) return 'Overpaid';
+  String _labelStatus(BuildContext context, String s) {
+    if (s == RecordStatuses.pending) return context.l10n.commonPending;
+    if (s == RecordStatuses.completed) return context.l10n.commonCompleted;
+    if (s == RecordStatuses.overpaid) return context.l10n.commonOverpaid;
     return s;
   }
 

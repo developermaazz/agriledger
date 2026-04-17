@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../domain/record_status.dart';
+import '../l10n/l10n.dart';
 
 class StatusBadge extends StatelessWidget {
   const StatusBadge({super.key, required this.status});
@@ -17,10 +18,10 @@ class StatusBadge extends StatelessWidget {
             ? Colors.red.shade800
             : Colors.orange.shade900;
     final label = isDone
-        ? 'Completed'
+        ? context.l10n.commonCompleted
         : isPending
-            ? 'Pending'
-            : 'Overpaid';
+            ? context.l10n.commonPending
+            : context.l10n.commonOverpaid;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(

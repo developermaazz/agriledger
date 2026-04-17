@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../shared/l10n/l10n.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -54,30 +55,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(context.l10n.settingsTitle)),
       body: _loading || _requireEmail == null
           ? const Center(child: CircularProgressIndicator.adaptive())
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
                 SwitchListTile(
-                  title: const Text('Require email sign-in'),
-                  subtitle: const Text(
-                    'When off, the app signs you in as a guest (Firebase anonymous) so data still backs up to the cloud.',
-                  ),
+                  title: Text(context.l10n.settingsRequireEmailTitle),
+                  subtitle: Text(context.l10n.settingsRequireEmailSubtitle),
                   value: _requireEmail!,
                   onChanged: (v) => _setRequire(v),
                 ),
                 const Divider(),
-                const ListTile(
-                  title: Text('Backup'),
-                  subtitle: Text(
-                    'Your records are stored in Cloud Firestore under your account. '
-                    'Use Reports → Excel/PDF to keep file copies on your device.',
-                  ),
+                ListTile(
+                  title: Text(context.l10n.settingsBackupTitle),
+                  subtitle: Text(context.l10n.settingsBackupSubtitle),
                 ),
                 ListTile(
-                  title: const Text('Sign out'),
+                  title: Text(context.l10n.settingsSignOut),
                   trailing: const Icon(Icons.logout),
                   onTap: () async {
                     await AppDependencies.of(context).authService.signOut();
@@ -87,11 +83,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
                 ListTile(
-                  title: const Text('Account type'),
+                  title: Text(context.l10n.settingsAccountType),
                   subtitle: Text(
                     FirebaseAuth.instance.currentUser?.isAnonymous == true
-                        ? 'Guest (anonymous)'
-                        : 'Email user',
+                        ? context.l10n.settingsAccountTypeGuest
+                        : context.l10n.settingsAccountTypeEmail,
                   ),
                 ),
               ],

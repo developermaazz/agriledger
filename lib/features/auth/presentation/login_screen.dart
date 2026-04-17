@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../shared/l10n/l10n.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -54,13 +55,13 @@ class _LoginScreenState extends State<LoginScreen> {
       }
       AppSnackBar.show(
         context,
-        message: _isRegisterMode ? 'Account created' : 'Signed in',
+        message: _isRegisterMode ? context.l10n.authAccountCreated : context.l10n.authSignedIn,
         type: AppSnackType.success,
       );
     } on FirebaseAuthException catch (e) {
       AppSnackBar.show(
         context,
-        message: e.message ?? 'Authentication failed',
+        message: e.message ?? context.l10n.authFailed,
         type: AppSnackType.error,
       );
     } catch (e) {
@@ -88,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 24),
                 Text(
-                  'Fruit Ledger',
+                  context.l10n.appTitle,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
@@ -96,8 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _isRegisterMode
-                      ? 'Create an account to sync shipments, cash, and labour.'
-                      : 'Sign in to manage fruit trading and finances.',
+                      ? context.l10n.authSubtitleRegister
+                      : context.l10n.authSubtitleLogin,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
@@ -115,16 +116,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
                             textInputAction: TextInputAction.next,
-                            decoration: const InputDecoration(
-                              labelText: 'Email',
+                            decoration: InputDecoration(
+                              labelText: context.l10n.authEmailLabel,
                             ),
                             validator: (value) {
                               final v = value?.trim() ?? '';
                               if (v.isEmpty) {
-                                return 'Email is required';
+                                return context.l10n.authEmailRequired;
                               }
                               if (!v.contains('@')) {
-                                return 'Enter a valid email';
+                                return context.l10n.authEmailInvalid;
                               }
                               return null;
                             },
@@ -136,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             textInputAction: TextInputAction.done,
                             onFieldSubmitted: (_) => _submit(),
                             decoration: InputDecoration(
-                              labelText: 'Password',
+                              labelText: context.l10n.authPasswordLabel,
                               suffixIcon: IconButton(
                                 onPressed: () {
                                   setState(() {
@@ -153,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             validator: (value) {
                               final v = value ?? '';
                               if (v.length < 6) {
-                                return 'Password must be at least 6 characters';
+                                return context.l10n.authPasswordTooShort;
                               }
                               return null;
                             },
@@ -162,8 +163,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           ElevatedButton(
                             onPressed: _isBusy ? null : _submit,
                             child: Text(_isBusy
-                                ? 'Please wait...'
-                                : (_isRegisterMode ? 'Create account' : 'Sign in')),
+                                ? context.l10n.authPleaseWait
+                                : (_isRegisterMode
+                                    ? context.l10n.authCreateAccount
+                                    : context.l10n.authSignIn)),
                           ),
                           const SizedBox(height: 8),
                           TextButton(
@@ -176,8 +179,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   },
                             child: Text(
                               _isRegisterMode
-                                  ? 'Already have an account? Sign in'
-                                  : 'New here? Create an account',
+                                  ? context.l10n.authAlreadyHaveAccount
+                                  : context.l10n.authNewHere,
                             ),
                           ),
                         ],

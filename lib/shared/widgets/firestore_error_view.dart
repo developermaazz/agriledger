@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+
 class FirestoreErrorView extends StatelessWidget {
   const FirestoreErrorView({
     super.key,
     required this.error,
-    this.title = 'Something went wrong',
+    this.title,
   });
 
   final Object error;
-  final String title;
+  final String? title;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +18,8 @@ class FirestoreErrorView extends StatelessWidget {
     final isPermissionDenied = msg.contains('permission-denied') ||
         msg.contains('PERMISSION_DENIED') ||
         msg.contains('Missing or insufficient permissions');
+
+    final effectiveTitle = title ?? context.l10n.errorsSomethingWentWrong;
 
     return Center(
       child: Padding(
@@ -30,14 +34,14 @@ class FirestoreErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              title,
+              effectiveTitle,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),
             Text(
               isPermissionDenied
-                  ? 'Firestore is blocking access. Deploy the provided `firestore.rules` in Firebase Console (or put Firestore in test mode for development).'
+                  ? context.l10n.errorsFirestoreBlocked
                   : msg,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(

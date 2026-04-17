@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../models/cash_entry.dart';
+import '../../../shared/l10n/l10n.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 
 class CashEntryFormScreen extends StatefulWidget {
@@ -107,10 +108,9 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final readOnly = widget.existing != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(readOnly ? '${widget.marketName} (Edit)' : widget.marketName),
+        title: Text(widget.marketName),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -121,7 +121,7 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
               children: [
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Date'),
+                  title: Text(context.l10n.cashDateLabel),
                   subtitle: Text(_date.toString().split(' ').first),
                   trailing: IconButton(
                     icon: const Icon(Icons.calendar_month),
@@ -130,33 +130,29 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
                 ),
                 TextFormField(
                   controller: _recv,
-                  decoration: const InputDecoration(
-                    labelText: 'Amount received',
-                  ),
+                  decoration: InputDecoration(labelText: context.l10n.cashAmountReceivedLabel),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                   ],
                   validator: (v) =>
-                      double.tryParse(v ?? '') == null ? 'Invalid' : null,
+                      double.tryParse(v ?? '') == null ? context.l10n.commonInvalid : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _pay,
-                  decoration: const InputDecoration(
-                    labelText: 'Payments',
-                  ),
+                  decoration: InputDecoration(labelText: context.l10n.cashPaymentsLabel),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                   ],
                   validator: (v) =>
-                      double.tryParse(v ?? '') == null ? 'Invalid' : null,
+                      double.tryParse(v ?? '') == null ? context.l10n.commonInvalid : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _remarks,
-                  decoration: const InputDecoration(labelText: 'Remarks'),
+                  decoration: InputDecoration(labelText: context.l10n.cashRemarksLabel),
                   maxLines: 3,
                 ),
               ],
@@ -165,7 +161,7 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
           const SizedBox(height: 16),
           FilledButton(
             onPressed: _busy ? null : _save,
-            child: Text(_busy ? 'Saving...' : 'Save'),
+            child: Text(_busy ? context.l10n.commonSaving : context.l10n.commonSave),
           ),
         ],
       ),

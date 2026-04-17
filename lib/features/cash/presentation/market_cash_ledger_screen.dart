@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../app/app_dependencies.dart';
 import '../../../models/cash_entry.dart';
 import '../../../services/export_service.dart';
+import '../../../shared/l10n/l10n.dart';
 import '../../../shared/widgets/empty_state.dart';
 import 'cash_entry_details_screen.dart';
 import 'cash_entry_form_screen.dart';
@@ -25,7 +26,7 @@ class MarketCashLedgerScreen extends StatelessWidget {
         title: Text(marketName),
         actions: [
           IconButton(
-            tooltip: 'Export Excel',
+            tooltip: context.l10n.cashExportExcel,
             onPressed: () async {
               final list = await cashRepo.watchCashEntries(marketId).first;
               final file = await ExportService.exportCashExcel(marketName, list);
@@ -48,7 +49,7 @@ class MarketCashLedgerScreen extends StatelessWidget {
           );
         },
         icon: const Icon(Icons.add),
-        label: const Text('Entry'),
+        label: Text(context.l10n.cashEntryButton),
       ),
       body: StreamBuilder<List<CashEntry>>(
         stream: cashRepo.watchCashEntries(marketId),
@@ -58,9 +59,9 @@ class MarketCashLedgerScreen extends StatelessWidget {
           }
           final rows = snap.data!;
           if (rows.isEmpty) {
-            return const EmptyState(
-              title: 'No cash entries',
-              subtitle: 'Add amount received and payments for this market.',
+            return EmptyState(
+              title: context.l10n.cashNoEntriesTitle,
+              subtitle: context.l10n.cashNoEntriesSubtitle,
             );
           }
           return ListView.separated(
@@ -71,10 +72,14 @@ class MarketCashLedgerScreen extends StatelessWidget {
               return ListTile(
                 title: Text('#${e.serial} · ${_d(e.date)}'),
                 subtitle: Text(
-                  'Cash ${e.cashAvailable.toStringAsFixed(2)} · Pay ${e.payments.toStringAsFixed(2)} · Bal ${e.balance.toStringAsFixed(2)}',
+                  context.l10n.cashLedgerRowSummary(
+                    e.cashAvailable.toStringAsFixed(2),
+                    e.payments.toStringAsFixed(2),
+                    e.balance.toStringAsFixed(2),
+                  ),
                 ),
                 trailing: PopupMenuButton<String>(
-                  tooltip: 'Actions',
+                  tooltip: context.l10n.commonActions,
                   onSelected: (v) async {
                     if (v == 'edit') {
                       Navigator.of(context).push(
@@ -92,9 +97,9 @@ class MarketCashLedgerScreen extends StatelessWidget {
                       await _confirmDelete(context, e);
                     }
                   },
-                  itemBuilder: (context) => const [
-                    PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(value: 'edit', child: Text(context.l10n.commonEdit)),
+                    PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
                   ],
                   child: const Icon(Icons.more_vert),
                 ),
@@ -126,11 +131,11 @@ class MarketCashLedgerScreen extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Delete entry?'),
-        content: const Text('Running totals will be recalculated.'),
+        title: Text(context.l10n.cashDeleteEntryTitle),
+        content: Text(context.l10n.cashDeleteEntryBody),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Delete')),
+          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );

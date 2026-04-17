@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../models/cash_entry.dart';
+import '../../../shared/l10n/l10n.dart';
 
 class CashEntryDetailsScreen extends StatelessWidget {
   const CashEntryDetailsScreen({
@@ -22,13 +23,13 @@ class CashEntryDetailsScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          _kv('Date', e.date.toString().split(' ').first),
-          _kv('Amount received', e.amountReceived.toStringAsFixed(2)),
-          _kv('Payments', e.payments.toStringAsFixed(2)),
-          _kv('Previous cash', e.previousCash.toStringAsFixed(2)),
-          _kv('Cash available', e.cashAvailable.toStringAsFixed(2)),
-          _kv('Balance', e.balance.toStringAsFixed(2)),
-          _kv('Remarks', e.remarks.isEmpty ? '-' : e.remarks),
+          _kv(context.l10n.cashDateLabel, e.date.toString().split(' ').first),
+          _kv(context.l10n.cashAmountReceivedLabel, e.amountReceived.toStringAsFixed(2)),
+          _kv(context.l10n.cashPaymentsLabel, e.payments.toStringAsFixed(2)),
+          _kv(context.l10n.cashPreviousCashLabel, e.previousCash.toStringAsFixed(2)),
+          _kv(context.l10n.cashCashAvailableLabel, e.cashAvailable.toStringAsFixed(2)),
+          _kv(context.l10n.cashBalanceLabel, e.balance.toStringAsFixed(2)),
+          _kv(context.l10n.cashRemarksLabel, e.remarks.isEmpty ? '-' : e.remarks),
         ],
       ),
     );

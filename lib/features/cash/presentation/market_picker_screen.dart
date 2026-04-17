@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../models/market.dart';
+import '../../../shared/l10n/l10n.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
@@ -16,13 +17,13 @@ class MarketPickerScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Market cash'),
+        title: Text(context.l10n.marketCashTitle),
       ),
       floatingActionButton: FloatingActionButton.extended(
         heroTag: null,
         onPressed: () => _addMarket(context),
         icon: const Icon(Icons.add),
-        label: const Text('Market'),
+        label: Text(context.l10n.commonAdd),
       ),
       body: StreamBuilder<List<Market>>(
         stream: repo.watchMarkets(),
@@ -39,12 +40,12 @@ class MarketPickerScreen extends StatelessWidget {
           final markets = snap.data!;
           if (markets.isEmpty) {
             return EmptyState(
-              title: 'No markets yet',
-              subtitle: 'Add Lahore or other markets to track cash.',
+              title: context.l10n.marketsEmptyTitle,
+              subtitle: context.l10n.marketsEmptySubtitle,
               action: FilledButton.icon(
                 onPressed: () => _addMarket(context),
                 icon: const Icon(Icons.add),
-                label: const Text('Add market'),
+                label: Text(context.l10n.commonAdd),
               ),
             );
           }
@@ -55,9 +56,9 @@ class MarketPickerScreen extends StatelessWidget {
               final m = markets[i];
               return ListTile(
                 title: Text(m.name),
-                subtitle: const Text('Tap to open cash ledger'),
+                subtitle: Text(context.l10n.marketsTapToOpenCashLedger),
                 trailing: PopupMenuButton<String>(
-                  tooltip: 'Actions',
+                  tooltip: context.l10n.commonActions,
                   onSelected: (v) async {
                     if (v == 'open') {
                       Navigator.of(context).push(
@@ -74,9 +75,9 @@ class MarketPickerScreen extends StatelessWidget {
                       await _confirmDeleteMarket(context, m.id, m.name);
                     }
                   },
-                  itemBuilder: (context) => const [
-                    PopupMenuItem(value: 'open', child: Text('Open')),
-                    PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  itemBuilder: (context) => [
+                    PopupMenuItem(value: 'open', child: Text(context.l10n.commonOpen)),
+                    PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
                   ],
                   child: const Icon(Icons.more_vert),
                 ),
@@ -104,13 +105,13 @@ class MarketPickerScreen extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Delete market?'),
+        title: Text(context.l10n.marketsDeleteConfirmTitle),
         content: Text(
-          'If this market is used in any shipment, it cannot be deleted.\n\n"$marketName" and its cash entries will be deleted.',
+          context.l10n.marketsDeleteConfirmBody(marketName),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Delete')),
+          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(context.l10n.commonCancel)),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: Text(context.l10n.commonDelete)),
         ],
       ),
     );
@@ -122,7 +123,7 @@ class MarketPickerScreen extends StatelessWidget {
       if (!context.mounted) return;
       AppSnackBar.show(
         context,
-          message: 'Market "$marketName" deleted',
+      message: context.l10n.marketDeleted(marketName),
           type: AppSnackType.success,
       );
     } catch (e) {
@@ -141,17 +142,17 @@ class MarketPickerScreen extends StatelessWidget {
     final name = await showDialog<String>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('New market'),
+        title: Text(context.l10n.marketNewTitle),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(labelText: 'Name (e.g. Lahore)'),
+          decoration: InputDecoration(labelText: context.l10n.marketNewHint),
           textCapitalization: TextCapitalization.words,
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(c), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(c), child: Text(context.l10n.commonCancel)),
           FilledButton(
             onPressed: () => Navigator.pop(c, controller.text.trim()),
-            child: const Text('Add'),
+            child: Text(context.l10n.commonAdd),
           ),
         ],
       ),
@@ -177,7 +178,7 @@ class MarketPickerScreen extends StatelessWidget {
     if (!context.mounted) return;
     AppSnackBar.show(
       context,
-      message: 'Market "$name" added',
+      message: context.l10n.marketAdded(name),
       type: AppSnackType.success,
     );
   }

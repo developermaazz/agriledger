@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import '../../../app/app_dependencies.dart';
 import '../../../domain/record_status.dart';
 import '../../../models/labour_job.dart';
+import '../../../shared/l10n/l10n.dart';
+import '../../../shared/snackbar/app_snackbar.dart';
 
 class LabourFormScreen extends StatefulWidget {
   const LabourFormScreen({super.key, this.existing});
@@ -74,7 +76,6 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
     }
     setState(() => _busy = true);
     final repo = AppDependencies.of(context).labourRepository;
-    final messenger = ScaffoldMessenger.of(context);
     try {
       final total = double.tryParse(_total.text) ?? 0;
       final recv = double.tryParse(_recv.text) ?? 0;
@@ -108,7 +109,12 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
         Navigator.pop(context);
       }
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+      if (!mounted) return;
+      AppSnackBar.show(
+        context,
+        message: e.toString(),
+        type: AppSnackType.error,
+      );
     } finally {
       if (mounted) {
         setState(() => _busy = false);
@@ -127,8 +133,8 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
       appBar: AppBar(
         title: Text(
           widget.existing == null
-              ? 'New labour'
-              : (locked ? 'Labour details' : 'Edit labour'),
+              ? context.l10n.labourNewTitle
+              : (locked ? context.l10n.labourDetailsTitle : context.l10n.labourEditTitle),
         ),
         actions: [
           if (widget.existing != null && !locked)
@@ -144,15 +150,15 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                       final ok = await showDialog<bool>(
                         context: context,
                         builder: (c) => AlertDialog(
-                          title: const Text('Delete record?'),
+                          title: Text(context.l10n.labourDeleteConfirmTitle),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(c, false),
-                              child: const Text('Cancel'),
+                              child: Text(context.l10n.commonCancel),
                             ),
                             FilledButton(
                               onPressed: () => Navigator.pop(c, true),
-                              child: const Text('Delete'),
+                              child: Text(context.l10n.commonDelete),
                             ),
                           ],
                         ),
@@ -176,7 +182,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
               children: [
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Start date'),
+                  title: Text(context.l10n.labourStartDateLabel),
                   subtitle: Text(_start.toString().split(' ').first),
                   trailing: IconButton(
                     icon: const Icon(Icons.calendar_month),
@@ -185,7 +191,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('End date'),
+                  title: Text(context.l10n.labourEndDateLabel),
                   subtitle: Text(_end.toString().split(' ').first),
                   trailing: IconButton(
                     icon: const Icon(Icons.calendar_month),
@@ -194,31 +200,31 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                 ),
                 TextFormField(
                   controller: _total,
-                  decoration: const InputDecoration(labelText: 'Total labour cost'),
+                  decoration: InputDecoration(labelText: context.l10n.labourTotalCostLabel),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                   ],
                   readOnly: locked,
                   validator: (v) =>
-                      double.tryParse(v ?? '') == null ? 'Invalid' : null,
+                      double.tryParse(v ?? '') == null ? context.l10n.commonInvalid : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _recv,
-                  decoration: const InputDecoration(labelText: 'Received payment'),
+                  decoration: InputDecoration(labelText: context.l10n.labourReceivedPaymentLabel),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                   ],
                   readOnly: locked,
                   validator: (v) =>
-                      double.tryParse(v ?? '') == null ? 'Invalid' : null,
+                      double.tryParse(v ?? '') == null ? context.l10n.commonInvalid : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _remarks,
-                  decoration: const InputDecoration(labelText: 'Remarks'),
+                  decoration: InputDecoration(labelText: context.l10n.labourRemarksLabel),
                   maxLines: 3,
                   readOnly: locked,
                 ),
@@ -232,7 +238,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
               child: Row(
                 children: [
                   Text(
-                    'Remaining (auto)\n${rem.toStringAsFixed(2)}',
+                    '${context.l10n.labourRemainingAuto}\n${rem.toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ],
@@ -242,7 +248,11 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
           const SizedBox(height: 16),
           FilledButton(
             onPressed: (locked || _busy) ? null : _save,
-            child: Text(locked ? 'Completed (read-only)' : (_busy ? 'Saving...' : 'Save')),
+            child: Text(
+              locked
+                  ? context.l10n.labourCompletedReadOnly
+                  : (_busy ? context.l10n.commonSaving : context.l10n.commonSave),
+            ),
           ),
         ],
       ),

@@ -6,6 +6,7 @@ import '../../../models/labour_job.dart';
 import '../../../models/market.dart';
 import '../../../models/shipment.dart';
 import '../../../services/market_cash_repository.dart';
+import '../../../shared/l10n/l10n.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import '../../../shared/widgets/status_badge.dart';
 
@@ -21,7 +22,7 @@ class DashboardScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: Text(context.l10n.dashboardTitle),
       ),
       body: StreamBuilder<List<Shipment>>(
         stream: shipmentsRepo.watchShipments(),
@@ -37,7 +38,7 @@ class DashboardScreen extends StatelessWidget {
                   if (firstError != null) {
                     return FirestoreErrorView(
                       error: firstError,
-                      title: 'Unable to load dashboard data',
+                      title: context.l10n.dashboardUnableToLoad,
                     );
                   }
                   if (!shipSnap.hasData ||
@@ -79,59 +80,59 @@ class DashboardScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(16),
                         children: [
                           Text(
-                            'Overview',
+                            context.l10n.dashboardOverview,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           const SizedBox(height: 12),
                           _KpiGrid(
                             children: [
                               _KpiCard(
-                                label: 'Total shipments',
+                                label: context.l10n.dashboardTotalShipments,
                                 value: '$totalShipments',
                               ),
                               _KpiCard(
-                                label: 'Total revenue',
+                                label: context.l10n.dashboardTotalRevenue,
                                 value: totalRevenue.toStringAsFixed(2),
                               ),
                               _KpiCard(
-                                label: 'Amount received',
+                                label: context.l10n.dashboardAmountReceived,
                                 value: totalReceived.toStringAsFixed(2),
                               ),
                               _KpiCard(
-                                label: 'Pending (shipments)',
+                                label: context.l10n.dashboardPendingShipmentsKpi,
                                 value: pendingShipments.toStringAsFixed(2),
                               ),
                               _KpiCard(
-                                label: 'Cash available',
+                                label: context.l10n.dashboardCashAvailable,
                                 value: totalCash.toStringAsFixed(2),
                               ),
                               _KpiCard(
-                                label: 'Labour expenses',
+                                label: context.l10n.dashboardLabourExpenses,
                                 value: labourCost.toStringAsFixed(2),
                               ),
                               _KpiCard(
-                                label: 'Pending (labour)',
+                                label: context.l10n.dashboardPendingLabourKpi,
                                 value: pendingLabour.toStringAsFixed(2),
                               ),
                             ],
                           ),
                           const SizedBox(height: 20),
                           Text(
-                            'Pending shipments',
+                            context.l10n.dashboardPendingShipments,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
-                          ..._pendingShipments(shipments),
+                          ..._pendingShipments(context, shipments),
                           const SizedBox(height: 16),
                           Text(
-                            'Completed shipments',
+                            context.l10n.dashboardCompletedShipments,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
                           ..._completedShipments(shipments),
                           const SizedBox(height: 16),
                           Text(
-                            'Recent activity',
+                            context.l10n.dashboardRecentActivity,
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
@@ -160,11 +161,11 @@ class DashboardScreen extends StatelessWidget {
     return sum;
   }
 
-  static List<Widget> _pendingShipments(List<Shipment> all) {
+  static List<Widget> _pendingShipments(BuildContext context, List<Shipment> all) {
     final list =
         all.where((s) => s.status == RecordStatuses.pending).take(8).toList();
     if (list.isEmpty) {
-      return [const Text('None')];
+      return [const _L10nText('dashboardNone')];
     }
     return list
         .map(
@@ -172,7 +173,9 @@ class DashboardScreen extends StatelessWidget {
             child: ListTile(
               dense: true,
               title: Text('${s.marketName} · ${s.buyerName}'),
-              subtitle: Text('Balance ${s.balance.toStringAsFixed(2)}'),
+              subtitle: Text(
+                context.l10n.dashboardBalanceLabel(s.balance.toStringAsFixed(2)),
+              ),
               trailing: const StatusBadge(status: RecordStatuses.pending),
             ),
           ),
@@ -186,7 +189,7 @@ class DashboardScreen extends StatelessWidget {
         .take(5)
         .toList();
     if (list.isEmpty) {
-      return [const Text('None')];
+      return [const _L10nText('dashboardNone')];
     }
     return list
         .map(
@@ -225,7 +228,7 @@ class DashboardScreen extends StatelessWidget {
     items.sort((a, b) => b.time.compareTo(a.time));
     final top = items.take(10).toList();
     if (top.isEmpty) {
-      return [const Text('No recent updates')];
+      return [const _L10nText('dashboardNoRecentUpdates')];
     }
     return top
         .map(
@@ -238,6 +241,24 @@ class DashboardScreen extends StatelessWidget {
           ),
         )
         .toList();
+  }
+}
+
+/// Small helper to keep "const" call sites where possible.
+class _L10nText extends StatelessWidget {
+  const _L10nText(this.keyName);
+
+  final String keyName;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final text = switch (keyName) {
+      'dashboardNone' => l10n.dashboardNone,
+      'dashboardNoRecentUpdates' => l10n.dashboardNoRecentUpdates,
+      _ => keyName,
+    };
+    return Text(text);
   }
 }
 

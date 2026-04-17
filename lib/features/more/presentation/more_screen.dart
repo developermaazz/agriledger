@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../services/export_service.dart';
+import '../../../shared/l10n/l10n.dart';
 import '../../reports/presentation/reports_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 
@@ -11,13 +12,13 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('More')),
+      appBar: AppBar(title: Text(context.l10n.moreTitle)),
       body: ListView(
         children: [
           ListTile(
             leading: const Icon(Icons.assessment_outlined),
-            title: const Text('Reports & summaries'),
-            subtitle: const Text('Daily / monthly totals, Excel & PDF'),
+            title: Text(context.l10n.moreReportsTitle),
+            subtitle: Text(context.l10n.moreReportsSubtitle),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(builder: (_) => const ReportsScreen()),
@@ -26,8 +27,8 @@ class MoreScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.settings_outlined),
-            title: const Text('Settings'),
-            subtitle: const Text('Sign-in mode, backup info'),
+            title: Text(context.l10n.moreSettingsTitle),
+            subtitle: Text(context.l10n.moreSettingsSubtitle),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
@@ -37,7 +38,7 @@ class MoreScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.table_chart_outlined),
-            title: const Text('Export shipments (Excel)'),
+            title: Text(context.l10n.moreExportShipmentsExcel),
             onTap: () async {
               final list =
                   await AppDependencies.of(context).shipmentRepository.watchShipments().first;
@@ -47,7 +48,7 @@ class MoreScreen extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.table_chart_outlined),
-            title: const Text('Export labour (Excel)'),
+            title: Text(context.l10n.moreExportLabourExcel),
             onTap: () async {
               final list =
                   await AppDependencies.of(context).labourRepository.watchLabourJobs().first;

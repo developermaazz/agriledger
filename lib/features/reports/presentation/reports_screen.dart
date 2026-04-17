@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../services/export_service.dart';
+import '../../../shared/l10n/l10n.dart';
 import '../date_range_utils.dart';
 
 class ReportsScreen extends StatefulWidget {
@@ -127,18 +128,18 @@ class _ReportsScreenState extends State<ReportsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reports')),
+      appBar: AppBar(title: Text(context.l10n.reportsTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Text(
-            'Daily / monthly summaries',
+            context.l10n.reportsSubtitle,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 8),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('From'),
+            title: Text(context.l10n.reportsFrom),
             subtitle: Text(_from.toString().split(' ').first),
             trailing: IconButton(
               icon: const Icon(Icons.calendar_month),
@@ -157,7 +158,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
           ),
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('To'),
+            title: Text(context.l10n.reportsTo),
             subtitle: Text(_to.toString().split(' ').first),
             trailing: IconButton(
               icon: const Icon(Icons.calendar_month),
@@ -176,26 +177,26 @@ class _ReportsScreenState extends State<ReportsScreen> {
           ),
           FilledButton(
             onPressed: _busy ? null : _generate,
-            child: Text(_busy ? 'Working...' : 'Generate summary'),
+            child: Text(_busy ? context.l10n.commonWorking : context.l10n.reportsGenerateSummary),
           ),
           const SizedBox(height: 16),
           if (_result != null) ...[
-            _line('Shipments in range', '${_result!['totalShipments']}'),
-            _line('Revenue in range', (_result!['totalRevenue'] as double).toStringAsFixed(2)),
-            _line('Received (shipments) in range',
+            _line(context.l10n.reportsShipmentsInRange, '${_result!['totalShipments']}'),
+            _line(context.l10n.reportsRevenueInRange, (_result!['totalRevenue'] as double).toStringAsFixed(2)),
+            _line(context.l10n.reportsReceivedShipmentsInRange,
                 (_result!['totalReceived'] as double).toStringAsFixed(2)),
-            _line('Pending balance (shipments, filtered)',
+            _line(context.l10n.reportsPendingBalanceShipmentsFiltered,
                 (_result!['pendingShipments'] as double).toStringAsFixed(2)),
-            _line('Labour cost in range',
+            _line(context.l10n.reportsLabourCostInRange,
                 (_result!['labourCost'] as double).toStringAsFixed(2)),
-            _line('Pending labour (filtered)',
+            _line(context.l10n.reportsPendingLabourFiltered,
                 (_result!['pendingLabour'] as double).toStringAsFixed(2)),
-            _line('Cash received (all markets, in range)',
+            _line(context.l10n.reportsCashReceivedAllMarketsInRange,
                 (_result!['cashReceivedInRange'] as double).toStringAsFixed(2)),
-            _line('Cash payments (all markets, in range)',
+            _line(context.l10n.reportsCashPaymentsAllMarketsInRange,
                 (_result!['cashPaidInRange'] as double).toStringAsFixed(2)),
             _line(
-              'Total cash available (current, all markets)',
+              context.l10n.reportsTotalCashAvailableCurrentAllMarkets,
               (_result!['totalCashAvailable'] as double).toStringAsFixed(2),
             ),
             const SizedBox(height: 16),
@@ -205,7 +206,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   child: OutlinedButton.icon(
                     onPressed: _exportExcel,
                     icon: const Icon(Icons.table_chart_outlined),
-                    label: const Text('Excel'),
+                    label: Text(context.l10n.reportsExcel),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -213,7 +214,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                   child: FilledButton.icon(
                     onPressed: _exportPdf,
                     icon: const Icon(Icons.picture_as_pdf_outlined),
-                    label: const Text('PDF'),
+                    label: Text(context.l10n.reportsPdf),
                   ),
                 ),
               ],

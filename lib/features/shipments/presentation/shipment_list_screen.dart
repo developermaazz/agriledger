@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../app/app_dependencies.dart';
 import '../../../models/market.dart';
 import '../../../models/shipment.dart';
+import '../../../shared/l10n/l10n.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import '../../../shared/widgets/status_badge.dart';
@@ -46,7 +47,7 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shipments'),
+        title: Text(context.l10n.shipmentsTitle),
       ),
       floatingActionButton: FloatingActionButton.extended(
         heroTag: null,
@@ -58,7 +59,7 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
           );
         },
         icon: const Icon(Icons.add),
-        label: const Text('Add'),
+        label: Text(context.l10n.commonAdd),
       ),
       body: Column(
         children: [
@@ -66,9 +67,9 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: TextField(
               controller: _search,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText: 'Buyer, market, remarks',
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.search),
+                hintText: context.l10n.shipmentsSearchHint,
               ),
             ),
           ),
@@ -80,7 +81,7 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                 if (mSnap.hasError) {
                   return FirestoreErrorView(
                     error: mSnap.error!,
-                    title: 'Unable to load markets',
+                    title: context.l10n.shipmentsUnableToLoadMarkets,
                   );
                 }
                 final markets = mSnap.data ?? [];
@@ -90,23 +91,23 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                       child: DropdownButtonFormField<String?>(
                         // ignore: deprecated_member_use
                         value: _statusFilter,
-                        decoration: const InputDecoration(
-                          labelText: 'Status',
+                        decoration: InputDecoration(
+                          labelText: context.l10n.commonStatus,
                           isDense: true,
                         ),
-                        items: const [
-                          DropdownMenuItem(value: null, child: Text('All')),
+                        items: [
+                          DropdownMenuItem(value: null, child: Text(context.l10n.commonAll)),
                           DropdownMenuItem(
                             value: RecordStatuses.pending,
-                            child: Text('Pending'),
+                            child: Text(context.l10n.commonPending),
                           ),
                           DropdownMenuItem(
                             value: RecordStatuses.completed,
-                            child: Text('Completed'),
+                            child: Text(context.l10n.commonCompleted),
                           ),
                           DropdownMenuItem(
                             value: RecordStatuses.overpaid,
-                            child: Text('Overpaid'),
+                            child: Text(context.l10n.commonOverpaid),
                           ),
                         ],
                         onChanged: (v) => setState(() => _statusFilter = v),
@@ -117,14 +118,14 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                       child: DropdownButtonFormField<String?>(
                         // ignore: deprecated_member_use
                         value: _marketIdFilter,
-                        decoration: const InputDecoration(
-                          labelText: 'Market',
+                        decoration: InputDecoration(
+                          labelText: context.l10n.shipmentsMarketLabel,
                           isDense: true,
                         ),
                         items: [
-                          const DropdownMenuItem(
+                          DropdownMenuItem(
                             value: null,
-                            child: Text('All markets'),
+                            child: Text(context.l10n.shipmentsMarketFilterAll),
                           ),
                           ...markets.map(
                             (m) => DropdownMenuItem(
@@ -148,7 +149,7 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                 if (snap.hasError) {
                   return FirestoreErrorView(
                     error: snap.error!,
-                    title: 'Unable to load shipments',
+                    title: context.l10n.shipmentsUnableToLoad,
                   );
                 }
                 if (!snap.hasData) {
@@ -173,9 +174,9 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                 }).toList();
 
                 if (list.isEmpty) {
-                  return const EmptyState(
-                    title: 'No shipments',
-                    subtitle: 'Add a shipment to get started.',
+                  return EmptyState(
+                    title: context.l10n.shipmentsNoShipmentsTitle,
+                    subtitle: context.l10n.shipmentsNoShipmentsSubtitle,
                   );
                 }
 
@@ -188,7 +189,10 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                     return ListTile(
                       title: Text('#${s.serial} ${s.marketName}'),
                       subtitle: Text(
-                        '${s.buyerName} · Bal ${s.balance.toStringAsFixed(2)}',
+                        context.l10n.shipmentsListSubtitle(
+                          s.buyerName,
+                          s.balance.toStringAsFixed(2),
+                        ),
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -196,7 +200,7 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                           StatusBadge(status: s.status),
                           if (!locked)
                             PopupMenuButton<String>(
-                              tooltip: 'Actions',
+                              tooltip: context.l10n.commonActions,
                               onSelected: (v) async {
                                 if (v == 'edit') {
                                   Navigator.of(context).push(
@@ -210,9 +214,9 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                                 await _confirmDeleteShipment(s.id);
                                 }
                               },
-                              itemBuilder: (context) => const [
-                                PopupMenuItem(value: 'edit', child: Text('Edit')),
-                                PopupMenuItem(value: 'delete', child: Text('Delete')),
+                              itemBuilder: (context) => [
+                                PopupMenuItem(value: 'edit', child: Text(context.l10n.commonEdit)),
+                                PopupMenuItem(value: 'delete', child: Text(context.l10n.commonDelete)),
                               ],
                             ),
                         ],
@@ -244,16 +248,16 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: const Text('Delete shipment?'),
-        content: const Text('This cannot be undone.'),
+        title: Text(context.l10n.shipmentsDeleteConfirmTitle),
+        content: Text(context.l10n.shipmentsDeleteConfirmBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(c, false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.commonCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(c, true),
-            child: const Text('Delete'),
+            child: Text(context.l10n.commonDelete),
           ),
         ],
       ),
@@ -266,7 +270,7 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
       if (!mounted) return;
       AppSnackBar.show(
         context,
-        message: 'Shipment deleted',
+        message: context.l10n.shipmentsDeleted,
         type: AppSnackType.success,
       );
     } catch (e) {
