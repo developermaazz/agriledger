@@ -1,8 +1,12 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../domain/cash_ledger_math.dart';
+import '../models/cash_activity_line.dart';
 import '../models/cash_entry.dart';
+import '../models/market.dart';
 import 'market_repository.dart';
 
 class MarketCashRepository {
@@ -129,6 +133,15 @@ class MarketCashRepository {
       }
       await batch.commit();
     }
+
+    await _firestore
+        .collection('users')
+        .doc(_uid)
+        .collection('markets')
+        .doc(marketId)
+        .update({
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   /// Latest end-of-row cash ([balance]) for this market, or 0 if no entries.
@@ -138,5 +151,93 @@ class MarketCashRepository {
       return 0;
     }
     return CashEntry.fromFirestore(snap.docs.first).balance;
+  }
+
+  /// Sum of latest per-market balances; updates when any cash entry changes.
+  Stream<double> watchDashboardTotalCash() {
+    return _marketRepository.watchMarkets().asyncExpand((markets) {
+      if (markets.isEmpty) {
+        return Stream<double>.value(0);
+      }
+      return _watchTotalCashForMarkets(markets);
+    });
+  }
+
+  Stream<double> _watchTotalCashForMarkets(List<Market> markets) {
+    final subs = <StreamSubscription<List<CashEntry>>>[];
+    late final StreamController<double> controller;
+    controller = StreamController<double>(
+      onListen: () {
+        Future<void> push() async {
+          var sum = 0.0;
+          for (final m in markets) {
+            sum += await latestBalanceForMarket(m.id);
+          }
+          if (!controller.isClosed) {
+            controller.add(sum);
+          }
+        }
+
+        for (final m in markets) {
+          subs.add(watchCashEntries(m.id).listen((_) => push()));
+        }
+        push();
+      },
+      onCancel: () {
+        for (final s in subs) {
+          s.cancel();
+        }
+      },
+    );
+    return controller.stream;
+  }
+
+  /// Newest cash rows across all markets (for recent activity).
+  Stream<List<CashActivityLine>> watchCashActivityFeed() {
+    return _marketRepository.watchMarkets().asyncExpand((markets) {
+      if (markets.isEmpty) {
+        return Stream<List<CashActivityLine>>.value([]);
+      }
+      return _watchCashActivityForMarkets(markets);
+    });
+  }
+
+  Stream<List<CashActivityLine>> _watchCashActivityForMarkets(List<Market> markets) {
+    final subs = <StreamSubscription<List<CashEntry>>>[];
+    final cache = <String, List<CashEntry>>{};
+    late final StreamController<List<CashActivityLine>> controller;
+    controller = StreamController<List<CashActivityLine>>(
+      onListen: () {
+        void emit() {
+          final rows = <CashActivityLine>[];
+          for (final m in markets) {
+            for (final e in cache[m.id] ?? const []) {
+              rows.add(CashActivityLine(marketName: m.name, entry: e));
+            }
+          }
+          rows.sort((a, b) {
+            final ta = a.entry.updatedAt ?? a.entry.date;
+            final tb = b.entry.updatedAt ?? b.entry.date;
+            return tb.compareTo(ta);
+          });
+          if (!controller.isClosed) {
+            controller.add(rows.take(12).toList());
+          }
+        }
+
+        for (final m in markets) {
+          subs.add(watchCashEntries(m.id).listen((list) {
+            cache[m.id] = list;
+            emit();
+          }));
+        }
+      },
+      onCancel: () {
+        for (final s in subs) {
+          s.cancel();
+        }
+      },
+    );
+    return controller.stream;
   }
 }

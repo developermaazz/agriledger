@@ -60,6 +60,30 @@ class AppLocalizationsUr extends AppLocalizations {
   String get commonSaving => 'محفوظ ہو رہا ہے۔۔۔';
 
   @override
+  String get feedbackShipmentAdded => 'شپمنٹ محفوظ ہوگئی';
+
+  @override
+  String get feedbackShipmentUpdated => 'شپمنٹ اپڈیٹ ہوگئی';
+
+  @override
+  String get feedbackCashEntryAdded => 'کیش انٹری محفوظ ہوگئی';
+
+  @override
+  String get feedbackCashEntryUpdated => 'کیش انٹری اپڈیٹ ہوگئی';
+
+  @override
+  String get feedbackLabourAdded => 'لیبر ریکارڈ محفوظ ہوگیا';
+
+  @override
+  String get feedbackLabourUpdated => 'لیبر ریکارڈ اپڈیٹ ہوگیا';
+
+  @override
+  String get feedbackRecordDeleted => 'حذف ہوگیا';
+
+  @override
+  String get cashEntryDeletedSnack => 'کیش انٹری حذف ہوگئی';
+
+  @override
   String get authSignedIn => 'سائن اِن ہوگیا';
 
   @override
@@ -449,6 +473,16 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String dashboardActivityLabourPaidCaption(Object amount) {
     return 'اجرت ادا $amount';
+  }
+
+  @override
+  String dashboardActivityCashTitle(Object market, Object serial) {
+    return 'کیش · $market · #$serial';
+  }
+
+  @override
+  String dashboardActivityCashCaption(Object recv, Object pay) {
+    return 'وصول $recv · ادا $pay';
   }
 
   @override

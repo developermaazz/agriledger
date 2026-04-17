@@ -76,6 +76,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
       return;
     }
     setState(() => _busy = true);
+    final l10n = context.l10n;
     final repo = AppDependencies.of(context).labourRepository;
     try {
       final total = double.tryParse(_total.text) ?? 0;
@@ -107,7 +108,11 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
         );
       }
       if (mounted) {
+        final msg = widget.existing == null
+            ? l10n.feedbackLabourAdded
+            : l10n.feedbackLabourUpdated;
         Navigator.pop(context);
+        AppSnackBar.showAfterRoutePopped(message: msg);
       }
     } catch (e) {
       if (!mounted) return;
@@ -144,6 +149,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
               onPressed: _busy
                   ? null
                   : () async {
+                      final l10n = context.l10n;
                       final repo =
                           AppDependencies.of(context).labourRepository;
                       final nav = Navigator.of(context);
@@ -165,9 +171,22 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                         ),
                       );
                       if (ok == true && mounted) {
-                        await repo.deleteLabourJob(id);
-                        if (mounted) {
-                          nav.pop();
+                        try {
+                          await repo.deleteLabourJob(id);
+                          if (mounted) {
+                            nav.pop();
+                            AppSnackBar.showAfterRoutePopped(
+                              message: l10n.labourDeleted,
+                            );
+                          }
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          AppSnackBar.show(
+                            context,
+                            message:
+                                e is StateError ? e.message : e.toString(),
+                            type: AppSnackType.error,
+                          );
                         }
                       }
                     },

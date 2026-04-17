@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+
+import '../../app/app_navigator.dart';
 
 enum AppSnackType {
   success,
@@ -71,6 +74,19 @@ class AppSnackBar {
         ),
       ),
     );
+  }
+
+  /// Shows after [Navigator.pop] when the route context is no longer valid.
+  static void showAfterRoutePopped({
+    required String message,
+    AppSnackType type = AppSnackType.success,
+  }) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      final ctx = appNavigatorKey.currentContext;
+      if (ctx != null && ctx.mounted) {
+        show(ctx, message: message, type: type);
+      }
+    });
   }
 }
 

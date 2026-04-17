@@ -60,6 +60,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonSaving => 'Saving...';
 
   @override
+  String get feedbackShipmentAdded => 'Shipment saved';
+
+  @override
+  String get feedbackShipmentUpdated => 'Shipment updated';
+
+  @override
+  String get feedbackCashEntryAdded => 'Cash entry saved';
+
+  @override
+  String get feedbackCashEntryUpdated => 'Cash entry updated';
+
+  @override
+  String get feedbackLabourAdded => 'Labour record saved';
+
+  @override
+  String get feedbackLabourUpdated => 'Labour record updated';
+
+  @override
+  String get feedbackRecordDeleted => 'Deleted';
+
+  @override
+  String get cashEntryDeletedSnack => 'Cash entry deleted';
+
+  @override
   String get authSignedIn => 'Signed in';
 
   @override
@@ -448,6 +472,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String dashboardActivityLabourPaidCaption(Object amount) {
     return 'Wages paid $amount';
+  }
+
+  @override
+  String dashboardActivityCashTitle(Object market, Object serial) {
+    return 'Cash · $market · #$serial';
+  }
+
+  @override
+  String dashboardActivityCashCaption(Object recv, Object pay) {
+    return 'Received $recv · Paid $pay';
   }
 
   @override

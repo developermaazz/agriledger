@@ -20,6 +20,15 @@
   "commonInvalid": "غلط",
   "commonSaving": "محفوظ ہو رہا ہے۔۔۔",
 
+  "feedbackShipmentAdded": "شپمنٹ محفوظ ہوگئی",
+  "feedbackShipmentUpdated": "شپمنٹ اپڈیٹ ہوگئی",
+  "feedbackCashEntryAdded": "کیش انٹری محفوظ ہوگئی",
+  "feedbackCashEntryUpdated": "کیش انٹری اپڈیٹ ہوگئی",
+  "feedbackLabourAdded": "لیبر ریکارڈ محفوظ ہوگیا",
+  "feedbackLabourUpdated": "لیبر ریکارڈ اپڈیٹ ہوگیا",
+  "feedbackRecordDeleted": "حذف ہوگیا",
+  "cashEntryDeletedSnack": "کیش انٹری حذف ہوگئی",
+
   "authSignedIn": "سائن اِن ہوگیا",
   "authAccountCreated": "اکاؤنٹ بن گیا",
   "authFailed": "تصدیق ناکام",
@@ -160,6 +169,10 @@
   "@dashboardActivityLabourTitle": { "placeholders": { "serial": {} } },
   "dashboardActivityLabourPaidCaption": "اجرت ادا {amount}",
   "@dashboardActivityLabourPaidCaption": { "placeholders": { "amount": {} } },
+  "dashboardActivityCashTitle": "کیش · {market} · #{serial}",
+  "@dashboardActivityCashTitle": { "placeholders": { "market": {}, "serial": {} } },
+  "dashboardActivityCashCaption": "وصول {recv} · ادا {pay}",
+  "@dashboardActivityCashCaption": { "placeholders": { "recv": {}, "pay": {} } },
 
   "moreTitle": "مزید",
   "moreReportsTitle": "رپورٹس اور خلاصہ",

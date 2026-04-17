@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../models/cash_activity_line.dart';
 import '../../../models/labour_job.dart';
 import '../../../models/market.dart';
 import '../../../models/shipment.dart';
 import '../../../services/firestore_refresh.dart';
-import '../../../services/market_cash_repository.dart';
 import '../../../shared/formatters/money.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
@@ -73,7 +73,6 @@ class DashboardScreen extends StatelessWidget {
                   }
                   final shipments = shipSnap.data!;
                   final labour = labourSnap.data!;
-                  final markets = marketSnap.data!;
 
                   final totalShipments = shipments.length;
                   final totalRevenue =
@@ -89,22 +88,38 @@ class DashboardScreen extends StatelessWidget {
                   final labourCost =
                       labour.fold<double>(0, (a, j) => a + j.totalCost);
 
-                  return FutureBuilder<double>(
-                    future: _sumMarketCash(markets, cashRepo),
-                    builder: (context, cashSnap) {
-                      if (cashSnap.hasError) {
+                  return StreamBuilder<double>(
+                    stream: cashRepo.watchDashboardTotalCash(),
+                    builder: (context, cashTotalSnap) {
+                      if (cashTotalSnap.hasError) {
                         return RefreshIndicator(
                           onRefresh: () => _refreshDashboardData(context),
                           child: MinHeightRefreshContent(
                             child: FirestoreErrorView(
-                              error: cashSnap.error!,
+                              error: cashTotalSnap.error!,
                               title: context.l10n.dashboardUnableToLoadCash,
                             ),
                           ),
                         );
                       }
-                      final totalCash = cashSnap.data ?? 0;
-                      return RefreshIndicator(
+                      if (cashTotalSnap.connectionState ==
+                              ConnectionState.waiting &&
+                          !cashTotalSnap.hasData) {
+                        return RefreshIndicator(
+                          onRefresh: () => _refreshDashboardData(context),
+                          child: MinHeightRefreshContent(
+                            child: const Center(
+                              child: CircularProgressIndicator.adaptive(),
+                            ),
+                          ),
+                        );
+                      }
+                      final totalCash = cashTotalSnap.data ?? 0;
+                      return StreamBuilder<List<CashActivityLine>>(
+                        stream: cashRepo.watchCashActivityFeed(),
+                        builder: (context, cashActSnap) {
+                          final cashLines = cashActSnap.data ?? [];
+                          return RefreshIndicator(
                         onRefresh: () => _refreshDashboardData(context),
                         child: ListView(
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -181,9 +196,11 @@ class DashboardScreen extends StatelessWidget {
                             subtitle: context.l10n.dashboardRecentActivitySubtitle,
                           ),
                           const SizedBox(height: 12),
-                          ..._recent(context, shipments, labour),
+                          ..._recent(context, shipments, labour, cashLines),
                         ],
-                        ),
+                      ),
+                    );
+                        },
                       );
                     },
                   );
@@ -194,17 +211,6 @@ class DashboardScreen extends StatelessWidget {
         },
       ),
     );
-  }
-
-  static Future<double> _sumMarketCash(
-    List<Market> markets,
-    MarketCashRepository cashRepo,
-  ) async {
-    double sum = 0;
-    for (final m in markets) {
-      sum += await cashRepo.latestBalanceForMarket(m.id);
-    }
-    return sum;
   }
 
   static String _fmtDate(BuildContext context, DateTime d) {
@@ -269,6 +275,7 @@ class DashboardScreen extends StatelessWidget {
     BuildContext context,
     List<Shipment> s,
     List<LabourJob> l,
+    List<CashActivityLine> cash,
   ) {
     final items = <_RecentItem>[];
     final l10n = context.l10n;
@@ -296,6 +303,23 @@ class DashboardScreen extends StatelessWidget {
         ),
       );
     }
+    for (final line in cash) {
+      final e = line.entry;
+      items.add(
+        _RecentItem(
+          time: e.updatedAt ?? e.date,
+          kind: _ActivityKind.cash,
+          title: l10n.dashboardActivityCashTitle(
+            line.marketName,
+            e.serial.toString(),
+          ),
+          subtitle: l10n.dashboardActivityCashCaption(
+            MoneyFmt.of(e.amountReceived),
+            MoneyFmt.of(e.payments),
+          ),
+        ),
+      );
+    }
     items.sort((a, b) => b.time.compareTo(a.time));
     final top = items.take(10).toList();
     if (top.isEmpty) {
@@ -312,7 +336,7 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-enum _ActivityKind { shipment, labour }
+enum _ActivityKind { shipment, labour, cash }
 
 class _RecentItem {
   _RecentItem({
@@ -661,10 +685,23 @@ class _RecentActivityTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     final t = Theme.of(context).textTheme;
-    final isShipment = item.kind == _ActivityKind.shipment;
-    final icon = isShipment ? Icons.local_shipping_outlined : Icons.engineering_outlined;
-    final iconBg = isShipment ? cs.secondaryContainer : cs.tertiaryContainer;
-    final iconFg = isShipment ? cs.onSecondaryContainer : cs.onTertiaryContainer;
+    final (icon, iconBg, iconFg) = switch (item.kind) {
+      _ActivityKind.shipment => (
+          Icons.local_shipping_outlined,
+          cs.secondaryContainer,
+          cs.onSecondaryContainer,
+        ),
+      _ActivityKind.labour => (
+          Icons.engineering_outlined,
+          cs.tertiaryContainer,
+          cs.onTertiaryContainer,
+        ),
+      _ActivityKind.cash => (
+          Icons.account_balance_wallet_outlined,
+          cs.primaryContainer,
+          cs.onPrimaryContainer,
+        ),
+    };
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),

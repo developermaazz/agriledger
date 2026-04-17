@@ -74,6 +74,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
     }
     final market = markets.firstWhere((m) => m.id == marketId);
     setState(() => _busy = true);
+    final l10n = context.l10n;
     final repo = AppDependencies.of(context).shipmentRepository;
     try {
       final qty = double.tryParse(_qty.text) ?? 0;
@@ -113,7 +114,11 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
         );
       }
       if (mounted) {
+        final msg = widget.existing == null
+            ? l10n.feedbackShipmentAdded
+            : l10n.feedbackShipmentUpdated;
         Navigator.pop(context);
+        AppSnackBar.showAfterRoutePopped(message: msg);
       }
     } catch (e) {
       if (!mounted) return;
@@ -148,6 +153,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
               onPressed: _busy
                   ? null
                   : () async {
+                      final l10n = context.l10n;
                       final repo =
                           AppDependencies.of(context).shipmentRepository;
                       final nav = Navigator.of(context);
@@ -169,9 +175,22 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
                         ),
                       );
                       if (ok == true && mounted) {
-                        await repo.deleteShipment(id);
-                        if (mounted) {
-                          nav.pop();
+                        try {
+                          await repo.deleteShipment(id);
+                          if (mounted) {
+                            nav.pop();
+                            AppSnackBar.showAfterRoutePopped(
+                              message: l10n.shipmentsDeleted,
+                            );
+                          }
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          AppSnackBar.show(
+                            context,
+                            message:
+                                e is StateError ? e.message : e.toString(),
+                            type: AppSnackType.error,
+                          );
                         }
                       }
                     },

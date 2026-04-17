@@ -67,6 +67,7 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
       return;
     }
     setState(() => _busy = true);
+    final l10n = context.l10n;
     final repo = AppDependencies.of(context).marketCashRepository;
     try {
       final amountReceived = double.tryParse(_amountReceived.text) ?? 0;
@@ -90,7 +91,11 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
         );
       }
       if (mounted) {
+        final msg = widget.existing == null
+            ? l10n.feedbackCashEntryAdded
+            : l10n.feedbackCashEntryUpdated;
         Navigator.pop(context);
+        AppSnackBar.showAfterRoutePopped(message: msg);
       }
     } catch (e) {
       if (!mounted) return;

@@ -200,6 +200,54 @@ abstract class AppLocalizations {
   /// **'Saving...'**
   String get commonSaving;
 
+  /// No description provided for @feedbackShipmentAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipment saved'**
+  String get feedbackShipmentAdded;
+
+  /// No description provided for @feedbackShipmentUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipment updated'**
+  String get feedbackShipmentUpdated;
+
+  /// No description provided for @feedbackCashEntryAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash entry saved'**
+  String get feedbackCashEntryAdded;
+
+  /// No description provided for @feedbackCashEntryUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash entry updated'**
+  String get feedbackCashEntryUpdated;
+
+  /// No description provided for @feedbackLabourAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour record saved'**
+  String get feedbackLabourAdded;
+
+  /// No description provided for @feedbackLabourUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour record updated'**
+  String get feedbackLabourUpdated;
+
+  /// No description provided for @feedbackRecordDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted'**
+  String get feedbackRecordDeleted;
+
+  /// No description provided for @cashEntryDeletedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash entry deleted'**
+  String get cashEntryDeletedSnack;
+
   /// No description provided for @authSignedIn.
   ///
   /// In en, this message translates to:
@@ -901,6 +949,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wages paid {amount}'**
   String dashboardActivityLabourPaidCaption(Object amount);
+
+  /// No description provided for @dashboardActivityCashTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash · {market} · #{serial}'**
+  String dashboardActivityCashTitle(Object market, Object serial);
+
+  /// No description provided for @dashboardActivityCashCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Received {recv} · Paid {pay}'**
+  String dashboardActivityCashCaption(Object recv, Object pay);
 
   /// No description provided for @moreTitle.
   ///

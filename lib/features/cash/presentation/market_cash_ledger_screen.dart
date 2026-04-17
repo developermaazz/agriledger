@@ -4,6 +4,7 @@ import '../../../app/app_dependencies.dart';
 import '../../../models/cash_entry.dart';
 import '../../../services/export_service.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/snackbar/app_snackbar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/pull_to_refresh.dart';
 import 'cash_entry_details_screen.dart';
@@ -153,8 +154,22 @@ class MarketCashLedgerScreen extends StatelessWidget {
         ],
       ),
     );
-    if (ok == true && context.mounted) {
+    if (ok != true || !context.mounted) return;
+    try {
       await repo.deleteCashEntry(marketId, e.id);
+      if (!context.mounted) return;
+      AppSnackBar.show(
+        context,
+        message: context.l10n.cashEntryDeletedSnack,
+        type: AppSnackType.success,
+      );
+    } catch (err) {
+      if (!context.mounted) return;
+      AppSnackBar.show(
+        context,
+        message: err.toString(),
+        type: AppSnackType.error,
+      );
     }
   }
 }

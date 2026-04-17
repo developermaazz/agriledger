@@ -20,6 +20,15 @@
   "commonInvalid": "Invalid",
   "commonSaving": "Saving...",
 
+  "feedbackShipmentAdded": "Shipment saved",
+  "feedbackShipmentUpdated": "Shipment updated",
+  "feedbackCashEntryAdded": "Cash entry saved",
+  "feedbackCashEntryUpdated": "Cash entry updated",
+  "feedbackLabourAdded": "Labour record saved",
+  "feedbackLabourUpdated": "Labour record updated",
+  "feedbackRecordDeleted": "Deleted",
+  "cashEntryDeletedSnack": "Cash entry deleted",
+
   "authSignedIn": "Signed in",
   "authAccountCreated": "Account created",
   "authFailed": "Authentication failed",
@@ -169,6 +178,10 @@
   "@dashboardActivityLabourTitle": { "placeholders": { "serial": {} } },
   "dashboardActivityLabourPaidCaption": "Wages paid {amount}",
   "@dashboardActivityLabourPaidCaption": { "placeholders": { "amount": {} } },
+  "dashboardActivityCashTitle": "Cash · {market} · #{serial}",
+  "@dashboardActivityCashTitle": { "placeholders": { "market": {}, "serial": {} } },
+  "dashboardActivityCashCaption": "Received {recv} · Paid {pay}",
+  "@dashboardActivityCashCaption": { "placeholders": { "recv": {}, "pay": {} } },
 
   "moreTitle": "More",
   "moreReportsTitle": "Reports & summaries",
