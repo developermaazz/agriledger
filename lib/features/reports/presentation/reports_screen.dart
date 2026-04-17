@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../services/export_service.dart';
+import '../../../shared/formatters/money.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../date_range_utils.dart';
 
@@ -182,22 +183,22 @@ class _ReportsScreenState extends State<ReportsScreen> {
           const SizedBox(height: 16),
           if (_result != null) ...[
             _line(context.l10n.reportsShipmentsInRange, '${_result!['totalShipments']}'),
-            _line(context.l10n.reportsRevenueInRange, (_result!['totalRevenue'] as double).toStringAsFixed(2)),
+            _line(context.l10n.reportsRevenueInRange, MoneyFmt.of(_result!['totalRevenue'] as double)),
             _line(context.l10n.reportsReceivedShipmentsInRange,
-                (_result!['totalReceived'] as double).toStringAsFixed(2)),
+                MoneyFmt.of(_result!['totalReceived'] as double)),
             _line(context.l10n.reportsPendingBalanceShipmentsFiltered,
-                (_result!['pendingShipments'] as double).toStringAsFixed(2)),
+                MoneyFmt.of(_result!['pendingShipments'] as double)),
             _line(context.l10n.reportsLabourCostInRange,
-                (_result!['labourCost'] as double).toStringAsFixed(2)),
+                MoneyFmt.of(_result!['labourCost'] as double)),
             _line(context.l10n.reportsPendingLabourFiltered,
-                (_result!['pendingLabour'] as double).toStringAsFixed(2)),
+                MoneyFmt.of(_result!['pendingLabour'] as double)),
             _line(context.l10n.reportsCashReceivedAllMarketsInRange,
-                (_result!['cashReceivedInRange'] as double).toStringAsFixed(2)),
+                MoneyFmt.of(_result!['cashReceivedInRange'] as double)),
             _line(context.l10n.reportsCashPaymentsAllMarketsInRange,
-                (_result!['cashPaidInRange'] as double).toStringAsFixed(2)),
+                MoneyFmt.of(_result!['cashPaidInRange'] as double)),
             _line(
               context.l10n.reportsTotalCashAvailableCurrentAllMarkets,
-              (_result!['totalCashAvailable'] as double).toStringAsFixed(2),
+              MoneyFmt.of(_result!['totalCashAvailable'] as double),
             ),
             const SizedBox(height: 16),
             Row(
