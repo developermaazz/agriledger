@@ -14,6 +14,8 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool? _requireEmail;
   bool _loading = true;
+  ThemeMode _themeMode = ThemeMode.system;
+  String? _localeCode; // null = system
 
   @override
   void initState() {
@@ -27,10 +29,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _load() async {
-    final v =
-        await AppDependencies.of(context).settingsRepository.requireEmailLogin;
+    final repo = AppDependencies.of(context).settingsRepository;
+    final v = await repo.requireEmailLogin;
+    final tm = await repo.themeMode;
+    final lc = await repo.localeCode;
     setState(() {
       _requireEmail = v;
+      _themeMode = tm;
+      _localeCode = lc;
       _loading = false;
     });
   }
@@ -52,6 +58,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _requireEmail = v);
   }
 
+  Future<void> _setThemeMode(ThemeMode m) async {
+    final repo = AppDependencies.of(context).settingsRepository;
+    await repo.setThemeMode(m);
+    if (!mounted) return;
+    setState(() => _themeMode = m);
+  }
+
+  Future<void> _setLocale(String? code) async {
+    final repo = AppDependencies.of(context).settingsRepository;
+    await repo.setLocaleCode(code);
+    if (!mounted) return;
+    setState(() => _localeCode = code);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,6 +81,71 @@ class _SettingsScreenState extends State<SettingsScreen> {
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
+                Text(
+                  context.l10n.settingsAppearance,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                const SizedBox(height: 10),
+                Card(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.color_lens_outlined),
+                        title: Text(context.l10n.settingsTheme),
+                        trailing: DropdownButtonHideUnderline(
+                          child: DropdownButton<ThemeMode>(
+                            value: _themeMode,
+                            items: [
+                              DropdownMenuItem(
+                                value: ThemeMode.system,
+                                child: Text(context.l10n.settingsThemeSystem),
+                              ),
+                              DropdownMenuItem(
+                                value: ThemeMode.light,
+                                child: Text(context.l10n.settingsThemeLight),
+                              ),
+                              DropdownMenuItem(
+                                value: ThemeMode.dark,
+                                child: Text(context.l10n.settingsThemeDark),
+                              ),
+                            ],
+                            onChanged: (v) {
+                              if (v != null) _setThemeMode(v);
+                            },
+                          ),
+                        ),
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: const Icon(Icons.translate_outlined),
+                        title: Text(context.l10n.settingsLanguage),
+                        trailing: DropdownButtonHideUnderline(
+                          child: DropdownButton<String?>(
+                            value: _localeCode,
+                            items: [
+                              DropdownMenuItem(
+                                value: null,
+                                child: Text(context.l10n.settingsThemeSystem),
+                              ),
+                              DropdownMenuItem(
+                                value: 'en',
+                                child: Text(context.l10n.settingsLanguageEnglish),
+                              ),
+                              DropdownMenuItem(
+                                value: 'ur',
+                                child: Text(context.l10n.settingsLanguageUrdu),
+                              ),
+                            ],
+                            onChanged: (v) => _setLocale(v),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
                 SwitchListTile(
                   title: Text(context.l10n.settingsRequireEmailTitle),
                   subtitle: Text(context.l10n.settingsRequireEmailSubtitle),
