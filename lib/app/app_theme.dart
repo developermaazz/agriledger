@@ -16,6 +16,39 @@ class AppTheme {
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
       ),
+      navigationBarTheme: NavigationBarThemeData(
+        height: 72,
+        backgroundColor: colorScheme.surface,
+        elevation: 0,
+        indicatorColor: colorScheme.primaryContainer.withValues(alpha: 0.92),
+        indicatorShape: const StadiumBorder(),
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) {
+            final selected = states.contains(WidgetState.selected);
+            return TextStyle(
+              fontSize: 11.5,
+              height: 1.1,
+              letterSpacing: 0.15,
+              fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+              color: selected
+                  ? colorScheme.onSurface
+                  : colorScheme.onSurfaceVariant,
+            );
+          },
+        ),
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) {
+            final selected = states.contains(WidgetState.selected);
+            return IconThemeData(
+              size: 24,
+              color: selected
+                  ? colorScheme.onPrimaryContainer
+                  : colorScheme.onSurfaceVariant,
+            );
+          },
+        ),
+      ),
       cardTheme: CardThemeData(
         elevation: 0,
         color: Colors.white,

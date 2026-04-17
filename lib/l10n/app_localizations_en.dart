@@ -483,4 +483,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsAccountTypeEmail => 'Email user';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navShipments => 'Shipments';
+
+  @override
+  String get navCash => 'Cash';
+
+  @override
+  String get navLabour => 'Labour';
+
+  @override
+  String get navMore => 'More';
 }

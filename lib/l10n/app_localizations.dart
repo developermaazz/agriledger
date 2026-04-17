@@ -993,6 +993,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Email user'**
   String get settingsAccountTypeEmail;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navShipments.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipments'**
+  String get navShipments;
+
+  /// No description provided for @navCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get navCash;
+
+  /// No description provided for @navLabour.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour'**
+  String get navLabour;
+
+  /// No description provided for @navMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get navMore;
 }
 
 class _AppLocalizationsDelegate

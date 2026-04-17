@@ -171,6 +171,12 @@
   "settingsSignOut": "Sign out",
   "settingsAccountType": "Account type",
   "settingsAccountTypeGuest": "Guest (anonymous)",
-  "settingsAccountTypeEmail": "Email user"
+  "settingsAccountTypeEmail": "Email user",
+
+  "navHome": "Home",
+  "navShipments": "Shipments",
+  "navCash": "Cash",
+  "navLabour": "Labour",
+  "navMore": "More"
 }
 
