@@ -1,3 +1,4 @@
+import 'package:agri_ledger/shared/formatters/money.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/cash_entry.dart';
@@ -18,17 +19,19 @@ class CashEntryDetailsScreen extends StatelessWidget {
     final e = entry;
     return Scaffold(
       appBar: AppBar(
-        title: Text('$marketName · #${e.serial}'),
+        title: Text(
+          context.l10n.cashEntryDetailsAppBarTitle(marketName, e.serial),
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           _kv(context.l10n.cashDateLabel, e.date.toString().split(' ').first),
-          _kv(context.l10n.cashAmountReceivedLabel, e.amountReceived.toStringAsFixed(2)),
-          _kv(context.l10n.cashPaymentsLabel, e.payments.toStringAsFixed(2)),
-          _kv(context.l10n.cashPreviousCashLabel, e.previousCash.toStringAsFixed(2)),
-          _kv(context.l10n.cashCashAvailableLabel, e.cashAvailable.toStringAsFixed(2)),
-          _kv(context.l10n.cashBalanceLabel, e.balance.toStringAsFixed(2)),
+          _kv(context.l10n.cashAmountReceivedLabel, MoneyFmt.of(e.amountReceived)),
+          _kv(context.l10n.cashPaymentsLabel, MoneyFmt.of(e.payments)),
+          _kv(context.l10n.cashPreviousCashLabel, MoneyFmt.of(e.previousCash)),
+          _kv(context.l10n.cashCashAvailableLabel, MoneyFmt.of(e.cashAvailable)),
+          _kv(context.l10n.cashBalanceLabel, MoneyFmt.of(e.balance)),
           _kv(context.l10n.cashRemarksLabel, e.remarks.isEmpty ? '-' : e.remarks),
         ],
       ),

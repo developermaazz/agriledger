@@ -59,8 +59,8 @@ class _MainShellState extends State<MainShell> {
               label: context.l10n.navShipments,
             ),
             NavigationDestination(
-              icon: const Icon(Icons.payments_outlined),
-              selectedIcon: const Icon(Icons.payments),
+              icon: const Icon(Icons.storefront_outlined),
+              selectedIcon: const Icon(Icons.storefront),
               label: context.l10n.navCash,
             ),
             NavigationDestination(

@@ -1,3 +1,4 @@
+import 'package:agri_ledger/shared/formatters/money.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -19,7 +20,7 @@ class LabourFormScreen extends StatefulWidget {
 class _LabourFormScreenState extends State<LabourFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _total = TextEditingController();
-  final _recv = TextEditingController();
+  final _paymentReceived = TextEditingController();
   final _remarks = TextEditingController();
   DateTime _start = DateTime.now();
   DateTime _end = DateTime.now();
@@ -31,7 +32,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
     final e = widget.existing;
     if (e != null) {
       _total.text = e.totalCost.toString();
-      _recv.text = e.receivedPayment.toString();
+      _paymentReceived.text = e.receivedPayment.toString();
       _remarks.text = e.remarks;
       _start = e.dateStart;
       _end = e.dateEnd;
@@ -41,7 +42,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
   @override
   void dispose() {
     _total.dispose();
-    _recv.dispose();
+    _paymentReceived.dispose();
     _remarks.dispose();
     super.dispose();
   }
@@ -78,13 +79,13 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
     final repo = AppDependencies.of(context).labourRepository;
     try {
       final total = double.tryParse(_total.text) ?? 0;
-      final recv = double.tryParse(_recv.text) ?? 0;
+      final receivedPayment = double.tryParse(_paymentReceived.text) ?? 0;
       if (widget.existing == null) {
         await repo.createLabourJob(
           dateStart: _start,
           dateEnd: _end,
           totalCost: total,
-          receivedPayment: recv,
+          receivedPayment: receivedPayment,
           remarks: _remarks.text.trim(),
         );
       } else {
@@ -96,7 +97,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
             dateStart: _start,
             dateEnd: _end,
             totalCost: total,
-            receivedPayment: recv,
+            receivedPayment: receivedPayment,
             remainingBalance: 0,
             status: e.status,
             remarks: _remarks.text.trim(),
@@ -125,8 +126,8 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
   @override
   Widget build(BuildContext context) {
     final total = double.tryParse(_total.text) ?? 0;
-    final recv = double.tryParse(_recv.text) ?? 0;
-    final rem = total - recv;
+    final receivedPayment = double.tryParse(_paymentReceived.text) ?? 0;
+    final remainingBalance = total - receivedPayment;
     final locked = widget.existing?.status == RecordStatuses.completed;
 
     return Scaffold(
@@ -211,7 +212,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
-                  controller: _recv,
+                  controller: _paymentReceived,
                   decoration: InputDecoration(labelText: context.l10n.labourReceivedPaymentLabel),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [
@@ -238,7 +239,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
               child: Row(
                 children: [
                   Text(
-                    '${context.l10n.labourRemainingAuto}\n${rem.toStringAsFixed(2)}',
+                    '${context.l10n.labourRemainingAuto}\n${MoneyFmt.of(remainingBalance)}',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ],

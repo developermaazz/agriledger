@@ -401,13 +401,13 @@ abstract class AppLocalizations {
   /// No description provided for @shipmentsBalanceAuto.
   ///
   /// In en, this message translates to:
-  /// **'Balance (auto)'**
+  /// **'Outstanding balance (calculated)'**
   String get shipmentsBalanceAuto;
 
   /// No description provided for @shipmentsAddMarketFirst.
   ///
   /// In en, this message translates to:
-  /// **'Add a market first (Cash tab → add market).'**
+  /// **'Add a market first (Markets tab → add market).'**
   String get shipmentsAddMarketFirst;
 
   /// No description provided for @shipmentsDeleteConfirmTitle.
@@ -503,7 +503,7 @@ abstract class AppLocalizations {
   /// No description provided for @labourReceivedPaymentLabel.
   ///
   /// In en, this message translates to:
-  /// **'Received payment'**
+  /// **'Payment received'**
   String get labourReceivedPaymentLabel;
 
   /// No description provided for @labourRemarksLabel.
@@ -515,7 +515,7 @@ abstract class AppLocalizations {
   /// No description provided for @labourRemainingAuto.
   ///
   /// In en, this message translates to:
-  /// **'Remaining (auto)'**
+  /// **'Remaining balance (calculated)'**
   String get labourRemainingAuto;
 
   /// No description provided for @labourDeleteConfirmTitle.
@@ -611,7 +611,7 @@ abstract class AppLocalizations {
   /// No description provided for @cashEntryButton.
   ///
   /// In en, this message translates to:
-  /// **'Entry'**
+  /// **'Add entry'**
   String get cashEntryButton;
 
   /// No description provided for @cashNoEntriesTitle.
@@ -629,7 +629,7 @@ abstract class AppLocalizations {
   /// No description provided for @cashLedgerRowSummary.
   ///
   /// In en, this message translates to:
-  /// **'Cash {cash} · Pay {pay} · Bal {bal}'**
+  /// **'Available {cash} · Payments {pay} · Balance {bal}'**
   String cashLedgerRowSummary(Object cash, Object pay, Object bal);
 
   /// No description provided for @cashDeleteEntryTitle.
@@ -701,14 +701,50 @@ abstract class AppLocalizations {
   /// No description provided for @shipmentsListSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'{buyer} · Bal {bal}'**
+  /// **'{buyer} · Outstanding {bal}'**
   String shipmentsListSubtitle(Object buyer, Object bal);
+
+  /// No description provided for @shipmentsListTileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipment {serial} · {market}'**
+  String shipmentsListTileTitle(Object serial, Object market);
+
+  /// No description provided for @shipmentDetailAppBarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipment {serial}'**
+  String shipmentDetailAppBarTitle(Object serial);
 
   /// No description provided for @labourListTitle.
   ///
   /// In en, this message translates to:
-  /// **'#{serial} · {amount} due'**
+  /// **'Labour #{serial} · {amount} outstanding'**
   String labourListTitle(Object serial, Object amount);
+
+  /// No description provided for @labourListDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{dateStart} — {dateEnd}'**
+  String labourListDateRange(Object dateStart, Object dateEnd);
+
+  /// No description provided for @labourDetailAppBarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour {serial}'**
+  String labourDetailAppBarTitle(Object serial);
+
+  /// No description provided for @cashLedgerListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry {serial} · {date}'**
+  String cashLedgerListTitle(Object serial, Object date);
+
+  /// No description provided for @cashEntryDetailsAppBarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{marketName} · Entry {serial}'**
+  String cashEntryDetailsAppBarTitle(Object marketName, Object serial);
 
   /// No description provided for @dashboardTitle.
   ///
@@ -722,11 +758,23 @@ abstract class AppLocalizations {
   /// **'Unable to load dashboard data'**
   String get dashboardUnableToLoad;
 
+  /// No description provided for @dashboardUnableToLoadCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load cash balances'**
+  String get dashboardUnableToLoadCash;
+
   /// No description provided for @dashboardOverview.
   ///
   /// In en, this message translates to:
   /// **'Overview'**
   String get dashboardOverview;
+
+  /// No description provided for @dashboardOverviewSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance at a glance'**
+  String get dashboardOverviewSubtitle;
 
   /// No description provided for @dashboardPendingShipments.
   ///
@@ -734,11 +782,23 @@ abstract class AppLocalizations {
   /// **'Pending shipments'**
   String get dashboardPendingShipments;
 
+  /// No description provided for @dashboardPendingShipmentsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting full settlement'**
+  String get dashboardPendingShipmentsSubtitle;
+
   /// No description provided for @dashboardCompletedShipments.
   ///
   /// In en, this message translates to:
   /// **'Completed shipments'**
   String get dashboardCompletedShipments;
+
+  /// No description provided for @dashboardCompletedShipmentsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently finalized'**
+  String get dashboardCompletedShipmentsSubtitle;
 
   /// No description provided for @dashboardRecentActivity.
   ///
@@ -746,16 +806,22 @@ abstract class AppLocalizations {
   /// **'Recent activity'**
   String get dashboardRecentActivity;
 
+  /// No description provided for @dashboardRecentActivitySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest ledger activity'**
+  String get dashboardRecentActivitySubtitle;
+
   /// No description provided for @dashboardNone.
   ///
   /// In en, this message translates to:
-  /// **'None'**
+  /// **'No records to show'**
   String get dashboardNone;
 
   /// No description provided for @dashboardNoRecentUpdates.
   ///
   /// In en, this message translates to:
-  /// **'No recent updates'**
+  /// **'No recent activity yet'**
   String get dashboardNoRecentUpdates;
 
   /// No description provided for @dashboardTotalShipments.
@@ -779,7 +845,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardPendingShipmentsKpi.
   ///
   /// In en, this message translates to:
-  /// **'Pending (shipments)'**
+  /// **'Shipment receivables'**
   String get dashboardPendingShipmentsKpi;
 
   /// No description provided for @dashboardCashAvailable.
@@ -797,14 +863,44 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardPendingLabourKpi.
   ///
   /// In en, this message translates to:
-  /// **'Pending (labour)'**
+  /// **'Labour outstanding'**
   String get dashboardPendingLabourKpi;
 
   /// No description provided for @dashboardBalanceLabel.
   ///
   /// In en, this message translates to:
-  /// **'Balance {amount}'**
+  /// **'Outstanding balance {amount}'**
   String dashboardBalanceLabel(Object amount);
+
+  /// No description provided for @dashboardCompletedValueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Settlement amount'**
+  String get dashboardCompletedValueLabel;
+
+  /// No description provided for @dashboardActivityShipmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shipment #{serial} · {marketName}'**
+  String dashboardActivityShipmentTitle(Object serial, Object marketName);
+
+  /// No description provided for @dashboardActivityPaymentReceivedCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment received {amount}'**
+  String dashboardActivityPaymentReceivedCaption(Object amount);
+
+  /// No description provided for @dashboardActivityLabourTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour #{serial}'**
+  String dashboardActivityLabourTitle(Object serial);
+
+  /// No description provided for @dashboardActivityLabourPaidCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Wages paid {amount}'**
+  String dashboardActivityLabourPaidCaption(Object amount);
 
   /// No description provided for @moreTitle.
   ///
@@ -893,13 +989,13 @@ abstract class AppLocalizations {
   /// No description provided for @reportsReceivedShipmentsInRange.
   ///
   /// In en, this message translates to:
-  /// **'Received (shipments) in range'**
+  /// **'Amount collected (shipments, in range)'**
   String get reportsReceivedShipmentsInRange;
 
   /// No description provided for @reportsPendingBalanceShipmentsFiltered.
   ///
   /// In en, this message translates to:
-  /// **'Pending balance (shipments, filtered)'**
+  /// **'Outstanding shipment balances (filtered)'**
   String get reportsPendingBalanceShipmentsFiltered;
 
   /// No description provided for @reportsLabourCostInRange.
@@ -911,25 +1007,25 @@ abstract class AppLocalizations {
   /// No description provided for @reportsPendingLabourFiltered.
   ///
   /// In en, this message translates to:
-  /// **'Pending labour (filtered)'**
+  /// **'Outstanding labour balances (filtered)'**
   String get reportsPendingLabourFiltered;
 
   /// No description provided for @reportsCashReceivedAllMarketsInRange.
   ///
   /// In en, this message translates to:
-  /// **'Cash received (all markets, in range)'**
+  /// **'Cash collected (all markets, in range)'**
   String get reportsCashReceivedAllMarketsInRange;
 
   /// No description provided for @reportsCashPaymentsAllMarketsInRange.
   ///
   /// In en, this message translates to:
-  /// **'Cash payments (all markets, in range)'**
+  /// **'Cash paid out (all markets, in range)'**
   String get reportsCashPaymentsAllMarketsInRange;
 
   /// No description provided for @reportsTotalCashAvailableCurrentAllMarkets.
   ///
   /// In en, this message translates to:
-  /// **'Total cash available (current, all markets)'**
+  /// **'Total cash on hand (current, all markets)'**
   String get reportsTotalCashAvailableCurrentAllMarkets;
 
   /// No description provided for @reportsExcel.
@@ -1013,7 +1109,7 @@ abstract class AppLocalizations {
   /// No description provided for @navCash.
   ///
   /// In en, this message translates to:
-  /// **'Cash'**
+  /// **'Markets'**
   String get navCash;
 
   /// No description provided for @navLabour.

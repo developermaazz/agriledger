@@ -1,5 +1,6 @@
 import 'package:agri_ledger/domain/record_status.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../models/labour_job.dart';
@@ -72,15 +73,18 @@ class DashboardScreen extends StatelessWidget {
                       if (cashSnap.hasError) {
                         return FirestoreErrorView(
                           error: cashSnap.error!,
-                          title: 'Unable to load market cash totals',
+                          title: context.l10n.dashboardUnableToLoadCash,
                         );
                       }
                       final totalCash = cashSnap.data ?? 0;
                       return ListView(
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
                         children: [
-                          _SectionHeader(title: context.l10n.dashboardOverview),
-                          const SizedBox(height: 10),
+                          _SectionHeader(
+                            title: context.l10n.dashboardOverview,
+                            subtitle: context.l10n.dashboardOverviewSubtitle,
+                          ),
+                          const SizedBox(height: 12),
                           _KpiGrid(
                             children: [
                               _KpiCard(
@@ -127,17 +131,26 @@ class DashboardScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 18),
-                          _SectionHeader(title: context.l10n.dashboardPendingShipments),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 28),
+                          _SectionHeader(
+                            title: context.l10n.dashboardPendingShipments,
+                            subtitle: context.l10n.dashboardPendingShipmentsSubtitle,
+                          ),
+                          const SizedBox(height: 12),
                           ..._pendingShipments(context, shipments),
-                          const SizedBox(height: 14),
-                          _SectionHeader(title: context.l10n.dashboardCompletedShipments),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 28),
+                          _SectionHeader(
+                            title: context.l10n.dashboardCompletedShipments,
+                            subtitle: context.l10n.dashboardCompletedShipmentsSubtitle,
+                          ),
+                          const SizedBox(height: 12),
                           ..._completedShipments(context, shipments),
-                          const SizedBox(height: 14),
-                          _SectionHeader(title: context.l10n.dashboardRecentActivity),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 28),
+                          _SectionHeader(
+                            title: context.l10n.dashboardRecentActivity,
+                            subtitle: context.l10n.dashboardRecentActivitySubtitle,
+                          ),
+                          const SizedBox(height: 12),
                           ..._recent(context, shipments, labour),
                         ],
                       );
@@ -163,73 +176,32 @@ class DashboardScreen extends StatelessWidget {
     return sum;
   }
 
+  static String _fmtDate(BuildContext context, DateTime d) {
+    final loc = Localizations.localeOf(context).toString();
+    return DateFormat.yMMMd(loc).format(d);
+  }
+
+  static String _fmtDateTime(BuildContext context, DateTime d) {
+    final loc = Localizations.localeOf(context).toString();
+    return DateFormat('d MMM yyyy · HH:mm', loc).format(d);
+  }
+
   static List<Widget> _pendingShipments(BuildContext context, List<Shipment> all) {
     final list =
         all.where((s) => s.status == RecordStatuses.pending).take(8).toList();
     if (list.isEmpty) {
-      return [const _L10nText('dashboardNone')];
+      return [_EmptyHint(message: context.l10n.dashboardNone)];
     }
     return list
         .map(
-          (s) => Card(
-            elevation: 0,
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-              child: Row(
-                children: [
-                  Container(
-                    width: 4,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.error,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.errorContainer,
-                    foregroundColor:
-                        Theme.of(context).colorScheme.onErrorContainer,
-                    child: const Icon(Icons.local_shipping_outlined, size: 18),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${s.marketName} · ${s.buyerName}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleSmall
-                              ?.copyWith(fontWeight: FontWeight.w700),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          context.l10n.dashboardBalanceLabel(MoneyFmt.of(s.balance)),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  _AmountChip(
-                    value: MoneyFmt.of(s.balance),
-                    tone: _ChipTone.pending,
-                  ),
-                ],
-              ),
+          (s) => _DashboardListCard(
+            accentColor: Theme.of(context).colorScheme.error,
+            leadingIcon: Icons.local_shipping_outlined,
+            title: '${s.marketName} · ${s.buyerName}',
+            subtitle: context.l10n.dashboardBalanceLabel(MoneyFmt.of(s.balance)),
+            trailing: _AmountChip(
+              value: MoneyFmt.of(s.balance),
+              tone: _ChipTone.pending,
             ),
           ),
         )
@@ -242,81 +214,42 @@ class DashboardScreen extends StatelessWidget {
         .take(5)
         .toList();
     if (list.isEmpty) {
-      return [const _L10nText('dashboardNone')];
+      return [_EmptyHint(message: context.l10n.dashboardNone)];
     }
+    final cs = Theme.of(context).colorScheme;
     return list
         .map(
-          (s) => Card(
-            elevation: 0,
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-              child: Row(
-                children: [
-                  Container(
-                    width: 4,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade800,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primaryContainer,
-                    foregroundColor:
-                        Theme.of(context).colorScheme.onPrimaryContainer,
-                    child: const Icon(Icons.check_circle_outline, size: 18),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${s.marketName} · ${s.buyerName}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleSmall
-                              ?.copyWith(fontWeight: FontWeight.w700),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          s.date.toString().split(' ').first,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  _AmountChip(
-                    value: MoneyFmt.of(s.totalAmount),
-                    tone: _ChipTone.success,
-                  ),
-                ],
-              ),
+          (s) => _DashboardListCard(
+            accentColor: cs.tertiary,
+            leadingIcon: Icons.check_rounded,
+            title: '${s.marketName} · ${s.buyerName}',
+            subtitle:
+                '${_fmtDate(context, s.date)} · ${context.l10n.dashboardCompletedValueLabel}',
+            trailing: _AmountChip(
+              value: MoneyFmt.of(s.totalAmount),
+              tone: _ChipTone.success,
             ),
           ),
         )
         .toList();
   }
 
-  static List<Widget> _recent(BuildContext context, List<Shipment> s, List<LabourJob> l) {
+  static List<Widget> _recent(
+    BuildContext context,
+    List<Shipment> s,
+    List<LabourJob> l,
+  ) {
     final items = <_RecentItem>[];
+    final l10n = context.l10n;
     for (final x in s) {
       items.add(
         _RecentItem(
           time: x.updatedAt ?? x.date,
-          text:
-              'Shipment #${x.serial} ${x.marketName} · recv ${MoneyFmt.of(x.amountReceived)}',
+          kind: _ActivityKind.shipment,
+          title: l10n.dashboardActivityShipmentTitle(x.serial, x.marketName),
+          subtitle: l10n.dashboardActivityPaymentReceivedCaption(
+            MoneyFmt.of(x.amountReceived),
+          ),
         ),
       );
     }
@@ -324,47 +257,161 @@ class DashboardScreen extends StatelessWidget {
       items.add(
         _RecentItem(
           time: x.updatedAt ?? x.dateEnd,
-          text:
-              'Labour #${x.serial} paid ${MoneyFmt.of(x.receivedPayment)}',
+          kind: _ActivityKind.labour,
+          title: l10n.dashboardActivityLabourTitle(x.serial),
+          subtitle: l10n.dashboardActivityLabourPaidCaption(
+            MoneyFmt.of(x.receivedPayment),
+          ),
         ),
       );
     }
     items.sort((a, b) => b.time.compareTo(a.time));
     final top = items.take(10).toList();
     if (top.isEmpty) {
-      return [const _L10nText('dashboardNoRecentUpdates')];
+      return [_EmptyHint(message: context.l10n.dashboardNoRecentUpdates)];
     }
     return top
         .map(
-          (e) => _RecentTimelineTile(item: e),
+          (e) => _RecentActivityTile(
+            item: e,
+            timeLabel: _fmtDateTime(context, e.time),
+          ),
         )
         .toList();
   }
 }
 
-/// Small helper to keep "const" call sites where possible.
-class _L10nText extends StatelessWidget {
-  const _L10nText(this.keyName);
+enum _ActivityKind { shipment, labour }
 
-  final String keyName;
+class _RecentItem {
+  _RecentItem({
+    required this.time,
+    required this.kind,
+    required this.title,
+    required this.subtitle,
+  });
+
+  final DateTime time;
+  final _ActivityKind kind;
+  final String title;
+  final String subtitle;
+}
+
+class _EmptyHint extends StatelessWidget {
+  const _EmptyHint({required this.message});
+
+  final String message;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final text = switch (keyName) {
-      'dashboardNone' => l10n.dashboardNone,
-      'dashboardNoRecentUpdates' => l10n.dashboardNoRecentUpdates,
-      _ => keyName,
-    };
-    return Text(text);
+    final cs = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: cs.onSurfaceVariant,
+                fontStyle: FontStyle.italic,
+              ),
+        ),
+      ),
+    );
   }
 }
 
-class _RecentItem {
-  _RecentItem({required this.time, required this.text});
+class _DashboardListCard extends StatelessWidget {
+  const _DashboardListCard({
+    required this.accentColor,
+    required this.leadingIcon,
+    required this.title,
+    required this.subtitle,
+    required this.trailing,
+  });
 
-  final DateTime time;
-  final String text;
+  final Color accentColor;
+  final IconData leadingIcon;
+  final String title;
+  final String subtitle;
+  final Widget trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+    final iconBg = accentColor.withValues(alpha: 0.14);
+    final iconFg = accentColor;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Material(
+        color: cs.surfaceContainerLow,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: cs.outlineVariant.withValues(alpha: 0.45),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(4, 10, 12, 10),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 48,
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(leadingIcon, size: 22, color: iconFg),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: t.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: t.bodySmall?.copyWith(
+                        color: cs.onSurfaceVariant,
+                        height: 1.25,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              trailing,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 class _KpiGrid extends StatelessWidget {
@@ -382,9 +429,9 @@ class _KpiGrid extends StatelessWidget {
           crossAxisCount: cols,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 8,
-          crossAxisSpacing: 8,
-          childAspectRatio: 1.8,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: 1.72,
           children: children,
         );
       },
@@ -417,11 +464,18 @@ class _KpiCard extends StatelessWidget {
       _KpiTone.info => (cs.surfaceContainerHighest, cs.onSurface),
       _KpiTone.neutral => (cs.surfaceContainerHighest, cs.onSurface),
     };
-    return Card(
-      elevation: 0,
+    return Material(
       color: bg,
+      elevation: 0,
+      shadowColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(
+          color: cs.outlineVariant.withValues(alpha: tone == _KpiTone.neutral ? 0.4 : 0.25),
+        ),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -433,22 +487,25 @@ class _KpiCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     label,
-                    maxLines: 1,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: fg.withValues(alpha: 0.88),
+                      height: 1.15,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               value,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
+                letterSpacing: -0.3,
                 color: fg,
               ),
             ),
@@ -469,19 +526,53 @@ enum _KpiTone {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title});
+  const _SectionHeader({
+    required this.title,
+    this.subtitle,
+  });
 
   final String title;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
     final t = Theme.of(context);
+    final cs = t.colorScheme;
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Container(
+          width: 3,
+          height: 24,
+          margin: const EdgeInsets.only(top: 2),
+          decoration: BoxDecoration(
+            color: cs.primary,
+            borderRadius: BorderRadius.circular(3),
+          ),
+        ),
+        const SizedBox(width: 12),
         Expanded(
-          child: Text(
-            title,
-            style: t.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: t.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              if (subtitle != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  subtitle!,
+                  style: t.textTheme.bodySmall?.copyWith(
+                    color: cs.onSurfaceVariant,
+                    height: 1.2,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ],
@@ -506,78 +597,113 @@ class _AmountChip extends StatelessWidget {
       _ChipTone.neutral => (cs.surfaceContainerHigh, cs.onSurface),
     };
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: fg.withValues(alpha: 0.12),
+        ),
       ),
       child: Text(
         value,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: fg,
               fontWeight: FontWeight.w700,
+              letterSpacing: -0.2,
             ),
       ),
     );
   }
 }
 
-class _RecentTimelineTile extends StatelessWidget {
-  const _RecentTimelineTile({required this.item});
+class _RecentActivityTile extends StatelessWidget {
+  const _RecentActivityTile({
+    required this.item,
+    required this.timeLabel,
+  });
 
   final _RecentItem item;
+  final String timeLabel;
 
   @override
   Widget build(BuildContext context) {
-    final isShipment = item.text.startsWith('Shipment');
     final cs = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+    final isShipment = item.kind == _ActivityKind.shipment;
     final icon = isShipment ? Icons.local_shipping_outlined : Icons.engineering_outlined;
     final iconBg = isShipment ? cs.secondaryContainer : cs.tertiaryContainer;
     final iconFg = isShipment ? cs.onSecondaryContainer : cs.onTertiaryContainer;
 
-    return Card(
-      elevation: 0,
-      color: cs.surfaceContainerHighest,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: iconBg,
-                  foregroundColor: iconFg,
-                  child: Icon(icon, size: 18),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Material(
+        color: cs.surfaceContainerLow,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: cs.outlineVariant.withValues(alpha: 0.45),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ],
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    item.text,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    item.time.toString().split('.').first,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: cs.onSurfaceVariant,
-                        ),
-                  ),
-                ],
+                child: Icon(icon, size: 22, color: iconFg),
               ),
-            ),
-          ],
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.title,
+                      style: t.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      item.subtitle,
+                      style: t.bodySmall?.copyWith(
+                        color: cs.onSurfaceVariant,
+                        height: 1.3,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.schedule_outlined,
+                          size: 14,
+                          color: cs.onSurfaceVariant.withValues(alpha: 0.85),
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            timeLabel,
+                            style: t.labelSmall?.copyWith(
+                              color: cs.onSurfaceVariant,
+                              letterSpacing: 0.1,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

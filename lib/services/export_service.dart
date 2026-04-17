@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:agri_ledger/models/cash_entry.dart';
+import 'package:agri_ledger/shared/formatters/money.dart';
 import 'package:agri_ledger/models/labour_job.dart';
 import 'package:agri_ledger/models/shipment.dart';
 import 'package:excel/excel.dart';
@@ -38,9 +39,9 @@ class ExportService {
         TextCellValue(s.marketName),
         TextCellValue(s.buyerName),
         DoubleCellValue(s.quantity),
-        DoubleCellValue(s.totalAmount),
-        DoubleCellValue(s.amountReceived),
-        DoubleCellValue(s.balance),
+        TextCellValue(MoneyFmt.of(s.totalAmount)),
+        TextCellValue(MoneyFmt.of(s.amountReceived)),
+        TextCellValue(MoneyFmt.of(s.balance)),
         TextCellValue(s.status),
         TextCellValue(s.remarks),
       ]);
@@ -72,11 +73,11 @@ class ExportService {
       sheet.appendRow([
         IntCellValue(e.serial),
         TextCellValue(_dateFmt.format(e.date)),
-        DoubleCellValue(e.amountReceived),
-        DoubleCellValue(e.previousCash),
-        DoubleCellValue(e.cashAvailable),
-        DoubleCellValue(e.payments),
-        DoubleCellValue(e.balance),
+        TextCellValue(MoneyFmt.of(e.amountReceived)),
+        TextCellValue(MoneyFmt.of(e.previousCash)),
+        TextCellValue(MoneyFmt.of(e.cashAvailable)),
+        TextCellValue(MoneyFmt.of(e.payments)),
+        TextCellValue(MoneyFmt.of(e.balance)),
         TextCellValue(e.remarks),
       ]);
     }
@@ -107,9 +108,9 @@ class ExportService {
         IntCellValue(j.serial),
         TextCellValue(_dateFmt.format(j.dateStart)),
         TextCellValue(_dateFmt.format(j.dateEnd)),
-        DoubleCellValue(j.totalCost),
-        DoubleCellValue(j.receivedPayment),
-        DoubleCellValue(j.remainingBalance),
+        TextCellValue(MoneyFmt.of(j.totalCost)),
+        TextCellValue(MoneyFmt.of(j.receivedPayment)),
+        TextCellValue(MoneyFmt.of(j.remainingBalance)),
         TextCellValue(j.status),
         TextCellValue(j.remarks),
       ]);
@@ -141,27 +142,27 @@ class ExportService {
     sheet.appendRow([TextCellValue('Total shipments'), IntCellValue(totalShipments)]);
     sheet.appendRow([
       TextCellValue('Total revenue'),
-      DoubleCellValue(totalRevenue),
+      TextCellValue(MoneyFmt.of(totalRevenue)),
     ]);
     sheet.appendRow([
       TextCellValue('Total received'),
-      DoubleCellValue(totalReceived),
+      TextCellValue(MoneyFmt.of(totalReceived)),
     ]);
     sheet.appendRow([
       TextCellValue('Pending shipments'),
-      DoubleCellValue(totalPendingShipments),
+      TextCellValue(MoneyFmt.of(totalPendingShipments)),
     ]);
     sheet.appendRow([
       TextCellValue('Pending labour'),
-      DoubleCellValue(totalPendingLabour),
+      TextCellValue(MoneyFmt.of(totalPendingLabour)),
     ]);
     sheet.appendRow([
       TextCellValue('Cash available'),
-      DoubleCellValue(totalCashAvailable),
+      TextCellValue(MoneyFmt.of(totalCashAvailable)),
     ]);
     sheet.appendRow([
       TextCellValue('Labour expenses'),
-      DoubleCellValue(totalLabourCost),
+      TextCellValue(MoneyFmt.of(totalLabourCost)),
     ]);
     final bytes = excel.encode()!;
     final dir = await getTemporaryDirectory();
@@ -197,12 +198,12 @@ class ExportService {
                 '${_dateFmt.format(from)}  –  ${_dateFmt.format(to)}'),
             pw.SizedBox(height: 16),
             pw.Bullet(text: 'Total shipments: $totalShipments'),
-            pw.Bullet(text: 'Total revenue (shipments): ${totalRevenue.toStringAsFixed(2)}'),
-            pw.Bullet(text: 'Total received (shipments): ${totalReceived.toStringAsFixed(2)}'),
-            pw.Bullet(text: 'Pending (shipments): ${totalPendingShipments.toStringAsFixed(2)}'),
-            pw.Bullet(text: 'Pending (labour): ${totalPendingLabour.toStringAsFixed(2)}'),
-            pw.Bullet(text: 'Cash available (markets): ${totalCashAvailable.toStringAsFixed(2)}'),
-            pw.Bullet(text: 'Labour expenses: ${totalLabourCost.toStringAsFixed(2)}'),
+            pw.Bullet(text: 'Total revenue (shipments): ${MoneyFmt.of(totalRevenue)}'),
+            pw.Bullet(text: 'Total received (shipments): ${MoneyFmt.of(totalReceived)}'),
+            pw.Bullet(text: 'Pending (shipments): ${MoneyFmt.of(totalPendingShipments)}'),
+            pw.Bullet(text: 'Pending (labour): ${MoneyFmt.of(totalPendingLabour)}'),
+            pw.Bullet(text: 'Cash available (markets): ${MoneyFmt.of(totalCashAvailable)}'),
+            pw.Bullet(text: 'Labour expenses: ${MoneyFmt.of(totalLabourCost)}'),
           ],
         ),
       ),

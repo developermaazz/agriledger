@@ -24,8 +24,8 @@ class CashEntryFormScreen extends StatefulWidget {
 
 class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _recv = TextEditingController();
-  final _pay = TextEditingController();
+  final _amountReceived = TextEditingController();
+  final _payments = TextEditingController();
   final _remarks = TextEditingController();
   DateTime _date = DateTime.now();
   bool _busy = false;
@@ -35,8 +35,8 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
     super.initState();
     final e = widget.existing;
     if (e != null) {
-      _recv.text = e.amountReceived.toString();
-      _pay.text = e.payments.toString();
+      _amountReceived.text = e.amountReceived.toString();
+      _payments.text = e.payments.toString();
       _remarks.text = e.remarks;
       _date = e.date;
     }
@@ -44,8 +44,8 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
 
   @override
   void dispose() {
-    _recv.dispose();
-    _pay.dispose();
+    _amountReceived.dispose();
+    _payments.dispose();
     _remarks.dispose();
     super.dispose();
   }
@@ -69,14 +69,14 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
     setState(() => _busy = true);
     final repo = AppDependencies.of(context).marketCashRepository;
     try {
-      final recv = double.tryParse(_recv.text) ?? 0;
-      final pay = double.tryParse(_pay.text) ?? 0;
+      final amountReceived = double.tryParse(_amountReceived.text) ?? 0;
+      final payments = double.tryParse(_payments.text) ?? 0;
       if (widget.existing == null) {
         await repo.createCashEntry(
           marketId: widget.marketId,
           date: _date,
-          amountReceived: recv,
-          payments: pay,
+          amountReceived: amountReceived,
+          payments: payments,
           remarks: _remarks.text.trim(),
         );
       } else {
@@ -84,8 +84,8 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
           marketId: widget.marketId,
           entryId: widget.existing!.id,
           date: _date,
-          amountReceived: recv,
-          payments: pay,
+          amountReceived: amountReceived,
+          payments: payments,
           remarks: _remarks.text.trim(),
         );
       }
@@ -110,7 +110,14 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.marketName),
+        title: Text(
+          widget.existing != null
+              ? context.l10n.cashEntryDetailsAppBarTitle(
+                  widget.marketName,
+                  widget.existing!.serial,
+                )
+              : widget.marketName,
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -129,7 +136,7 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
                   ),
                 ),
                 TextFormField(
-                  controller: _recv,
+                  controller: _amountReceived,
                   decoration: InputDecoration(labelText: context.l10n.cashAmountReceivedLabel),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [
@@ -140,7 +147,7 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
-                  controller: _pay,
+                  controller: _payments,
                   decoration: InputDecoration(labelText: context.l10n.cashPaymentsLabel),
                   keyboardType: const TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [

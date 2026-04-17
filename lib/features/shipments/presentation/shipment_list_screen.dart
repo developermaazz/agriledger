@@ -1,4 +1,5 @@
 import 'package:agri_ledger/domain/record_status.dart';
+import 'package:agri_ledger/shared/formatters/money.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
@@ -187,11 +188,13 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                     final s = list[i];
                     final locked = s.status == RecordStatuses.completed;
                     return ListTile(
-                      title: Text('#${s.serial} ${s.marketName}'),
+                      title: Text(
+                        context.l10n.shipmentsListTileTitle(s.serial, s.marketName),
+                      ),
                       subtitle: Text(
                         context.l10n.shipmentsListSubtitle(
                           s.buyerName,
-                          s.balance.toStringAsFixed(2),
+                          MoneyFmt.of(s.balance),
                         ),
                       ),
                       trailing: Row(

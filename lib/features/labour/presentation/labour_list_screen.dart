@@ -1,4 +1,5 @@
 import 'package:agri_ledger/domain/record_status.dart';
+import 'package:agri_ledger/shared/formatters/money.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
@@ -132,11 +133,14 @@ class _LabourListScreenState extends State<LabourListScreen> {
                       title: Text(
                         context.l10n.labourListTitle(
                           '${j.serial}',
-                          j.remainingBalance.toStringAsFixed(2),
+                          MoneyFmt.of(j.remainingBalance),
                         ),
                       ),
                       subtitle: Text(
-                        '${j.dateStart.toString().split(' ').first} → ${j.dateEnd.toString().split(' ').first}',
+                        context.l10n.labourListDateRange(
+                          j.dateStart.toString().split(' ').first,
+                          j.dateEnd.toString().split(' ').first,
+                        ),
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,

@@ -1,3 +1,4 @@
+import 'package:agri_ledger/shared/formatters/money.dart';
 import 'package:flutter/material.dart';
 import '../../../app/app_dependencies.dart';
 import '../../../models/cash_entry.dart';
@@ -70,12 +71,14 @@ class MarketCashLedgerScreen extends StatelessWidget {
             itemBuilder: (context, i) {
               final e = rows[i];
               return ListTile(
-                title: Text('#${e.serial} · ${_d(e.date)}'),
+                title: Text(
+                  context.l10n.cashLedgerListTitle(e.serial, _d(e.date)),
+                ),
                 subtitle: Text(
                   context.l10n.cashLedgerRowSummary(
-                    e.cashAvailable.toStringAsFixed(2),
-                    e.payments.toStringAsFixed(2),
-                    e.balance.toStringAsFixed(2),
+                    MoneyFmt.of(e.cashAvailable),
+                    MoneyFmt.of(e.payments),
+                    MoneyFmt.of(e.balance),
                   ),
                 ),
                 trailing: PopupMenuButton<String>(

@@ -161,11 +161,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shipmentsRemarksLabel => 'Remarks';
 
   @override
-  String get shipmentsBalanceAuto => 'Balance (auto)';
+  String get shipmentsBalanceAuto => 'Outstanding balance (calculated)';
 
   @override
   String get shipmentsAddMarketFirst =>
-      'Add a market first (Cash tab → add market).';
+      'Add a market first (Markets tab → add market).';
 
   @override
   String get shipmentsDeleteConfirmTitle => 'Delete shipment?';
@@ -213,13 +213,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get labourTotalCostLabel => 'Total labour cost';
 
   @override
-  String get labourReceivedPaymentLabel => 'Received payment';
+  String get labourReceivedPaymentLabel => 'Payment received';
 
   @override
   String get labourRemarksLabel => 'Remarks';
 
   @override
-  String get labourRemainingAuto => 'Remaining (auto)';
+  String get labourRemainingAuto => 'Remaining balance (calculated)';
 
   @override
   String get labourDeleteConfirmTitle => 'Delete labour record?';
@@ -274,7 +274,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cashExportExcel => 'Export Excel';
 
   @override
-  String get cashEntryButton => 'Entry';
+  String get cashEntryButton => 'Add entry';
 
   @override
   String get cashNoEntriesTitle => 'No cash entries';
@@ -285,7 +285,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String cashLedgerRowSummary(Object cash, Object pay, Object bal) {
-    return 'Cash $cash · Pay $pay · Bal $bal';
+    return 'Available $cash · Payments $pay · Balance $bal';
   }
 
   @override
@@ -324,12 +324,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String shipmentsListSubtitle(Object buyer, Object bal) {
-    return '$buyer · Bal $bal';
+    return '$buyer · Outstanding $bal';
+  }
+
+  @override
+  String shipmentsListTileTitle(Object serial, Object market) {
+    return 'Shipment $serial · $market';
+  }
+
+  @override
+  String shipmentDetailAppBarTitle(Object serial) {
+    return 'Shipment $serial';
   }
 
   @override
   String labourListTitle(Object serial, Object amount) {
-    return '#$serial · $amount due';
+    return 'Labour #$serial · $amount outstanding';
+  }
+
+  @override
+  String labourListDateRange(Object dateStart, Object dateEnd) {
+    return '$dateStart — $dateEnd';
+  }
+
+  @override
+  String labourDetailAppBarTitle(Object serial) {
+    return 'Labour $serial';
+  }
+
+  @override
+  String cashLedgerListTitle(Object serial, Object date) {
+    return 'Entry $serial · $date';
+  }
+
+  @override
+  String cashEntryDetailsAppBarTitle(Object marketName, Object serial) {
+    return '$marketName · Entry $serial';
   }
 
   @override
@@ -339,22 +369,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardUnableToLoad => 'Unable to load dashboard data';
 
   @override
+  String get dashboardUnableToLoadCash => 'Unable to load cash balances';
+
+  @override
   String get dashboardOverview => 'Overview';
+
+  @override
+  String get dashboardOverviewSubtitle => 'Performance at a glance';
 
   @override
   String get dashboardPendingShipments => 'Pending shipments';
 
   @override
+  String get dashboardPendingShipmentsSubtitle => 'Awaiting full settlement';
+
+  @override
   String get dashboardCompletedShipments => 'Completed shipments';
+
+  @override
+  String get dashboardCompletedShipmentsSubtitle => 'Recently finalized';
 
   @override
   String get dashboardRecentActivity => 'Recent activity';
 
   @override
-  String get dashboardNone => 'None';
+  String get dashboardRecentActivitySubtitle => 'Latest ledger activity';
 
   @override
-  String get dashboardNoRecentUpdates => 'No recent updates';
+  String get dashboardNone => 'No records to show';
+
+  @override
+  String get dashboardNoRecentUpdates => 'No recent activity yet';
 
   @override
   String get dashboardTotalShipments => 'Total shipments';
@@ -366,7 +411,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardAmountReceived => 'Amount received';
 
   @override
-  String get dashboardPendingShipmentsKpi => 'Pending (shipments)';
+  String get dashboardPendingShipmentsKpi => 'Shipment receivables';
 
   @override
   String get dashboardCashAvailable => 'Cash available';
@@ -375,11 +420,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dashboardLabourExpenses => 'Labour expenses';
 
   @override
-  String get dashboardPendingLabourKpi => 'Pending (labour)';
+  String get dashboardPendingLabourKpi => 'Labour outstanding';
 
   @override
   String dashboardBalanceLabel(Object amount) {
-    return 'Balance $amount';
+    return 'Outstanding balance $amount';
+  }
+
+  @override
+  String get dashboardCompletedValueLabel => 'Settlement amount';
+
+  @override
+  String dashboardActivityShipmentTitle(Object serial, Object marketName) {
+    return 'Shipment #$serial · $marketName';
+  }
+
+  @override
+  String dashboardActivityPaymentReceivedCaption(Object amount) {
+    return 'Payment received $amount';
+  }
+
+  @override
+  String dashboardActivityLabourTitle(Object serial) {
+    return 'Labour #$serial';
+  }
+
+  @override
+  String dashboardActivityLabourPaidCaption(Object amount) {
+    return 'Wages paid $amount';
   }
 
   @override
@@ -425,29 +493,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportsRevenueInRange => 'Revenue in range';
 
   @override
-  String get reportsReceivedShipmentsInRange => 'Received (shipments) in range';
+  String get reportsReceivedShipmentsInRange =>
+      'Amount collected (shipments, in range)';
 
   @override
   String get reportsPendingBalanceShipmentsFiltered =>
-      'Pending balance (shipments, filtered)';
+      'Outstanding shipment balances (filtered)';
 
   @override
   String get reportsLabourCostInRange => 'Labour cost in range';
 
   @override
-  String get reportsPendingLabourFiltered => 'Pending labour (filtered)';
+  String get reportsPendingLabourFiltered =>
+      'Outstanding labour balances (filtered)';
 
   @override
   String get reportsCashReceivedAllMarketsInRange =>
-      'Cash received (all markets, in range)';
+      'Cash collected (all markets, in range)';
 
   @override
   String get reportsCashPaymentsAllMarketsInRange =>
-      'Cash payments (all markets, in range)';
+      'Cash paid out (all markets, in range)';
 
   @override
   String get reportsTotalCashAvailableCurrentAllMarkets =>
-      'Total cash available (current, all markets)';
+      'Total cash on hand (current, all markets)';
 
   @override
   String get reportsExcel => 'Excel';
@@ -491,7 +561,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navShipments => 'Shipments';
 
   @override
-  String get navCash => 'Cash';
+  String get navCash => 'Markets';
 
   @override
   String get navLabour => 'Labour';

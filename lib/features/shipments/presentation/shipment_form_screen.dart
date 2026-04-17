@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'package:agri_ledger/shared/formatters/money.dart';
+
 import '../../../app/app_dependencies.dart';
 import '../../../domain/record_status.dart';
 import '../../../models/market.dart';
@@ -76,7 +78,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
     try {
       final qty = double.tryParse(_qty.text) ?? 0;
       final total = double.tryParse(_total.text) ?? 0;
-      final recv = double.tryParse(_received.text) ?? 0;
+      final amountReceived = double.tryParse(_received.text) ?? 0;
 
       if (widget.existing == null) {
         await repo.createShipment(
@@ -86,7 +88,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
           buyerName: _buyer.text.trim(),
           quantity: qty,
           totalAmount: total,
-          amountReceived: recv,
+          amountReceived: amountReceived,
           remarks: _remarks.text.trim(),
         );
       } else {
@@ -101,7 +103,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
             buyerName: _buyer.text.trim(),
             quantity: qty,
             totalAmount: total,
-            amountReceived: recv,
+            amountReceived: amountReceived,
             balance: 0,
             status: e.status,
             remarks: _remarks.text.trim(),
@@ -197,8 +199,8 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
           final effectiveMarketId = _marketId ?? markets.first.id;
 
           final total = double.tryParse(_total.text) ?? 0;
-          final recv = double.tryParse(_received.text) ?? 0;
-          final bal = total - recv;
+          final amountReceived = double.tryParse(_received.text) ?? 0;
+          final outstandingBalance = total - amountReceived;
 
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -306,7 +308,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
                               style: Theme.of(context).textTheme.labelLarge,
                             ),
                             Text(
-                              bal.toStringAsFixed(2),
+                              MoneyFmt.of(outstandingBalance),
                               style: Theme.of(context).textTheme.headlineSmall,
                             ),
                           ],

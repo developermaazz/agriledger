@@ -1,3 +1,4 @@
+import 'package:agri_ledger/shared/formatters/money.dart';
 import 'package:flutter/material.dart';
 
 import '../../../domain/record_status.dart';
@@ -18,7 +19,7 @@ class ShipmentDetailsScreen extends StatelessWidget {
     final s = shipment;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${context.l10n.shipmentsTitle} #${s.serial}'),
+        title: Text(context.l10n.shipmentDetailAppBarTitle(s.serial)),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -43,9 +44,9 @@ class ShipmentDetailsScreen extends StatelessWidget {
           _kv(context.l10n.shipmentsBuyerLabel, s.buyerName),
           _kv(context.l10n.shipmentsDateLabel, s.date.toString().split(' ').first),
           _kv(context.l10n.shipmentsQuantityLabel, s.quantity.toStringAsFixed(2)),
-          _kv(context.l10n.shipmentsTotalAmountLabel, s.totalAmount.toStringAsFixed(2)),
-          _kv(context.l10n.shipmentsAmountReceivedLabel, s.amountReceived.toStringAsFixed(2)),
-          _kv(context.l10n.cashBalanceLabel, s.balance.toStringAsFixed(2)),
+          _kv(context.l10n.shipmentsTotalAmountLabel, MoneyFmt.of(s.totalAmount)),
+          _kv(context.l10n.shipmentsAmountReceivedLabel, MoneyFmt.of(s.amountReceived)),
+          _kv(context.l10n.cashBalanceLabel, MoneyFmt.of(s.balance)),
           _kv(context.l10n.commonStatus, _labelStatus(context, s.status)),
           _kv(context.l10n.shipmentsRemarksLabel, s.remarks.isEmpty ? '-' : s.remarks),
         ],

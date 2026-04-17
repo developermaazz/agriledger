@@ -31,7 +31,7 @@ class MarketPickerScreen extends StatelessWidget {
           if (snap.hasError) {
             return FirestoreErrorView(
               error: snap.error!,
-              title: 'Unable to load markets',
+              title: context.l10n.shipmentsUnableToLoadMarkets,
             );
           }
           if (!snap.hasData) {

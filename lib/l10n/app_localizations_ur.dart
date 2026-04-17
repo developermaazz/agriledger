@@ -162,11 +162,11 @@ class AppLocalizationsUr extends AppLocalizations {
   String get shipmentsRemarksLabel => 'ریمارکس';
 
   @override
-  String get shipmentsBalanceAuto => 'بیلنس (خودکار)';
+  String get shipmentsBalanceAuto => 'بقایا بیلنس (خودکار حساب)';
 
   @override
   String get shipmentsAddMarketFirst =>
-      'پہلے مارکیٹ شامل کریں (کیش ٹیب → مارکیٹ شامل کریں)۔';
+      'پہلے مارکیٹ شامل کریں (مارکیٹس ٹیب → مارکیٹ شامل کریں)۔';
 
   @override
   String get shipmentsDeleteConfirmTitle => 'شپمنٹ حذف کریں؟';
@@ -214,13 +214,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get labourTotalCostLabel => 'کل لیبر لاگت';
 
   @override
-  String get labourReceivedPaymentLabel => 'وصول شدہ ادائیگی';
+  String get labourReceivedPaymentLabel => 'ادائیگی وصول شدہ';
 
   @override
   String get labourRemarksLabel => 'ریمارکس';
 
   @override
-  String get labourRemainingAuto => 'بقایا (خودکار)';
+  String get labourRemainingAuto => 'بقایا بیلنس (خودکار حساب)';
 
   @override
   String get labourDeleteConfirmTitle => 'لیبر ریکارڈ حذف کریں؟';
@@ -275,7 +275,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get cashExportExcel => 'ایکسِل ایکسپورٹ';
 
   @override
-  String get cashEntryButton => 'انٹری';
+  String get cashEntryButton => 'انٹری شامل کریں';
 
   @override
   String get cashNoEntriesTitle => 'کوئی کیش انٹری نہیں';
@@ -286,7 +286,7 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String cashLedgerRowSummary(Object cash, Object pay, Object bal) {
-    return 'کیش $cash · ادائیگی $pay · بیلنس $bal';
+    return 'دستیاب $cash · ادائیگیاں $pay · بیلنس $bal';
   }
 
   @override
@@ -329,8 +329,38 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String shipmentsListTileTitle(Object serial, Object market) {
+    return 'شپمنٹ $serial · $market';
+  }
+
+  @override
+  String shipmentDetailAppBarTitle(Object serial) {
+    return 'شپمنٹ $serial';
+  }
+
+  @override
   String labourListTitle(Object serial, Object amount) {
-    return '#$serial · $amount بقایا';
+    return 'لیبر #$serial · $amount بقایا';
+  }
+
+  @override
+  String labourListDateRange(Object dateStart, Object dateEnd) {
+    return '$dateStart — $dateEnd';
+  }
+
+  @override
+  String labourDetailAppBarTitle(Object serial) {
+    return 'لیبر $serial';
+  }
+
+  @override
+  String cashLedgerListTitle(Object serial, Object date) {
+    return 'انٹری $serial · $date';
+  }
+
+  @override
+  String cashEntryDetailsAppBarTitle(Object marketName, Object serial) {
+    return '$marketName · انٹری $serial';
   }
 
   @override
@@ -340,22 +370,37 @@ class AppLocalizationsUr extends AppLocalizations {
   String get dashboardUnableToLoad => 'ڈیش بورڈ ڈیٹا لوڈ نہیں ہو رہا';
 
   @override
+  String get dashboardUnableToLoadCash => 'کیش کے بیلنس لوڈ نہیں ہو رہے';
+
+  @override
   String get dashboardOverview => 'خلاصہ';
+
+  @override
+  String get dashboardOverviewSubtitle => 'اہم اشاریے';
 
   @override
   String get dashboardPendingShipments => 'زیرِ التواء شپمنٹس';
 
   @override
+  String get dashboardPendingShipmentsSubtitle => 'مکمل تصفیے کا انتظار';
+
+  @override
   String get dashboardCompletedShipments => 'مکمل شپمنٹس';
+
+  @override
+  String get dashboardCompletedShipmentsSubtitle => 'حال ہی میں طے شدہ';
 
   @override
   String get dashboardRecentActivity => 'حالیہ سرگرمی';
 
   @override
-  String get dashboardNone => 'کوئی نہیں';
+  String get dashboardRecentActivitySubtitle => 'لیجر کی تازہ ترین سرگرمی';
 
   @override
-  String get dashboardNoRecentUpdates => 'کوئی تازہ اپڈیٹس نہیں';
+  String get dashboardNone => 'کوئی ریکارڈ نہیں';
+
+  @override
+  String get dashboardNoRecentUpdates => 'ابھی کوئی حالیہ سرگرمی نہیں';
 
   @override
   String get dashboardTotalShipments => 'کل شپمنٹس';
@@ -367,7 +412,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get dashboardAmountReceived => 'وصول شدہ رقم';
 
   @override
-  String get dashboardPendingShipmentsKpi => 'بقایا (شپمنٹس)';
+  String get dashboardPendingShipmentsKpi => 'واجباتِ شپمنٹس';
 
   @override
   String get dashboardCashAvailable => 'دستیاب کیش';
@@ -376,11 +421,34 @@ class AppLocalizationsUr extends AppLocalizations {
   String get dashboardLabourExpenses => 'لیبر اخراجات';
 
   @override
-  String get dashboardPendingLabourKpi => 'بقایا (لیبر)';
+  String get dashboardPendingLabourKpi => 'لیبر بقایا';
 
   @override
   String dashboardBalanceLabel(Object amount) {
-    return 'بقایا $amount';
+    return 'بقایا بیلنس $amount';
+  }
+
+  @override
+  String get dashboardCompletedValueLabel => 'تصفیہ رقم';
+
+  @override
+  String dashboardActivityShipmentTitle(Object serial, Object marketName) {
+    return 'شپمنٹ #$serial · $marketName';
+  }
+
+  @override
+  String dashboardActivityPaymentReceivedCaption(Object amount) {
+    return 'وصول شدہ ادائیگی $amount';
+  }
+
+  @override
+  String dashboardActivityLabourTitle(Object serial) {
+    return 'لیبر #$serial';
+  }
+
+  @override
+  String dashboardActivityLabourPaidCaption(Object amount) {
+    return 'اجرت ادا $amount';
   }
 
   @override
@@ -491,7 +559,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get navShipments => 'شپمنٹس';
 
   @override
-  String get navCash => 'کیش';
+  String get navCash => 'مارکیٹس';
 
   @override
   String get navLabour => 'لیبر';
