@@ -2,6 +2,7 @@ import 'package:agri_ledger/domain/record_status.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../services/firestore_refresh.dart';
 import '../../../services/export_service.dart';
 import '../../../shared/formatters/money.dart';
 import '../../../shared/l10n/l10n.dart';
@@ -19,6 +20,16 @@ class _ReportsScreenState extends State<ReportsScreen> {
   DateTime _to = endOfDay(DateTime.now());
   Map<String, dynamic>? _result;
   bool _busy = false;
+
+  Future<void> _refreshUnderlyingData() async {
+    final deps = AppDependencies.of(context);
+    await refreshAllUserDataFromServer(
+      shipmentRepository: deps.shipmentRepository,
+      labourRepository: deps.labourRepository,
+      marketRepository: deps.marketRepository,
+      marketCashRepository: deps.marketCashRepository,
+    );
+  }
 
   Future<void> _generate() async {
     setState(() {
@@ -130,9 +141,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.reportsTitle)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await _refreshUnderlyingData();
+          if (_result != null && mounted) {
+            await _generate();
+          }
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          children: [
           Text(
             context.l10n.reportsSubtitle,
             style: Theme.of(context).textTheme.titleMedium,
@@ -222,6 +241,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
             ),
           ],
         ],
+        ),
       ),
     );
   }

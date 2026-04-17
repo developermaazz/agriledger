@@ -5,6 +5,7 @@ import '../../../models/cash_entry.dart';
 import '../../../services/export_service.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/pull_to_refresh.dart';
 import 'cash_entry_details_screen.dart';
 import 'cash_entry_form_screen.dart';
 
@@ -52,20 +53,28 @@ class MarketCashLedgerScreen extends StatelessWidget {
         icon: const Icon(Icons.add),
         label: Text(context.l10n.cashEntryButton),
       ),
-      body: StreamBuilder<List<CashEntry>>(
-        stream: cashRepo.watchCashEntries(marketId),
-        builder: (context, snap) {
-          if (!snap.hasData) {
-            return const Center(child: CircularProgressIndicator.adaptive());
-          }
-          final rows = snap.data!;
-          if (rows.isEmpty) {
-            return EmptyState(
-              title: context.l10n.cashNoEntriesTitle,
-              subtitle: context.l10n.cashNoEntriesSubtitle,
-            );
-          }
-          return ListView.separated(
+      body: RefreshIndicator(
+        onRefresh: () =>
+            cashRepo.refreshCashEntriesFromServer(marketId),
+        child: StreamBuilder<List<CashEntry>>(
+          stream: cashRepo.watchCashEntries(marketId),
+          builder: (context, snap) {
+            if (!snap.hasData) {
+              return MinHeightRefreshContent(
+                child: const Center(child: CircularProgressIndicator.adaptive()),
+              );
+            }
+            final rows = snap.data!;
+            if (rows.isEmpty) {
+              return MinHeightRefreshContent(
+                child: EmptyState(
+                  title: context.l10n.cashNoEntriesTitle,
+                  subtitle: context.l10n.cashNoEntriesSubtitle,
+                ),
+              );
+            }
+            return ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
             itemCount: rows.length,
             separatorBuilder: (context, index) => const Divider(height: 1),
             itemBuilder: (context, i) {
@@ -110,6 +119,7 @@ class MarketCashLedgerScreen extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (_) => CashEntryDetailsScreen(
+                        marketId: marketId,
                         marketName: marketName,
                         entry: e,
                       ),
@@ -119,7 +129,8 @@ class MarketCashLedgerScreen extends StatelessWidget {
               );
             },
           );
-        },
+          },
+        ),
       ),
     );
   }

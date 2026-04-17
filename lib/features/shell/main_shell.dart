@@ -15,21 +15,49 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
+  static const int _tabCount = 5;
+  /// Pixels/sec; avoids accidental tab changes while scrolling lists vertically.
+  static const double _swipeVelocityThreshold = 380;
+
   int _index = 0;
+
+  void _onHorizontalSwipeEnd(DragEndDetails details) {
+    final v = details.primaryVelocity;
+    if (v == null) {
+      return;
+    }
+    if (v.abs() < _swipeVelocityThreshold) {
+      return;
+    }
+    final rtl = Directionality.of(context) == TextDirection.rtl;
+    // LTR: swipe left (negative v) → next tab. RTL: mirror to match reading direction.
+    final goNext = rtl ? v > 0 : v < 0;
+    final goPrev = rtl ? v < 0 : v > 0;
+    if (goNext && _index < _tabCount - 1) {
+      setState(() => _index++);
+    } else if (goPrev && _index > 0) {
+      setState(() => _index--);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
     return Scaffold(
-      body: IndexedStack(
-        index: _index,
-        children: const [
-          DashboardScreen(),
-          ShipmentListScreen(),
-          MarketPickerScreen(),
-          LabourListScreen(),
-          MoreScreen(),
-        ],
+      body: GestureDetector(
+        // Allow horizontal swipe over vertical lists; threshold avoids accidents.
+        behavior: HitTestBehavior.translucent,
+        onHorizontalDragEnd: _onHorizontalSwipeEnd,
+        child: IndexedStack(
+          index: _index,
+          children: const [
+            DashboardScreen(),
+            ShipmentListScreen(),
+            MarketPickerScreen(),
+            LabourListScreen(),
+            MoreScreen(),
+          ],
+        ),
       ),
       bottomNavigationBar: DecoratedBox(
         decoration: BoxDecoration(

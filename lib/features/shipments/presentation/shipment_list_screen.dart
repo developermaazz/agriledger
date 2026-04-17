@@ -7,6 +7,7 @@ import '../../../models/market.dart';
 import '../../../models/shipment.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/pull_to_refresh.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
@@ -39,6 +40,14 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
   void dispose() {
     _search.dispose();
     super.dispose();
+  }
+
+  Future<void> _refreshShipmentLists() async {
+    final deps = AppDependencies.of(context);
+    await Future.wait([
+      deps.shipmentRepository.refreshFromServer(),
+      deps.marketRepository.refreshFromServer(),
+    ]);
   }
 
   @override
@@ -144,44 +153,53 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
             ),
           ),
           Expanded(
-            child: StreamBuilder<List<Shipment>>(
-              stream: shipRepo.watchShipments(),
-              builder: (context, snap) {
-                if (snap.hasError) {
-                  return FirestoreErrorView(
-                    error: snap.error!,
-                    title: context.l10n.shipmentsUnableToLoad,
-                  );
-                }
-                if (!snap.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator.adaptive(),
-                  );
-                }
-                var list = snap.data!;
-                list = list.where((s) {
-                  if (_statusFilter != null && s.status != _statusFilter) {
-                    return false;
+            child: RefreshIndicator(
+              onRefresh: _refreshShipmentLists,
+              child: StreamBuilder<List<Shipment>>(
+                stream: shipRepo.watchShipments(),
+                builder: (context, snap) {
+                  if (snap.hasError) {
+                    return MinHeightRefreshContent(
+                      child: FirestoreErrorView(
+                        error: snap.error!,
+                        title: context.l10n.shipmentsUnableToLoad,
+                      ),
+                    );
                   }
-                  if (_marketIdFilter != null && s.marketId != _marketIdFilter) {
-                    return false;
+                  if (!snap.hasData) {
+                    return MinHeightRefreshContent(
+                      child: const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    );
                   }
-                  if (_query.isEmpty) {
-                    return true;
-                  }
-                  final hay = '${s.buyerName} ${s.marketName} ${s.remarks}'
-                      .toLowerCase();
-                  return hay.contains(_query);
-                }).toList();
+                  var list = snap.data!;
+                  list = list.where((s) {
+                    if (_statusFilter != null && s.status != _statusFilter) {
+                      return false;
+                    }
+                    if (_marketIdFilter != null && s.marketId != _marketIdFilter) {
+                      return false;
+                    }
+                    if (_query.isEmpty) {
+                      return true;
+                    }
+                    final hay = '${s.buyerName} ${s.marketName} ${s.remarks}'
+                        .toLowerCase();
+                    return hay.contains(_query);
+                  }).toList();
 
-                if (list.isEmpty) {
-                  return EmptyState(
-                    title: context.l10n.shipmentsNoShipmentsTitle,
-                    subtitle: context.l10n.shipmentsNoShipmentsSubtitle,
-                  );
-                }
+                  if (list.isEmpty) {
+                    return MinHeightRefreshContent(
+                      child: EmptyState(
+                        title: context.l10n.shipmentsNoShipmentsTitle,
+                        subtitle: context.l10n.shipmentsNoShipmentsSubtitle,
+                      ),
+                    );
+                  }
 
-                return ListView.separated(
+                  return ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemCount: list.length,
                   separatorBuilder: (context, _) => const Divider(height: 1),
                   itemBuilder: (context, i) {
@@ -237,7 +255,8 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                     );
                   },
                 );
-              },
+                },
+              ),
             ),
           ),
         ],

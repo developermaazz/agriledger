@@ -35,6 +35,12 @@ class LabourRepository {
         );
   }
 
+  Future<void> refreshFromServer() async {
+    await _col
+        .orderBy('dateStart', descending: true)
+        .get(const GetOptions(source: Source.server));
+  }
+
   Future<String> createLabourJob({
     required DateTime dateStart,
     required DateTime dateEnd,

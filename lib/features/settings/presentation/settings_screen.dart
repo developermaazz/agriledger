@@ -78,9 +78,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       appBar: AppBar(title: Text(context.l10n.settingsTitle)),
       body: _loading || _requireEmail == null
           ? const Center(child: CircularProgressIndicator.adaptive())
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
+          : RefreshIndicator(
+              onRefresh: _load,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                children: [
                 Text(
                   context.l10n.settingsAppearance,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -176,6 +179,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
               ],
+              ),
             ),
     );
   }

@@ -6,6 +6,7 @@ import '../../../app/app_dependencies.dart';
 import '../../../models/labour_job.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/pull_to_refresh.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
@@ -35,6 +36,10 @@ class _LabourListScreenState extends State<LabourListScreen> {
   void dispose() {
     _search.dispose();
     super.dispose();
+  }
+
+  Future<void> _refreshLabourList() async {
+    await AppDependencies.of(context).labourRepository.refreshFromServer();
   }
 
   @override
@@ -93,37 +98,48 @@ class _LabourListScreenState extends State<LabourListScreen> {
             ),
           ),
           Expanded(
-            child: StreamBuilder<List<LabourJob>>(
-              stream: repo.watchLabourJobs(),
-              builder: (context, snap) {
-                if (snap.hasError) {
-                  return FirestoreErrorView(
-                    error: snap.error!,
-                    title: context.l10n.labourUnableToLoad,
-                  );
-                }
-                if (!snap.hasData) {
-                  return const Center(child: CircularProgressIndicator.adaptive());
-                }
-                var list = snap.data!;
-                list = list.where((j) {
-                  if (_status != null && j.status != _status) {
-                    return false;
+            child: RefreshIndicator(
+              onRefresh: _refreshLabourList,
+              child: StreamBuilder<List<LabourJob>>(
+                stream: repo.watchLabourJobs(),
+                builder: (context, snap) {
+                  if (snap.hasError) {
+                    return MinHeightRefreshContent(
+                      child: FirestoreErrorView(
+                        error: snap.error!,
+                        title: context.l10n.labourUnableToLoad,
+                      ),
+                    );
                   }
-                  if (_q.isEmpty) {
-                    return true;
+                  if (!snap.hasData) {
+                    return MinHeightRefreshContent(
+                      child: const Center(
+                        child: CircularProgressIndicator.adaptive(),
+                      ),
+                    );
                   }
-                  return j.remarks.toLowerCase().contains(_q);
-                }).toList();
+                  var list = snap.data!;
+                  list = list.where((j) {
+                    if (_status != null && j.status != _status) {
+                      return false;
+                    }
+                    if (_q.isEmpty) {
+                      return true;
+                    }
+                    return j.remarks.toLowerCase().contains(_q);
+                  }).toList();
 
-                if (list.isEmpty) {
-                  return EmptyState(
-                    title: context.l10n.labourNoRecordsTitle,
-                    subtitle: context.l10n.labourNoRecordsSubtitle,
-                  );
-                }
+                  if (list.isEmpty) {
+                    return MinHeightRefreshContent(
+                      child: EmptyState(
+                        title: context.l10n.labourNoRecordsTitle,
+                        subtitle: context.l10n.labourNoRecordsSubtitle,
+                      ),
+                    );
+                  }
 
-                return ListView.separated(
+                  return ListView.separated(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   itemCount: list.length,
                   separatorBuilder: (context, _) => const Divider(height: 1),
                   itemBuilder: (context, i) {
@@ -182,7 +198,8 @@ class _LabourListScreenState extends State<LabourListScreen> {
                     );
                   },
                 );
-              },
+                },
+              ),
             ),
           ),
         ],

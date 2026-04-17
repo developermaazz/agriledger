@@ -5,6 +5,7 @@ import '../../../models/market.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/pull_to_refresh.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import 'market_cash_ledger_screen.dart';
 
@@ -25,31 +26,41 @@ class MarketPickerScreen extends StatelessWidget {
         icon: const Icon(Icons.add),
         label: Text(context.l10n.commonAdd),
       ),
-      body: StreamBuilder<List<Market>>(
-        stream: repo.watchMarkets(),
-        builder: (context, snap) {
-          if (snap.hasError) {
-            return FirestoreErrorView(
-              error: snap.error!,
-              title: context.l10n.shipmentsUnableToLoadMarkets,
-            );
-          }
-          if (!snap.hasData) {
-            return const Center(child: CircularProgressIndicator.adaptive());
-          }
-          final markets = snap.data!;
-          if (markets.isEmpty) {
-            return EmptyState(
-              title: context.l10n.marketsEmptyTitle,
-              subtitle: context.l10n.marketsEmptySubtitle,
-              action: FilledButton.icon(
-                onPressed: () => _addMarket(context),
-                icon: const Icon(Icons.add),
-                label: Text(context.l10n.commonAdd),
-              ),
-            );
-          }
-          return ListView.separated(
+      body: RefreshIndicator(
+        onRefresh: () =>
+            AppDependencies.of(context).marketRepository.refreshFromServer(),
+        child: StreamBuilder<List<Market>>(
+          stream: repo.watchMarkets(),
+          builder: (context, snap) {
+            if (snap.hasError) {
+              return MinHeightRefreshContent(
+                child: FirestoreErrorView(
+                  error: snap.error!,
+                  title: context.l10n.shipmentsUnableToLoadMarkets,
+                ),
+              );
+            }
+            if (!snap.hasData) {
+              return MinHeightRefreshContent(
+                child: const Center(child: CircularProgressIndicator.adaptive()),
+              );
+            }
+            final markets = snap.data!;
+            if (markets.isEmpty) {
+              return MinHeightRefreshContent(
+                child: EmptyState(
+                  title: context.l10n.marketsEmptyTitle,
+                  subtitle: context.l10n.marketsEmptySubtitle,
+                  action: FilledButton.icon(
+                    onPressed: () => _addMarket(context),
+                    icon: const Icon(Icons.add),
+                    label: Text(context.l10n.commonAdd),
+                  ),
+                ),
+              );
+            }
+            return ListView.separated(
+            physics: const AlwaysScrollableScrollPhysics(),
             itemCount: markets.length,
             separatorBuilder: (context, _) => const Divider(height: 1),
             itemBuilder: (context, i) {
@@ -92,7 +103,8 @@ class MarketPickerScreen extends StatelessWidget {
               );
             },
           );
-        },
+          },
+        ),
       ),
     );
   }

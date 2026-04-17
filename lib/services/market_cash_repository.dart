@@ -44,6 +44,13 @@ class MarketCashRepository {
         .map((s) => s.docs.map(CashEntry.fromFirestore).toList());
   }
 
+  Future<void> refreshCashEntriesFromServer(String marketId) async {
+    await _cashCol(marketId)
+        .orderBy('date')
+        .orderBy('serial')
+        .get(const GetOptions(source: Source.server));
+  }
+
   Future<List<CashEntry>> fetchCashEntriesOnce(String marketId) async {
     final snap =
         await _cashCol(marketId).orderBy('date').orderBy('serial').get();

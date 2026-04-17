@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../services/firestore_refresh.dart';
 import '../../../services/export_service.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../reports/presentation/reports_screen.dart';
@@ -13,8 +14,19 @@ class MoreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.moreTitle)),
-      body: ListView(
-        children: [
+      body: RefreshIndicator(
+        onRefresh: () async {
+          final d = AppDependencies.of(context);
+          await refreshAllUserDataFromServer(
+            shipmentRepository: d.shipmentRepository,
+            labourRepository: d.labourRepository,
+            marketRepository: d.marketRepository,
+            marketCashRepository: d.marketCashRepository,
+          );
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
           ListTile(
             leading: const Icon(Icons.assessment_outlined),
             title: Text(context.l10n.moreReportsTitle),
@@ -57,6 +69,7 @@ class MoreScreen extends StatelessWidget {
             },
           ),
         ],
+        ),
       ),
     );
   }

@@ -6,10 +6,22 @@ import '../../../app/app_dependencies.dart';
 import '../../../models/labour_job.dart';
 import '../../../models/market.dart';
 import '../../../models/shipment.dart';
+import '../../../services/firestore_refresh.dart';
 import '../../../services/market_cash_repository.dart';
 import '../../../shared/formatters/money.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
+import '../../../shared/widgets/pull_to_refresh.dart';
+
+Future<void> _refreshDashboardData(BuildContext context) {
+  final d = AppDependencies.of(context);
+  return refreshAllUserDataFromServer(
+    shipmentRepository: d.shipmentRepository,
+    labourRepository: d.labourRepository,
+    marketRepository: d.marketRepository,
+    marketCashRepository: d.marketCashRepository,
+  );
+}
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -37,16 +49,26 @@ class DashboardScreen extends StatelessWidget {
                   final firstError =
                       shipSnap.error ?? labourSnap.error ?? marketSnap.error;
                   if (firstError != null) {
-                    return FirestoreErrorView(
-                      error: firstError,
-                      title: context.l10n.dashboardUnableToLoad,
+                    return RefreshIndicator(
+                      onRefresh: () => _refreshDashboardData(context),
+                      child: MinHeightRefreshContent(
+                        child: FirestoreErrorView(
+                          error: firstError,
+                          title: context.l10n.dashboardUnableToLoad,
+                        ),
+                      ),
                     );
                   }
                   if (!shipSnap.hasData ||
                       !labourSnap.hasData ||
                       !marketSnap.hasData) {
-                    return const Center(
-                      child: CircularProgressIndicator.adaptive(),
+                    return RefreshIndicator(
+                      onRefresh: () => _refreshDashboardData(context),
+                      child: MinHeightRefreshContent(
+                        child: const Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                      ),
                     );
                   }
                   final shipments = shipSnap.data!;
@@ -71,13 +93,21 @@ class DashboardScreen extends StatelessWidget {
                     future: _sumMarketCash(markets, cashRepo),
                     builder: (context, cashSnap) {
                       if (cashSnap.hasError) {
-                        return FirestoreErrorView(
-                          error: cashSnap.error!,
-                          title: context.l10n.dashboardUnableToLoadCash,
+                        return RefreshIndicator(
+                          onRefresh: () => _refreshDashboardData(context),
+                          child: MinHeightRefreshContent(
+                            child: FirestoreErrorView(
+                              error: cashSnap.error!,
+                              title: context.l10n.dashboardUnableToLoadCash,
+                            ),
+                          ),
                         );
                       }
                       final totalCash = cashSnap.data ?? 0;
-                      return ListView(
+                      return RefreshIndicator(
+                        onRefresh: () => _refreshDashboardData(context),
+                        child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
                         children: [
                           _SectionHeader(
@@ -153,6 +183,7 @@ class DashboardScreen extends StatelessWidget {
                           const SizedBox(height: 12),
                           ..._recent(context, shipments, labour),
                         ],
+                        ),
                       );
                     },
                   );

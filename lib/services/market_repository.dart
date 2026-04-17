@@ -30,6 +30,12 @@ class MarketRepository {
         );
   }
 
+  Future<void> refreshFromServer() async {
+    await _marketsCol
+        .orderBy('name')
+        .get(const GetOptions(source: Source.server));
+  }
+
   Future<String> createMarket(String name) async {
     final doc = _marketsCol.doc();
     final market = Market(

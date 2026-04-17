@@ -1,6 +1,7 @@
 import 'package:agri_ledger/shared/formatters/money.dart';
 import 'package:flutter/material.dart';
 
+import '../../../app/app_dependencies.dart';
 import '../../../domain/record_status.dart';
 import '../../../models/labour_job.dart';
 import '../../../shared/l10n/l10n.dart';
@@ -21,9 +22,13 @@ class LabourDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(context.l10n.labourDetailAppBarTitle(j.serial)),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
+      body: RefreshIndicator(
+        onRefresh: () =>
+            AppDependencies.of(context).labourRepository.refreshFromServer(),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          children: [
           Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
@@ -47,6 +52,7 @@ class LabourDetailsScreen extends StatelessWidget {
           _kv(context.l10n.commonStatus, _labelStatus(context, j.status)),
           _kv(context.l10n.labourRemarksLabel, j.remarks.isEmpty ? '-' : j.remarks),
         ],
+        ),
       ),
     );
   }

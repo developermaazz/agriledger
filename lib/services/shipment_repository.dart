@@ -35,6 +35,13 @@ class ShipmentRepository {
         );
   }
 
+  /// Forces a read from the server so snapshot listeners and cache update.
+  Future<void> refreshFromServer() async {
+    await _col
+        .orderBy('date', descending: true)
+        .get(const GetOptions(source: Source.server));
+  }
+
   Future<String> createShipment({
     required DateTime date,
     required String marketId,
