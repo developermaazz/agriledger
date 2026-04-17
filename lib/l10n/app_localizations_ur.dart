@@ -9,7 +9,13 @@ class AppLocalizationsUr extends AppLocalizations {
   AppLocalizationsUr([String locale = 'ur']) : super(locale);
 
   @override
-  String get appTitle => 'فروٹ لیجر';
+  String get appTitle => 'ایگری لیجر';
+
+  @override
+  String get appTitleWord1 => 'ایگری';
+
+  @override
+  String get appTitleWord2 => 'لیجر';
 
   @override
   String get commonAdd => 'شامل کریں';

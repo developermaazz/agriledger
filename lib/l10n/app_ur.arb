@@ -1,7 +1,9 @@
 {
   "@@locale": "ur",
 
-  "appTitle": "فروٹ لیجر",
+  "appTitle": "ایگری لیجر",
+  "appTitleWord1": "ایگری",
+  "appTitleWord2": "لیجر",
 
   "commonAdd": "شامل کریں",
   "commonCancel": "منسوخ",

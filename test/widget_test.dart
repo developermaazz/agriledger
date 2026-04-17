@@ -1,4 +1,5 @@
 import 'package:agri_ledger/app/app.dart';
+import 'package:agri_ledger/shared/widgets/app_brand.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -15,6 +16,6 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
 
-    expect(find.text('Fruit Ledger'), findsOneWidget);
+    expect(find.byType(AppLogoMark), findsOneWidget);
   });
 }
