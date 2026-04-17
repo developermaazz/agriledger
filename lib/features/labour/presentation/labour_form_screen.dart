@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../domain/record_status.dart';
 import '../../../models/labour_job.dart';
 
 class LabourFormScreen extends StatefulWidget {
@@ -120,12 +121,17 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
     final total = double.tryParse(_total.text) ?? 0;
     final recv = double.tryParse(_recv.text) ?? 0;
     final rem = total - recv;
+    final locked = widget.existing?.status == RecordStatuses.completed;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.existing == null ? 'New labour' : 'Edit labour'),
+        title: Text(
+          widget.existing == null
+              ? 'New labour'
+              : (locked ? 'Labour details' : 'Edit labour'),
+        ),
         actions: [
-          if (widget.existing != null)
+          if (widget.existing != null && !locked)
             IconButton(
               icon: const Icon(Icons.delete_outline),
               onPressed: _busy
@@ -174,7 +180,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                   subtitle: Text(_start.toString().split(' ').first),
                   trailing: IconButton(
                     icon: const Icon(Icons.calendar_month),
-                    onPressed: _pickStart,
+                    onPressed: locked ? null : _pickStart,
                   ),
                 ),
                 ListTile(
@@ -183,7 +189,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                   subtitle: Text(_end.toString().split(' ').first),
                   trailing: IconButton(
                     icon: const Icon(Icons.calendar_month),
-                    onPressed: _pickEnd,
+                    onPressed: locked ? null : _pickEnd,
                   ),
                 ),
                 TextFormField(
@@ -193,6 +199,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                   ],
+                  readOnly: locked,
                   validator: (v) =>
                       double.tryParse(v ?? '') == null ? 'Invalid' : null,
                 ),
@@ -204,6 +211,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                   ],
+                  readOnly: locked,
                   validator: (v) =>
                       double.tryParse(v ?? '') == null ? 'Invalid' : null,
                 ),
@@ -212,6 +220,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                   controller: _remarks,
                   decoration: const InputDecoration(labelText: 'Remarks'),
                   maxLines: 3,
+                  readOnly: locked,
                 ),
               ],
             ),
@@ -232,8 +241,8 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
           ),
           const SizedBox(height: 16),
           FilledButton(
-            onPressed: _busy ? null : _save,
-            child: Text(_busy ? 'Saving...' : 'Save'),
+            onPressed: (locked || _busy) ? null : _save,
+            child: Text(locked ? 'Completed (read-only)' : (_busy ? 'Saving...' : 'Save')),
           ),
         ],
       ),

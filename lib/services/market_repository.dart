@@ -50,6 +50,52 @@ class MarketRepository {
     });
   }
 
+  /// Deletes a market. Optionally also deletes its `cashEntries` subcollection
+  /// to avoid leaving orphaned documents behind.
+  Future<void> deleteMarket(
+    String marketId, {
+    bool deleteCashEntries = true,
+  }) async {
+    // Prevent deleting a market that is referenced by other records (e.g. shipments).
+    final isUsed = await _isMarketReferencedByAnyShipment(marketId);
+    if (isUsed) {
+      throw StateError(
+        'Cannot delete this market because it is used in shipments. Delete those shipments first.',
+      );
+    }
+
+    if (deleteCashEntries) {
+      await _deleteMarketCashEntries(marketId);
+    }
+    await _marketsCol.doc(marketId).delete();
+  }
+
+  Future<bool> _isMarketReferencedByAnyShipment(String marketId) async {
+    final snap = await _firestore
+        .collection('users')
+        .doc(_uid)
+        .collection('shipments')
+        .where('marketId', isEqualTo: marketId)
+        .limit(1)
+        .get();
+    return snap.docs.isNotEmpty;
+  }
+
+  Future<void> _deleteMarketCashEntries(String marketId) async {
+    final col = _marketsCol.doc(marketId).collection('cashEntries');
+    while (true) {
+      final snap = await col.limit(400).get();
+      if (snap.docs.isEmpty) {
+        return;
+      }
+      final batch = _firestore.batch();
+      for (final d in snap.docs) {
+        batch.delete(d.reference);
+      }
+      await batch.commit();
+    }
+  }
+
   /// Allocates next cash entry serial for this market (transaction).
   Future<int> allocateCashSerial(String marketId) async {
     final ref = _marketsCol.doc(marketId);

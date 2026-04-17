@@ -62,8 +62,18 @@ class LabourRepository {
   }
 
   Future<void> updateLabourJob(LabourJob job) {
-    return _col.doc(job.id).update(job.toFirestoreWrite());
+    return _guardedWrite(job.id, () => _col.doc(job.id).update(job.toFirestoreWrite()));
   }
 
-  Future<void> deleteLabourJob(String id) => _col.doc(id).delete();
+  Future<void> deleteLabourJob(String id) => _guardedWrite(id, () => _col.doc(id).delete());
+
+  Future<void> _guardedWrite(String id, Future<void> Function() op) async {
+    final snap = await _col.doc(id).get();
+    final data = snap.data() ?? {};
+    final status = (data['status'] as String?) ?? RecordStatuses.pending;
+    if (status == RecordStatuses.completed) {
+      throw StateError('Completed labour record cannot be edited or deleted.');
+    }
+    await op();
+  }
 }

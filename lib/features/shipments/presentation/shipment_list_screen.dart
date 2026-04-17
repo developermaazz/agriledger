@@ -7,6 +7,7 @@ import '../../../models/shipment.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import '../../../shared/widgets/status_badge.dart';
+import 'shipment_details_screen.dart';
 import 'shipment_form_screen.dart';
 
 class ShipmentListScreen extends StatefulWidget {
@@ -21,6 +22,7 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
   String _query = '';
   String? _statusFilter; // null = all
   String? _marketIdFilter;
+  bool _deleting = false;
 
   @override
   void initState() {
@@ -181,19 +183,49 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                   separatorBuilder: (context, _) => const Divider(height: 1),
                   itemBuilder: (context, i) {
                     final s = list[i];
+                    final locked = s.status == RecordStatuses.completed;
                     return ListTile(
                       title: Text('#${s.serial} ${s.marketName}'),
                       subtitle: Text(
                         '${s.buyerName} · Bal ${s.balance.toStringAsFixed(2)}',
                       ),
-                      trailing: StatusBadge(status: s.status),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          StatusBadge(status: s.status),
+                          if (!locked)
+                            PopupMenuButton<String>(
+                              tooltip: 'Actions',
+                              onSelected: (v) async {
+                                if (v == 'edit') {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<void>(
+                                      builder: (_) => ShipmentFormScreen(existing: s),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                if (v == 'delete') {
+                                  await _confirmDeleteShipment(context, s.id);
+                                }
+                              },
+                              itemBuilder: (context) => const [
+                                PopupMenuItem(value: 'edit', child: Text('Edit')),
+                                PopupMenuItem(value: 'delete', child: Text('Delete')),
+                              ],
+                            ),
+                        ],
+                      ),
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute<void>(
-                            builder: (_) => ShipmentFormScreen(existing: s),
+                            builder: (_) => locked
+                                ? ShipmentDetailsScreen(shipment: s)
+                                : ShipmentFormScreen(existing: s),
                           ),
                         );
                       },
+                      onLongPress: locked ? null : () => _confirmDeleteShipment(context, s.id),
                     );
                   },
                 );
@@ -203,5 +235,42 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _confirmDeleteShipment(BuildContext context, String id) async {
+    if (_deleting) return;
+    final repo = AppDependencies.of(context).shipmentRepository;
+    final messenger = ScaffoldMessenger.of(context);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('Delete shipment?'),
+        content: const Text('This cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(c, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(c, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+
+    setState(() => _deleting = true);
+    try {
+      await repo.deleteShipment(id);
+      if (!mounted) return;
+      messenger.showSnackBar(const SnackBar(content: Text('Shipment deleted')));
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) {
+        setState(() => _deleting = false);
+      }
+    }
   }
 }

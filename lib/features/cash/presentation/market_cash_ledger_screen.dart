@@ -3,6 +3,7 @@ import '../../../app/app_dependencies.dart';
 import '../../../models/cash_entry.dart';
 import '../../../services/export_service.dart';
 import '../../../shared/widgets/empty_state.dart';
+import 'cash_entry_details_screen.dart';
 import 'cash_entry_form_screen.dart';
 
 class MarketCashLedgerScreen extends StatelessWidget {
@@ -72,21 +73,41 @@ class MarketCashLedgerScreen extends StatelessWidget {
                 subtitle: Text(
                   'Cash ${e.cashAvailable.toStringAsFixed(2)} · Pay ${e.payments.toStringAsFixed(2)} · Bal ${e.balance.toStringAsFixed(2)}',
                 ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.edit_outlined),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => CashEntryFormScreen(
-                          marketId: marketId,
-                          marketName: marketName,
-                          existing: e,
+                trailing: PopupMenuButton<String>(
+                  tooltip: 'Actions',
+                  onSelected: (v) async {
+                    if (v == 'edit') {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => CashEntryFormScreen(
+                            marketId: marketId,
+                            marketName: marketName,
+                            existing: e,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                      return;
+                    }
+                    if (v == 'delete') {
+                      await _confirmDelete(context, e);
+                    }
                   },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(value: 'edit', child: Text('Edit')),
+                    PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  ],
+                  child: const Icon(Icons.more_vert),
                 ),
-                onLongPress: () => _confirmDelete(context, e),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => CashEntryDetailsScreen(
+                        marketName: marketName,
+                        entry: e,
+                      ),
+                    ),
+                  );
+                },
               );
             },
           );
@@ -101,6 +122,7 @@ class MarketCashLedgerScreen extends StatelessWidget {
     BuildContext context,
     CashEntry e,
   ) async {
+    final repo = AppDependencies.of(context).marketCashRepository;
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
@@ -113,9 +135,7 @@ class MarketCashLedgerScreen extends StatelessWidget {
       ),
     );
     if (ok == true && context.mounted) {
-      await AppDependencies.of(context)
-          .marketCashRepository
-          .deleteCashEntry(marketId, e.id);
+      await repo.deleteCashEntry(marketId, e.id);
     }
   }
 }

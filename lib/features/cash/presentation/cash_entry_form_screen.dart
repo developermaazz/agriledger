@@ -102,9 +102,10 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final readOnly = widget.existing != null;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.marketName),
+        title: Text(readOnly ? '${widget.marketName} (Edit)' : widget.marketName),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

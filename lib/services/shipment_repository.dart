@@ -68,10 +68,20 @@ class ShipmentRepository {
   }
 
   Future<void> updateShipment(Shipment s) {
-    return _col.doc(s.id).update(s.toFirestoreWrite());
+    return _guardedWrite(s.id, () => _col.doc(s.id).update(s.toFirestoreWrite()));
   }
 
   Future<void> deleteShipment(String id) {
-    return _col.doc(id).delete();
+    return _guardedWrite(id, () => _col.doc(id).delete());
+  }
+
+  Future<void> _guardedWrite(String shipmentId, Future<void> Function() op) async {
+    final snap = await _col.doc(shipmentId).get();
+    final data = snap.data() ?? {};
+    final status = (data['status'] as String?) ?? RecordStatuses.pending;
+    if (status == RecordStatuses.completed) {
+      throw StateError('Completed shipment cannot be edited or deleted.');
+    }
+    await op();
   }
 }

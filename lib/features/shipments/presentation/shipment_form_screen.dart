@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../domain/record_status.dart';
 import '../../../models/market.dart';
 import '../../../models/shipment.dart';
 
@@ -123,12 +124,17 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
   @override
   Widget build(BuildContext context) {
     final marketRepo = AppDependencies.of(context).marketRepository;
+    final locked = widget.existing?.status == RecordStatuses.completed;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.existing == null ? 'New shipment' : 'Edit shipment'),
+        title: Text(
+          widget.existing == null
+              ? 'New shipment'
+              : (locked ? 'Shipment details' : 'Edit shipment'),
+        ),
         actions: [
-          if (widget.existing != null)
+          if (widget.existing != null && !locked)
             IconButton(
               icon: const Icon(Icons.delete_outline),
               onPressed: _busy
@@ -207,7 +213,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
                             ),
                           )
                           .toList(),
-                      onChanged: (v) => setState(() => _marketId = v),
+                      onChanged: locked ? null : (v) => setState(() => _marketId = v),
                     ),
                     const SizedBox(height: 12),
                     ListTile(
@@ -216,13 +222,14 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
                       subtitle: Text(_date.toString().split(' ').first),
                       trailing: IconButton(
                         icon: const Icon(Icons.calendar_month),
-                        onPressed: _pickDate,
+                        onPressed: locked ? null : _pickDate,
                       ),
                     ),
                     TextFormField(
                       controller: _buyer,
                       decoration: const InputDecoration(labelText: 'Buyer'),
                       textCapitalization: TextCapitalization.words,
+                      readOnly: locked,
                       validator: (v) =>
                           (v ?? '').trim().isEmpty ? 'Required' : null,
                     ),
@@ -238,6 +245,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                       ],
+                      readOnly: locked,
                       validator: (v) =>
                           double.tryParse(v ?? '') == null ? 'Invalid' : null,
                     ),
@@ -253,6 +261,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                       ],
+                      readOnly: locked,
                       validator: (v) =>
                           double.tryParse(v ?? '') == null ? 'Invalid' : null,
                     ),
@@ -268,6 +277,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
                       ],
+                      readOnly: locked,
                       validator: (v) =>
                           double.tryParse(v ?? '') == null ? 'Invalid' : null,
                     ),
@@ -276,6 +286,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
                       controller: _remarks,
                       decoration: const InputDecoration(labelText: 'Remarks'),
                       maxLines: 3,
+                      readOnly: locked,
                     ),
                   ],
                 ),
@@ -307,13 +318,15 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
               ),
               const SizedBox(height: 16),
               FilledButton(
-                onPressed: _busy
+                onPressed: (locked || _busy)
                     ? null
                     : () => _save(
                           markets,
                           effectiveMarketId,
                         ),
-                child: Text(_busy ? 'Saving...' : 'Save'),
+                child: Text(
+                  locked ? 'Completed (read-only)' : (_busy ? 'Saving...' : 'Save'),
+                ),
               ),
             ],
           );

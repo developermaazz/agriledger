@@ -55,7 +55,30 @@ class MarketPickerScreen extends StatelessWidget {
               return ListTile(
                 title: Text(m.name),
                 subtitle: const Text('Tap to open cash ledger'),
-                trailing: const Icon(Icons.chevron_right),
+                trailing: PopupMenuButton<String>(
+                  tooltip: 'Actions',
+                  onSelected: (v) async {
+                    if (v == 'open') {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => MarketCashLedgerScreen(
+                            marketId: m.id,
+                            marketName: m.name,
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+                    if (v == 'delete') {
+                      await _confirmDeleteMarket(context, m.id, m.name);
+                    }
+                  },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(value: 'open', child: Text('Open')),
+                    PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  ],
+                  child: const Icon(Icons.more_vert),
+                ),
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute<void>(
@@ -63,12 +86,45 @@ class MarketPickerScreen extends StatelessWidget {
                     ),
                   );
                 },
+                onLongPress: () => _confirmDeleteMarket(context, m.id, m.name),
               );
             },
           );
         },
       ),
     );
+  }
+
+  Future<void> _confirmDeleteMarket(
+    BuildContext context,
+    String marketId,
+    String marketName,
+  ) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: const Text('Delete market?'),
+        content: Text(
+          'If this market is used in any shipment, it cannot be deleted.\n\n"$marketName" and its cash entries will be deleted.',
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Delete')),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await AppDependencies.of(context).marketRepository.deleteMarket(marketId);
+      if (context.mounted) {
+        messenger.showSnackBar(SnackBar(content: Text('Market "$marketName" deleted')));
+      }
+    } catch (e) {
+      final msg = e is StateError ? e.message : e.toString();
+      messenger.showSnackBar(SnackBar(content: Text(msg)));
+    }
   }
 
   Future<void> _addMarket(BuildContext context) async {
