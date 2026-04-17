@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../shared/snackbar/app_snackbar.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,7 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _submit() async {
-    final messenger = ScaffoldMessenger.of(context);
     final form = _formKey.currentState;
     if (form == null || !form.validate()) {
       return;
@@ -52,17 +52,23 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) {
         return;
       }
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(_isRegisterMode ? 'Account created' : 'Signed in'),
-        ),
+      AppSnackBar.show(
+        context,
+        message: _isRegisterMode ? 'Account created' : 'Signed in',
+        type: AppSnackType.success,
       );
     } on FirebaseAuthException catch (e) {
-      messenger.showSnackBar(
-        SnackBar(content: Text(e.message ?? 'Authentication failed')),
+      AppSnackBar.show(
+        context,
+        message: e.message ?? 'Authentication failed',
+        type: AppSnackType.error,
       );
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+      AppSnackBar.show(
+        context,
+        message: e.toString(),
+        type: AppSnackType.error,
+      );
     } finally {
       if (mounted) {
         setState(() => _isBusy = false);

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../models/cash_entry.dart';
+import '../../../shared/snackbar/app_snackbar.dart';
 
 class CashEntryFormScreen extends StatefulWidget {
   const CashEntryFormScreen({
@@ -66,7 +67,6 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
     }
     setState(() => _busy = true);
     final repo = AppDependencies.of(context).marketCashRepository;
-    final messenger = ScaffoldMessenger.of(context);
     try {
       final recv = double.tryParse(_recv.text) ?? 0;
       final pay = double.tryParse(_pay.text) ?? 0;
@@ -92,7 +92,12 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
         Navigator.pop(context);
       }
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+      if (!mounted) return;
+      AppSnackBar.show(
+        context,
+        message: e.toString(),
+        type: AppSnackType.error,
+      );
     } finally {
       if (mounted) {
         setState(() => _busy = false);

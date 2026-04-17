@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../models/market.dart';
+import '../../../shared/snackbar/app_snackbar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import 'market_cash_ledger_screen.dart';
@@ -115,15 +116,23 @@ class MarketPickerScreen extends StatelessWidget {
     );
     if (ok != true || !context.mounted) return;
 
-    final messenger = ScaffoldMessenger.of(context);
+    final deps = AppDependencies.of(context);
     try {
-      await AppDependencies.of(context).marketRepository.deleteMarket(marketId);
-      if (context.mounted) {
-        messenger.showSnackBar(SnackBar(content: Text('Market "$marketName" deleted')));
-      }
+      await deps.marketRepository.deleteMarket(marketId);
+      if (!context.mounted) return;
+      AppSnackBar.show(
+        context,
+          message: 'Market "$marketName" deleted',
+          type: AppSnackType.success,
+      );
     } catch (e) {
       final msg = e is StateError ? e.message : e.toString();
-      messenger.showSnackBar(SnackBar(content: Text(msg)));
+      if (!context.mounted) return;
+      AppSnackBar.show(
+        context,
+        message: msg,
+        type: AppSnackType.error,
+      );
     }
   }
 
@@ -153,17 +162,23 @@ class MarketPickerScreen extends StatelessWidget {
     if (!context.mounted) {
       return;
     }
-    final messenger = ScaffoldMessenger.of(context);
+    final deps = AppDependencies.of(context);
     try {
-      await AppDependencies.of(context).marketRepository.createMarket(name);
+      await deps.marketRepository.createMarket(name);
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+      if (!context.mounted) return;
+      AppSnackBar.show(
+        context,
+        message: e.toString(),
+        type: AppSnackType.error,
+      );
       return;
     }
-    if (context.mounted) {
-      messenger.showSnackBar(
-        SnackBar(content: Text('Market "$name" added')),
-      );
-    }
+    if (!context.mounted) return;
+    AppSnackBar.show(
+      context,
+      message: 'Market "$name" added',
+      type: AppSnackType.success,
+    );
   }
 }

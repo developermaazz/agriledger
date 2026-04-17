@@ -6,6 +6,7 @@ import '../../../models/labour_job.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../../../shared/snackbar/app_snackbar.dart';
 import 'labour_details_screen.dart';
 import 'labour_form_screen.dart';
 
@@ -139,7 +140,7 @@ class _LabourListScreenState extends State<LabourListScreen> {
                                   return;
                                 }
                                 if (v == 'delete') {
-                                  await _confirmDelete(context, j.id);
+                                await _confirmDelete(j.id);
                                 }
                               },
                               itemBuilder: (context) => const [
@@ -158,7 +159,7 @@ class _LabourListScreenState extends State<LabourListScreen> {
                           ),
                         );
                       },
-                      onLongPress: locked ? null : () => _confirmDelete(context, j.id),
+                      onLongPress: locked ? null : () => _confirmDelete(j.id),
                     );
                   },
                 );
@@ -170,10 +171,9 @@ class _LabourListScreenState extends State<LabourListScreen> {
     );
   }
 
-  Future<void> _confirmDelete(BuildContext context, String id) async {
+  Future<void> _confirmDelete(String id) async {
     if (_deleting) return;
     final repo = AppDependencies.of(context).labourRepository;
-    final messenger = ScaffoldMessenger.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
@@ -191,9 +191,18 @@ class _LabourListScreenState extends State<LabourListScreen> {
     try {
       await repo.deleteLabourJob(id);
       if (!mounted) return;
-      messenger.showSnackBar(const SnackBar(content: Text('Labour record deleted')));
+      AppSnackBar.show(
+        context,
+        message: 'Labour record deleted',
+        type: AppSnackType.success,
+      );
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+      if (!mounted) return;
+      AppSnackBar.show(
+        context,
+        message: e is StateError ? e.message : e.toString(),
+        type: AppSnackType.error,
+      );
     } finally {
       if (mounted) {
         setState(() => _deleting = false);

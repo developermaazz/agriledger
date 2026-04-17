@@ -7,6 +7,7 @@ import '../../../models/shipment.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../../../shared/snackbar/app_snackbar.dart';
 import 'shipment_details_screen.dart';
 import 'shipment_form_screen.dart';
 
@@ -206,7 +207,7 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                                   return;
                                 }
                                 if (v == 'delete') {
-                                  await _confirmDeleteShipment(context, s.id);
+                                await _confirmDeleteShipment(s.id);
                                 }
                               },
                               itemBuilder: (context) => const [
@@ -225,7 +226,7 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
                           ),
                         );
                       },
-                      onLongPress: locked ? null : () => _confirmDeleteShipment(context, s.id),
+                      onLongPress: locked ? null : () => _confirmDeleteShipment(s.id),
                     );
                   },
                 );
@@ -237,10 +238,9 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
     );
   }
 
-  Future<void> _confirmDeleteShipment(BuildContext context, String id) async {
+  Future<void> _confirmDeleteShipment(String id) async {
     if (_deleting) return;
     final repo = AppDependencies.of(context).shipmentRepository;
-    final messenger = ScaffoldMessenger.of(context);
     final ok = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
@@ -264,9 +264,18 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
     try {
       await repo.deleteShipment(id);
       if (!mounted) return;
-      messenger.showSnackBar(const SnackBar(content: Text('Shipment deleted')));
+      AppSnackBar.show(
+        context,
+        message: 'Shipment deleted',
+        type: AppSnackType.success,
+      );
     } catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+      if (!mounted) return;
+      AppSnackBar.show(
+        context,
+        message: e is StateError ? e.message : e.toString(),
+        type: AppSnackType.error,
+      );
     } finally {
       if (mounted) {
         setState(() => _deleting = false);
