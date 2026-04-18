@@ -1184,6 +1184,42 @@ abstract class AppLocalizations {
   /// **'{marketName} · Entry {serial}'**
   String cashEntryDetailsAppBarTitle(Object marketName, Object serial);
 
+  /// No description provided for @greetingMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get greetingMorning;
+
+  /// No description provided for @greetingAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get greetingAfternoon;
+
+  /// No description provided for @greetingEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get greetingEvening;
+
+  /// No description provided for @welcomeGuestName.
+  ///
+  /// In en, this message translates to:
+  /// **'there'**
+  String get welcomeGuestName;
+
+  /// No description provided for @dashboardWelcomeLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{greeting}, {name}!'**
+  String dashboardWelcomeLine(Object greeting, Object name);
+
+  /// No description provided for @dashboardWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Here\'s your trading snapshot.'**
+  String get dashboardWelcomeSubtitle;
+
   /// No description provided for @dashboardTitle.
   ///
   /// In en, this message translates to:
@@ -1525,6 +1561,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign out'**
   String get settingsSignOut;
+
+  /// No description provided for @settingsDeleteAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get settingsDeleteAccountTitle;
+
+  /// No description provided for @settingsDeleteAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently remove your data and sign-in.'**
+  String get settingsDeleteAccountSubtitle;
+
+  /// No description provided for @settingsDeleteAccountConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete your account?'**
+  String get settingsDeleteAccountConfirmTitle;
+
+  /// No description provided for @settingsDeleteAccountConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This removes your shipments, markets, labour records, and profile from the cloud. This cannot be undone.'**
+  String get settingsDeleteAccountConfirmBody;
+
+  /// No description provided for @settingsDeleteAccountPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current password'**
+  String get settingsDeleteAccountPasswordLabel;
+
+  /// No description provided for @settingsDeleteAccountConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete forever'**
+  String get settingsDeleteAccountConfirmButton;
+
+  /// No description provided for @settingsDeleteAccountSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account was deleted.'**
+  String get settingsDeleteAccountSuccess;
+
+  /// No description provided for @settingsDeleteAccountWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password.'**
+  String get settingsDeleteAccountWrongPassword;
+
+  /// No description provided for @authErrorRequiresRecentLogin.
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign out, sign in again, then try deleting your account.'**
+  String get authErrorRequiresRecentLogin;
 
   /// No description provided for @settingsAccountType.
   ///

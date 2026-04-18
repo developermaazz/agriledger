@@ -25,6 +25,8 @@ String messageForAuthException(
         return l10n.authErrorWeakPassword;
       case 'too-many-requests':
         return l10n.authErrorTooManyRequests;
+      case 'requires-recent-login':
+        return l10n.authErrorRequiresRecentLogin;
       case 'network-request-failed':
         return l10n.authErrorNetwork;
       default:

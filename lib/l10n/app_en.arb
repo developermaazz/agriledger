@@ -213,6 +213,19 @@
   "cashEntryDetailsAppBarTitle": "{marketName} · Entry {serial}",
   "@cashEntryDetailsAppBarTitle": { "placeholders": { "marketName": {}, "serial": {} } },
 
+  "greetingMorning": "Good morning",
+  "greetingAfternoon": "Good afternoon",
+  "greetingEvening": "Good evening",
+  "welcomeGuestName": "there",
+  "dashboardWelcomeLine": "{greeting}, {name}!",
+  "@dashboardWelcomeLine": {
+    "placeholders": {
+      "greeting": {},
+      "name": {}
+    }
+  },
+  "dashboardWelcomeSubtitle": "Here's your trading snapshot.",
+
   "dashboardTitle": "Dashboard",
   "dashboardUnableToLoad": "Unable to load dashboard data",
   "dashboardUnableToLoadCash": "Unable to load cash balances",
@@ -280,6 +293,16 @@
   "settingsBackupTitle": "Backup",
   "settingsBackupSubtitle": "Your records are stored in Cloud Firestore under your account. Use Reports → Excel/PDF to keep file copies on your device.",
   "settingsSignOut": "Sign out",
+  "settingsDeleteAccountTitle": "Delete account",
+  "settingsDeleteAccountSubtitle": "Permanently remove your data and sign-in.",
+  "settingsDeleteAccountConfirmTitle": "Delete your account?",
+  "settingsDeleteAccountConfirmBody": "This removes your shipments, markets, labour records, and profile from the cloud. This cannot be undone.",
+  "settingsDeleteAccountPasswordLabel": "Current password",
+  "settingsDeleteAccountConfirmButton": "Delete forever",
+  "settingsDeleteAccountSuccess": "Your account was deleted.",
+  "settingsDeleteAccountWrongPassword": "Incorrect password.",
+
+  "authErrorRequiresRecentLogin": "Please sign out, sign in again, then try deleting your account.",
   "settingsAccountType": "Account type",
   "settingsAccountTypeGuest": "Guest (anonymous)",
   "settingsAccountTypeEmail": "Email user",

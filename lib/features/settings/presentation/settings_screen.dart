@@ -2,7 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../shared/auth/auth_error_messages.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/snackbar/app_snackbar.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -70,6 +72,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await repo.setLocaleCode(code);
     if (!mounted) return;
     setState(() => _localeCode = code);
+  }
+
+  Future<void> _showDeleteAccountDialog() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const _DeleteAccountDialog(),
+    );
+    if (confirmed == true && mounted) {
+      AppSnackBar.show(
+        context,
+        message: context.l10n.settingsDeleteAccountSuccess,
+        type: AppSnackType.success,
+      );
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -326,6 +344,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                     ),
                   ),
+                  if (FirebaseAuth.instance.currentUser != null &&
+                      FirebaseAuth.instance.currentUser!.isAnonymous == false &&
+                      (FirebaseAuth.instance.currentUser!.email ?? '').isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Material(
+                      color: cs.surfaceContainerLow,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                        side: BorderSide(
+                          color: cs.outlineVariant.withValues(alpha: 0.45),
+                        ),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        leading: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: cs.errorContainer.withValues(alpha: 0.55),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(Icons.delete_forever_outlined, color: cs.error),
+                        ),
+                        title: Text(
+                          context.l10n.settingsDeleteAccountTitle,
+                          style: t.titleSmall?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: cs.error,
+                          ),
+                        ),
+                        subtitle: Text(
+                          context.l10n.settingsDeleteAccountSubtitle,
+                          style: t.bodySmall?.copyWith(
+                            color: cs.onSurfaceVariant,
+                            height: 1.35,
+                          ),
+                        ),
+                        trailing: const Icon(Icons.chevron_right_rounded),
+                        onTap: _showDeleteAccountDialog,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 10),
                   Material(
                     color: cs.surfaceContainerLow,
@@ -365,6 +427,104 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ],
               ),
             ),
+    );
+  }
+}
+
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog();
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  final _passwordController = TextEditingController();
+  bool _busy = false;
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final trimmed = _passwordController.text.trim();
+    if (trimmed.isEmpty) {
+      AppSnackBar.show(
+        context,
+        message: context.l10n.commonRequired,
+        type: AppSnackType.error,
+      );
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      await AppDependencies.of(context)
+          .accountDeletionService
+          .deleteAccountWithPassword(trimmed);
+      if (mounted) {
+        Navigator.of(context).pop(true);
+      }
+    } catch (e) {
+      if (mounted) {
+        AppSnackBar.show(
+          context,
+          message: messageForAuthException(context, e),
+          type: AppSnackType.error,
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return AlertDialog(
+      title: Text(context.l10n.settingsDeleteAccountConfirmTitle),
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(context.l10n.settingsDeleteAccountConfirmBody),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              enabled: !_busy,
+              decoration: InputDecoration(
+                labelText: context.l10n.settingsDeleteAccountPasswordLabel,
+              ),
+              onSubmitted: _busy ? null : (_) => _submit(),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: _busy ? null : () => Navigator.of(context).pop(false),
+          child: Text(context.l10n.commonCancel),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: cs.error,
+            foregroundColor: cs.onError,
+          ),
+          onPressed: _busy ? null : _submit,
+          child: _busy
+              ? const SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                )
+              : Text(context.l10n.settingsDeleteAccountConfirmButton),
+        ),
+      ],
     );
   }
 }

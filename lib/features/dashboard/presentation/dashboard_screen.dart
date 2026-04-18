@@ -1,4 +1,5 @@
 import 'package:agri_ledger/domain/record_status.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -7,6 +8,7 @@ import '../../../models/cash_activity_line.dart';
 import '../../../models/labour_job.dart';
 import '../../../models/market.dart';
 import '../../../models/shipment.dart';
+import '../../../models/user_profile.dart';
 import '../../../services/firestore_refresh.dart';
 import '../../../shared/formatters/money.dart';
 import '../../../shared/l10n/l10n.dart';
@@ -125,6 +127,8 @@ class DashboardScreen extends StatelessWidget {
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
                         children: [
+                          const _DashboardWelcomeBanner(),
+                          const SizedBox(height: 20),
                           _SectionHeader(
                             title: context.l10n.dashboardOverview,
                             subtitle: context.l10n.dashboardOverviewSubtitle,
@@ -333,6 +337,88 @@ class DashboardScreen extends StatelessWidget {
           ),
         )
         .toList();
+  }
+}
+
+class _DashboardWelcomeBanner extends StatelessWidget {
+  const _DashboardWelcomeBanner();
+
+  static String _greetingForHour(BuildContext context, int hour) {
+    final l10n = context.l10n;
+    if (hour < 12) return l10n.greetingMorning;
+    if (hour < 17) return l10n.greetingAfternoon;
+    return l10n.greetingEvening;
+  }
+
+  static String _displayName(UserProfile? profile, User? user, BuildContext context) {
+    final l10n = context.l10n;
+    if (user?.isAnonymous == true) {
+      return l10n.welcomeGuestName;
+    }
+    final raw = profile?.name.trim() ?? '';
+    if (raw.isNotEmpty) {
+      return raw.split(RegExp(r'\s+')).first;
+    }
+    final em = user?.email?.trim() ?? '';
+    if (em.contains('@')) {
+      return em.split('@').first;
+    }
+    return l10n.welcomeGuestName;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final t = Theme.of(context).textTheme;
+    final hour = DateTime.now().hour;
+    final greeting = _greetingForHour(context, hour);
+    final deps = AppDependencies.of(context);
+    final user = deps.authService.currentUser;
+
+    return StreamBuilder<UserProfile?>(
+      stream: deps.userProfileRepository.profileStream(),
+      builder: (context, snap) {
+        final name = _displayName(snap.data, user, context);
+        final line = context.l10n.dashboardWelcomeLine(greeting, name);
+        return Semantics(
+          header: true,
+          label: line,
+          child: Material(
+            color: cs.primaryContainer.withValues(alpha: 0.42),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+              side: BorderSide(
+                color: cs.outlineVariant.withValues(alpha: 0.35),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    line,
+                    style: t.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.4,
+                      color: cs.onPrimaryContainer,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    context.l10n.dashboardWelcomeSubtitle,
+                    style: t.bodyMedium?.copyWith(
+                      color: cs.onPrimaryContainer.withValues(alpha: 0.88),
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 

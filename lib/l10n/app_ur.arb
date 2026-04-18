@@ -204,6 +204,19 @@
   "errorsSomethingWentWrong": "کچھ غلط ہوگیا",
   "errorsFirestoreBlocked": "فائر اسٹور تک رسائی روکی جا رہی ہے۔ Firebase Console میں `firestore.rules` ڈپلائے کریں (یا ڈویلپمنٹ کے لیے ٹیسٹ موڈ آن کریں)۔",
 
+  "greetingMorning": "صبح بخیر",
+  "greetingAfternoon": "دوپہر بخیر",
+  "greetingEvening": "شام بخیر",
+  "welcomeGuestName": "مہمان",
+  "dashboardWelcomeLine": "{greeting}، {name}!",
+  "@dashboardWelcomeLine": {
+    "placeholders": {
+      "greeting": {},
+      "name": {}
+    }
+  },
+  "dashboardWelcomeSubtitle": "یہاں آپ کی ٹریڈنگ کا خلاصہ ہے۔",
+
   "dashboardTitle": "ڈیش بورڈ",
   "dashboardUnableToLoad": "ڈیش بورڈ ڈیٹا لوڈ نہیں ہو رہا",
   "dashboardUnableToLoadCash": "کیش کے بیلنس لوڈ نہیں ہو رہے",
@@ -271,6 +284,16 @@
   "settingsBackupTitle": "بیک اپ",
   "settingsBackupSubtitle": "آپ کے ریکارڈز Cloud Firestore میں محفوظ ہیں۔ رپورٹس → Excel/PDF سے فائل کاپی رکھیں۔",
   "settingsSignOut": "سائن آؤٹ",
+  "settingsDeleteAccountTitle": "اکاؤنٹ حذف کریں",
+  "settingsDeleteAccountSubtitle": "ڈیٹا اور سائن اِن مستقل طور پر ہٹائیں۔",
+  "settingsDeleteAccountConfirmTitle": "اکاؤنٹ حذف کریں؟",
+  "settingsDeleteAccountConfirmBody": "شپمنٹس، مارکیٹس، لیبر ریکارڈ اور پروفائل کلاؤڈ سے حذف ہو جائیں گے۔ واپس نہیں ہوگا۔",
+  "settingsDeleteAccountPasswordLabel": "موجودہ پاس ورڈ",
+  "settingsDeleteAccountConfirmButton": "مستقل حذف",
+  "settingsDeleteAccountSuccess": "اکاؤنٹ حذف ہوگیا۔",
+  "settingsDeleteAccountWrongPassword": "پاس ورڈ غلط ہے۔",
+
+  "authErrorRequiresRecentLogin": "براہ کرم سائن آؤٹ کر کے دوبارہ سائن اِن کریں، پھر حذف کریں۔",
   "settingsAccountType": "اکاؤنٹ کی قسم",
   "settingsAccountTypeGuest": "گیسٹ (anonymous)",
   "settingsAccountTypeEmail": "ای میل صارف",

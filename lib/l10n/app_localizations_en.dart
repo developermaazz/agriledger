@@ -595,6 +595,26 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get greetingMorning => 'Good morning';
+
+  @override
+  String get greetingAfternoon => 'Good afternoon';
+
+  @override
+  String get greetingEvening => 'Good evening';
+
+  @override
+  String get welcomeGuestName => 'there';
+
+  @override
+  String dashboardWelcomeLine(Object greeting, Object name) {
+    return '$greeting, $name!';
+  }
+
+  @override
+  String get dashboardWelcomeSubtitle => 'Here\'s your trading snapshot.';
+
+  @override
   String get dashboardTitle => 'Dashboard';
 
   @override
@@ -786,6 +806,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsSignOut => 'Sign out';
+
+  @override
+  String get settingsDeleteAccountTitle => 'Delete account';
+
+  @override
+  String get settingsDeleteAccountSubtitle =>
+      'Permanently remove your data and sign-in.';
+
+  @override
+  String get settingsDeleteAccountConfirmTitle => 'Delete your account?';
+
+  @override
+  String get settingsDeleteAccountConfirmBody =>
+      'This removes your shipments, markets, labour records, and profile from the cloud. This cannot be undone.';
+
+  @override
+  String get settingsDeleteAccountPasswordLabel => 'Current password';
+
+  @override
+  String get settingsDeleteAccountConfirmButton => 'Delete forever';
+
+  @override
+  String get settingsDeleteAccountSuccess => 'Your account was deleted.';
+
+  @override
+  String get settingsDeleteAccountWrongPassword => 'Incorrect password.';
+
+  @override
+  String get authErrorRequiresRecentLogin =>
+      'Please sign out, sign in again, then try deleting your account.';
 
   @override
   String get settingsAccountType => 'Account type';

@@ -7,6 +7,7 @@ import 'app_navigator.dart';
 import 'app_router.dart';
 import 'app_theme.dart';
 import '../features/auth/presentation/auth_gate.dart';
+import '../services/account_deletion_service.dart';
 import '../services/auth_deep_link_handler.dart';
 import '../services/auth_service.dart';
 import '../services/user_profile_repository.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
       marketCashRepository: cashRepo,
       labourRepository: labourRepo,
       storageRepository: StorageRepository(),
+      accountDeletionService: AccountDeletionService(),
       child: ValueListenableBuilder<int>(
         valueListenable: settingsRepository.revision,
         builder: (context, _, child) {

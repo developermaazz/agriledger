@@ -591,6 +591,26 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String get greetingMorning => 'صبح بخیر';
+
+  @override
+  String get greetingAfternoon => 'دوپہر بخیر';
+
+  @override
+  String get greetingEvening => 'شام بخیر';
+
+  @override
+  String get welcomeGuestName => 'مہمان';
+
+  @override
+  String dashboardWelcomeLine(Object greeting, Object name) {
+    return '$greeting، $name!';
+  }
+
+  @override
+  String get dashboardWelcomeSubtitle => 'یہاں آپ کی ٹریڈنگ کا خلاصہ ہے۔';
+
+  @override
   String get dashboardTitle => 'ڈیش بورڈ';
 
   @override
@@ -779,6 +799,36 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get settingsSignOut => 'سائن آؤٹ';
+
+  @override
+  String get settingsDeleteAccountTitle => 'اکاؤنٹ حذف کریں';
+
+  @override
+  String get settingsDeleteAccountSubtitle =>
+      'ڈیٹا اور سائن اِن مستقل طور پر ہٹائیں۔';
+
+  @override
+  String get settingsDeleteAccountConfirmTitle => 'اکاؤنٹ حذف کریں؟';
+
+  @override
+  String get settingsDeleteAccountConfirmBody =>
+      'شپمنٹس، مارکیٹس، لیبر ریکارڈ اور پروفائل کلاؤڈ سے حذف ہو جائیں گے۔ واپس نہیں ہوگا۔';
+
+  @override
+  String get settingsDeleteAccountPasswordLabel => 'موجودہ پاس ورڈ';
+
+  @override
+  String get settingsDeleteAccountConfirmButton => 'مستقل حذف';
+
+  @override
+  String get settingsDeleteAccountSuccess => 'اکاؤنٹ حذف ہوگیا۔';
+
+  @override
+  String get settingsDeleteAccountWrongPassword => 'پاس ورڈ غلط ہے۔';
+
+  @override
+  String get authErrorRequiresRecentLogin =>
+      'براہ کرم سائن آؤٹ کر کے دوبارہ سائن اِن کریں، پھر حذف کریں۔';
 
   @override
   String get settingsAccountType => 'اکاؤنٹ کی قسم';
