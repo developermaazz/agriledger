@@ -7,7 +7,9 @@ import 'app_navigator.dart';
 import 'app_router.dart';
 import 'app_theme.dart';
 import '../features/auth/presentation/auth_gate.dart';
+import '../services/auth_deep_link_handler.dart';
 import '../services/auth_service.dart';
+import '../services/user_profile_repository.dart';
 import '../services/labour_repository.dart';
 import '../services/market_cash_repository.dart';
 import '../services/market_repository.dart';
@@ -17,7 +19,9 @@ import '../services/shipment_repository.dart';
 import '../services/storage_repository.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.authDeepLinkHandler});
+
+  final AuthDeepLinkHandler authDeepLinkHandler;
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +31,12 @@ class MyApp extends StatelessWidget {
     final labourRepo = LabourRepository(serialMeta: serialMeta);
     final cashRepo = MarketCashRepository(marketRepository: marketRepo);
     final settingsRepository = SettingsRepository();
+    final auth = AuthService();
 
     return AppDependencies(
-      authService: AuthService(),
+      authService: auth,
+      userProfileRepository: UserProfileRepository(),
+      authDeepLinkHandler: authDeepLinkHandler,
       settingsRepository: settingsRepository,
       serialMetaRepository: serialMeta,
       marketRepository: marketRepo,

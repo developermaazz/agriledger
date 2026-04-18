@@ -137,6 +137,188 @@ class AppLocalizationsUr extends AppLocalizations {
   String get authNewHere => 'نئے ہیں؟ اکاؤنٹ بنائیں';
 
   @override
+  String get authFullNameLabel => 'مکمل نام';
+
+  @override
+  String get authPhoneLabel => 'فون';
+
+  @override
+  String get authPhoneHint => 'ملک کا کوڈ شامل کریں (مثلاً +92)';
+
+  @override
+  String get authConfirmPasswordLabel => 'پاس ورڈ کی تصدیق';
+
+  @override
+  String get authPasswordMismatch => 'پاس ورڈ میل نہیں کھاتے';
+
+  @override
+  String get authPasswordRequirements =>
+      'کم از کم 8 حروف، بڑے، چھوٹے اور ایک عدد۔';
+
+  @override
+  String get authLoginWithEmail => 'ای میل';
+
+  @override
+  String get authLoginWithPhone => 'فون';
+
+  @override
+  String get authForgotPassword => 'پاس ورڈ بھول گئے؟';
+
+  @override
+  String get authRememberMe => 'مجھے یاد رکھیں';
+
+  @override
+  String get authVerifyTitle => 'ای میل تصدیق کریں';
+
+  @override
+  String get authVerifySubtitle =>
+      'ہم نے آپ کے ان باکس میں لنک بھیجا۔ نیا لنک چاہیے تو دوبارہ بھیجیں۔';
+
+  @override
+  String get authResendVerificationEmail => 'تصدیقی ای میل دوبارہ بھیجیں';
+
+  @override
+  String get authCheckedVerification => 'تصدیق ہوگئی — جاری رکھیں';
+
+  @override
+  String get authOtpSectionTitle => 'ای میل کوڈ';
+
+  @override
+  String get authOtpHint => '6 ہندسوں کا کوڈ';
+
+  @override
+  String get authRequestOtp => 'کوڈ بھیجیں';
+
+  @override
+  String get authVerifyOtp => 'کوڈ تصدیق کریں';
+
+  @override
+  String get authForgotTitle => 'پاس ورڈ ری سیٹ';
+
+  @override
+  String get authForgotSubtitle => 'ای میل درج کریں، ہم ری سیٹ لنک بھیجیں گے۔';
+
+  @override
+  String get authSendResetLink => 'ری سیٹ لنک بھیجیں';
+
+  @override
+  String get authBackToLogin => 'سائن اِن پر واپس';
+
+  @override
+  String get authResetPasswordTitle => 'نیا پاس ورڈ';
+
+  @override
+  String get authNewPasswordLabel => 'نیا پاس ورڈ';
+
+  @override
+  String get authResetSubmit => 'پاس ورڈ اپڈیٹ کریں';
+
+  @override
+  String get authSignupTitle => 'اکاؤنٹ بنائیں';
+
+  @override
+  String get authPasswordStrengthWeak => 'کمزور';
+
+  @override
+  String get authPasswordStrengthFair => 'درمیانہ';
+
+  @override
+  String get authPasswordStrengthGood => 'اچھا';
+
+  @override
+  String get authPasswordStrengthStrong => 'مضبوط';
+
+  @override
+  String get authErrorUserDisabled => 'یہ اکاؤنٹ بند ہے۔';
+
+  @override
+  String get authErrorInvalidCredentials => 'غلط ای میل یا پاس ورڈ۔';
+
+  @override
+  String get authErrorEmailInUse =>
+      'یہ ای میل پہلے سے رجسٹرڈ ہے۔ سائن اِن کریں۔';
+
+  @override
+  String get authAccountAlreadyExistsTitle => 'اکاؤنٹ پہلے سے موجود ہے';
+
+  @override
+  String get authAccountAlreadyExistsMessage =>
+      'یہ ای میل پہلے سے رجسٹرڈ ہے—غالباً پہلے سائن اپ کے بعد ای میل تصدیق نہیں ہوئی۔\n\nاپنے پاس ورڈ سے سائن اِن کریں۔ اگلے اسکرین سے نیا تصدیقی ای میل بھیج سکتے ہیں۔ پاس ورڈ یاد نہیں تو بھول گئے استعمال کریں۔';
+
+  @override
+  String get authGoToSignInFromSignup => 'سائن اِن پر جائیں';
+
+  @override
+  String get authPrefilledEmailHint =>
+      'جاری رکھنے کے لیے پاس ورڈ درج کریں۔ سائن اِن کے بعد تصدیق دوبارہ بھیج سکتے ہیں۔';
+
+  @override
+  String get authErrorWeakPassword => 'پاس ورڈ بہت کمزور ہے۔';
+
+  @override
+  String get authErrorTooManyRequests => 'بہت زیادہ کوششیں۔ بعد میں کوشش کریں۔';
+
+  @override
+  String get authErrorNetwork => 'نیٹ ورک خرابی۔ کنکشن چیک کریں۔';
+
+  @override
+  String get authErrorAlreadyExists => 'یہ ای میل یا فون پہلے سے رجسٹرڈ ہے۔';
+
+  @override
+  String get authErrorUnauthenticated => 'دوبارہ سائن اِن کریں۔';
+
+  @override
+  String get authOtpSent => 'تصدیقی کوڈ بھیج دیا گیا۔';
+
+  @override
+  String get authOtpExpired => 'کوڈ ختم ہوگیا۔ نیا کوڈ مانگیں۔';
+
+  @override
+  String get authVerifyEmailRequired => 'جاری رکھنے کے لیے ای میل تصدیق کریں۔';
+
+  @override
+  String get authEmailVerificationCompleted =>
+      'ای میل تصدیق ہوگئی۔ جاری رکھنے کے لیے سائن اِن کریں۔';
+
+  @override
+  String get authVerificationStillPending =>
+      'ابھی تصدیق نظر نہیں آئی۔ ان باکس چیک کریں یا دوبارہ بھیجیں۔';
+
+  @override
+  String get authEmailVerifiedFromLinkSnack => 'ای میل تصدیق ہوگئی۔';
+
+  @override
+  String get authProfileSaved => 'پروفائل محفوظ ہوگئی۔';
+
+  @override
+  String get authProfileIncomplete => 'جاری رکھنے کے لیے پروفائل مکمل کریں۔';
+
+  @override
+  String get authCompleteProfileTitle => 'پروفائل مکمل کریں';
+
+  @override
+  String get authCompleteProfileSubtitle => 'نام اور فون شامل کریں۔';
+
+  @override
+  String get authUnverifiedBlocked => 'سائن اِن سے پہلے ای میل تصدیق کریں۔';
+
+  @override
+  String get authTabEmailLink => 'ای میل لنک';
+
+  @override
+  String get authTabOtpCode => 'OTP';
+
+  @override
+  String get authPasswordResetDone => 'پاس ورڈ اپڈیٹ ہوگیا۔ اب سائن اِن کریں۔';
+
+  @override
+  String get authResetEmailSent => 'اگر اکاؤنٹ موجود ہے تو ہم نے لنک بھیج دیا۔';
+
+  @override
+  String get authVerificationEmailSent =>
+      'تصدیقی ای میل بھیج دی گئی۔ ان باکس چیک کریں۔';
+
+  @override
   String get creditsIntro => 'محنت اور توجہ کے ساتھ';
 
   @override

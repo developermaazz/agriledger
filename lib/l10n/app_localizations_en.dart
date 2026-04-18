@@ -137,6 +137,192 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authNewHere => 'New here? Create an account';
 
   @override
+  String get authFullNameLabel => 'Full name';
+
+  @override
+  String get authPhoneLabel => 'Phone';
+
+  @override
+  String get authPhoneHint => 'Include country code (e.g. +92…)';
+
+  @override
+  String get authConfirmPasswordLabel => 'Confirm password';
+
+  @override
+  String get authPasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get authPasswordRequirements =>
+      'Use at least 8 characters with upper, lower, and a number.';
+
+  @override
+  String get authLoginWithEmail => 'Email';
+
+  @override
+  String get authLoginWithPhone => 'Phone';
+
+  @override
+  String get authForgotPassword => 'Forgot password?';
+
+  @override
+  String get authRememberMe => 'Remember me';
+
+  @override
+  String get authVerifyTitle => 'Verify your email';
+
+  @override
+  String get authVerifySubtitle =>
+      'We sent a link to your inbox. Use Resend if you need a new one.';
+
+  @override
+  String get authResendVerificationEmail => 'Resend verification email';
+
+  @override
+  String get authCheckedVerification => 'I\'ve verified — continue';
+
+  @override
+  String get authOtpSectionTitle => 'Email code';
+
+  @override
+  String get authOtpHint => '6-digit code';
+
+  @override
+  String get authRequestOtp => 'Send code';
+
+  @override
+  String get authVerifyOtp => 'Verify code';
+
+  @override
+  String get authForgotTitle => 'Reset password';
+
+  @override
+  String get authForgotSubtitle =>
+      'Enter your email and we\'ll send a reset link.';
+
+  @override
+  String get authSendResetLink => 'Send reset link';
+
+  @override
+  String get authBackToLogin => 'Back to sign in';
+
+  @override
+  String get authResetPasswordTitle => 'Choose a new password';
+
+  @override
+  String get authNewPasswordLabel => 'New password';
+
+  @override
+  String get authResetSubmit => 'Update password';
+
+  @override
+  String get authSignupTitle => 'Create your account';
+
+  @override
+  String get authPasswordStrengthWeak => 'Weak';
+
+  @override
+  String get authPasswordStrengthFair => 'Fair';
+
+  @override
+  String get authPasswordStrengthGood => 'Good';
+
+  @override
+  String get authPasswordStrengthStrong => 'Strong';
+
+  @override
+  String get authErrorUserDisabled => 'This account has been disabled.';
+
+  @override
+  String get authErrorInvalidCredentials => 'Invalid email or password.';
+
+  @override
+  String get authErrorEmailInUse =>
+      'This email is already registered. Sign in instead.';
+
+  @override
+  String get authAccountAlreadyExistsTitle => 'Account already exists';
+
+  @override
+  String get authAccountAlreadyExistsMessage =>
+      'This email is already registered—often because a previous sign-up finished but the email was not verified yet.\n\nSign in with your password. You can send a new verification email from the next screen. If you forgot your password, use Forgot password.';
+
+  @override
+  String get authGoToSignInFromSignup => 'Go to sign in';
+
+  @override
+  String get authPrefilledEmailHint =>
+      'Enter your password to continue. You can resend verification after signing in.';
+
+  @override
+  String get authErrorWeakPassword => 'Password is too weak.';
+
+  @override
+  String get authErrorTooManyRequests => 'Too many attempts. Try again later.';
+
+  @override
+  String get authErrorNetwork => 'Network error. Check your connection.';
+
+  @override
+  String get authErrorAlreadyExists =>
+      'That email or phone is already registered.';
+
+  @override
+  String get authErrorUnauthenticated => 'Please sign in again.';
+
+  @override
+  String get authOtpSent => 'Verification code sent.';
+
+  @override
+  String get authOtpExpired => 'That code expired. Request a new one.';
+
+  @override
+  String get authVerifyEmailRequired => 'Verify your email to continue.';
+
+  @override
+  String get authEmailVerificationCompleted =>
+      'Email verified. Sign in to continue.';
+
+  @override
+  String get authVerificationStillPending =>
+      'We still don\'t see a verified email. Check your inbox or tap Resend.';
+
+  @override
+  String get authEmailVerifiedFromLinkSnack => 'Email address verified.';
+
+  @override
+  String get authProfileSaved => 'Profile saved.';
+
+  @override
+  String get authProfileIncomplete => 'Complete your profile to continue.';
+
+  @override
+  String get authCompleteProfileTitle => 'Complete profile';
+
+  @override
+  String get authCompleteProfileSubtitle =>
+      'Add your name and phone to finish setup.';
+
+  @override
+  String get authUnverifiedBlocked => 'Verify your email before signing in.';
+
+  @override
+  String get authTabEmailLink => 'Email link';
+
+  @override
+  String get authTabOtpCode => 'OTP';
+
+  @override
+  String get authPasswordResetDone => 'Password updated. You can sign in now.';
+
+  @override
+  String get authResetEmailSent =>
+      'If an account exists, we sent a reset link.';
+
+  @override
+  String get authVerificationEmailSent =>
+      'Verification email sent. Check your inbox.';
+
+  @override
   String get creditsIntro => 'Crafted with care';
 
   @override

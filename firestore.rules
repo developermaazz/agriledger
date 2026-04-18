@@ -10,8 +10,36 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == uid;
     }
 
+    // Profile document (same path as parent of markets, shipments, etc.)
+    match /users/{uid} {
+      allow read: if isOwner(uid);
+      allow create: if isOwner(uid) && request.resource.data.isVerified == false;
+      allow update: if isOwner(uid)
+        && request.resource.data.isVerified == resource.data.isVerified;
+    }
+
     match /users/{uid}/{document=**} {
       allow read, write: if isOwner(uid);
+    }
+
+    match /phone_login_index/{phone} {
+      allow read, write: if false;
+    }
+
+    match /registry_emails/{email} {
+      allow read, write: if false;
+    }
+
+    match /registry_phones/{phone} {
+      allow read, write: if false;
+    }
+
+    match /email_otp_challenges/{document=**} {
+      allow read, write: if false;
+    }
+
+    match /auth_rate_limits/{document=**} {
+      allow read, write: if false;
     }
   }
 }

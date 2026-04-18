@@ -6,6 +6,7 @@ class SettingsRepository {
   static const _keyRequireEmailLogin = 'require_email_login';
   static const _keyThemeMode = 'theme_mode'; // system|light|dark
   static const _keyLocaleCode = 'locale_code'; // en|ur
+  static const _keyAuthRememberMe = 'auth_remember_me';
 
   /// Bumped whenever a setting changes so [AuthGate] can re-read prefs.
   final ValueNotifier<int> revision = ValueNotifier(0);
@@ -45,6 +46,18 @@ class SettingsRepository {
   Future<String?> get localeCode async {
     final p = await SharedPreferences.getInstance();
     return p.getString(_keyLocaleCode);
+  }
+
+  /// Web: persist login across browser restarts. Ignored on mobile (defaults true).
+  Future<bool> get authRememberMe async {
+    final p = await SharedPreferences.getInstance();
+    return p.getBool(_keyAuthRememberMe) ?? true;
+  }
+
+  Future<void> setAuthRememberMe(bool value) async {
+    final p = await SharedPreferences.getInstance();
+    await p.setBool(_keyAuthRememberMe, value);
+    revision.value++;
   }
 
   Future<void> setLocaleCode(String? code) async {
