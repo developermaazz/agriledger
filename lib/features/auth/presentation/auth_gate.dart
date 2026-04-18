@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +8,7 @@ import '../../../app/app_navigator.dart';
 import '../../../app/app_router.dart';
 import '../../../models/user_profile.dart';
 import '../../../services/auth_deep_link_handler.dart';
+import '../../../services/settings_repository.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 import '../../shell/main_shell.dart';
@@ -13,29 +16,63 @@ import 'complete_profile_screen.dart';
 import 'login_screen.dart';
 import 'verify_email_screen.dart';
 
-class AuthGate extends StatelessWidget {
+/// Loads [SettingsRepository.requireEmailLogin] without tying it to [SettingsRepository.revision].
+/// Any setting change bumps [revision]; wrapping a [FutureBuilder] in [ValueListenableBuilder]
+/// on revision gave a **new** [Future] each rebuild and reset the future to "waiting", which
+/// flashed the loading scaffold and login during flows like "remember me" on sign-in.
+class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final settings = AppDependencies.of(context).settingsRepository;
+  State<AuthGate> createState() => _AuthGateState();
+}
 
-    return ValueListenableBuilder<int>(
-      valueListenable: settings.revision,
-      builder: (context, _, child) {
-        return FutureBuilder<bool>(
-          future: settings.requireEmailLogin,
-          builder: (context, snap) {
-            if (!snap.hasData) {
-              return const Scaffold(
-                body: Center(child: CircularProgressIndicator.adaptive()),
-              );
-            }
-            return _AuthSession(requireEmailLogin: snap.data!);
-          },
-        );
-      },
-    );
+class _AuthGateState extends State<AuthGate> {
+  SettingsRepository? _settings;
+  bool? _requireEmailLogin;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final settings = AppDependencies.of(context).settingsRepository;
+    if (_settings == null) {
+      _settings = settings;
+      settings.revision.addListener(_onSettingsRevision);
+      unawaited(_loadRequireEmailLogin());
+    } else if (!identical(_settings, settings)) {
+      _settings!.revision.removeListener(_onSettingsRevision);
+      _settings = settings;
+      settings.revision.addListener(_onSettingsRevision);
+      unawaited(_loadRequireEmailLogin());
+    }
+  }
+
+  @override
+  void dispose() {
+    _settings?.revision.removeListener(_onSettingsRevision);
+    super.dispose();
+  }
+
+  void _onSettingsRevision() {
+    unawaited(_loadRequireEmailLogin());
+  }
+
+  Future<void> _loadRequireEmailLogin() async {
+    final settings = AppDependencies.of(context).settingsRepository;
+    final v = await settings.requireEmailLogin;
+    if (!mounted) return;
+    if (_requireEmailLogin == v) return;
+    setState(() => _requireEmailLogin = v);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_requireEmailLogin == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator.adaptive()),
+      );
+    }
+    return _AuthSession(requireEmailLogin: _requireEmailLogin!);
   }
 }
 

@@ -88,7 +88,11 @@ class _LoginScreenState extends State<LoginScreen> {
         type: AppSnackType.error,
       );
     } finally {
-      if (mounted) setState(() => _busy = false);
+      // If sign-in succeeded, keep the button loading until AuthGate replaces this
+      // screen — avoids one frame of idle form before navigation.
+      if (mounted && auth.currentUser == null) {
+        setState(() => _busy = false);
+      }
     }
   }
 

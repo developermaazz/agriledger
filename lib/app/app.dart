@@ -19,40 +19,52 @@ import '../services/settings_repository.dart';
 import '../services/shipment_repository.dart';
 import '../services/storage_repository.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key, required this.authDeepLinkHandler});
 
   final AuthDeepLinkHandler authDeepLinkHandler;
 
   @override
-  Widget build(BuildContext context) {
-    final serialMeta = SerialMetaRepository();
-    final marketRepo = MarketRepository();
-    final shipmentRepo = ShipmentRepository(serialMeta: serialMeta);
-    final labourRepo = LabourRepository(serialMeta: serialMeta);
-    final cashRepo = MarketCashRepository(marketRepository: marketRepo);
-    final settingsRepository = SettingsRepository();
-    final auth = AuthService();
+  State<MyApp> createState() => _MyAppState();
+}
 
+class _MyAppState extends State<MyApp> {
+  late final SettingsRepository _settingsRepository = SettingsRepository();
+  late final AuthService _authService = AuthService();
+  late final UserProfileRepository _userProfileRepository = UserProfileRepository();
+  late final SerialMetaRepository _serialMeta = SerialMetaRepository();
+  late final MarketRepository _marketRepo = MarketRepository();
+  late final ShipmentRepository _shipmentRepo =
+      ShipmentRepository(serialMeta: _serialMeta);
+  late final LabourRepository _labourRepo =
+      LabourRepository(serialMeta: _serialMeta);
+  late final MarketCashRepository _cashRepo =
+      MarketCashRepository(marketRepository: _marketRepo);
+  late final StorageRepository _storageRepository = StorageRepository();
+  late final AccountDeletionService _accountDeletionService =
+      AccountDeletionService();
+
+  @override
+  Widget build(BuildContext context) {
     return AppDependencies(
-      authService: auth,
-      userProfileRepository: UserProfileRepository(),
-      authDeepLinkHandler: authDeepLinkHandler,
-      settingsRepository: settingsRepository,
-      serialMetaRepository: serialMeta,
-      marketRepository: marketRepo,
-      shipmentRepository: shipmentRepo,
-      marketCashRepository: cashRepo,
-      labourRepository: labourRepo,
-      storageRepository: StorageRepository(),
-      accountDeletionService: AccountDeletionService(),
+      authService: _authService,
+      userProfileRepository: _userProfileRepository,
+      authDeepLinkHandler: widget.authDeepLinkHandler,
+      settingsRepository: _settingsRepository,
+      serialMetaRepository: _serialMeta,
+      marketRepository: _marketRepo,
+      shipmentRepository: _shipmentRepo,
+      marketCashRepository: _cashRepo,
+      labourRepository: _labourRepo,
+      storageRepository: _storageRepository,
+      accountDeletionService: _accountDeletionService,
       child: ValueListenableBuilder<int>(
-        valueListenable: settingsRepository.revision,
+        valueListenable: _settingsRepository.revision,
         builder: (context, _, child) {
           return FutureBuilder<({ThemeMode mode, Locale? locale})>(
             future: () async {
-              final mode = await settingsRepository.themeMode;
-              final code = await settingsRepository.localeCode;
+              final mode = await _settingsRepository.themeMode;
+              final code = await _settingsRepository.localeCode;
               final locale = (code == null || code.isEmpty) ? null : Locale(code);
               return (mode: mode, locale: locale);
             }(),
