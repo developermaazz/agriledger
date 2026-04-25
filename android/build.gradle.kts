@@ -5,6 +5,15 @@ allprojects {
     }
 }
 
+// Silence JDK warning spam from some transitive Android modules/plugins that still compile with
+// -source/-target 8 (common in Flutter/Android plugin dependencies).
+// This does not change compilation targets; it only suppresses the "options ... obsolete" warning.
+subprojects {
+    tasks.withType<JavaCompile>().configureEach {
+        options.compilerArgs.add("-Xlint:-options")
+    }
+}
+
 val newBuildDir: Directory =
     rootProject.layout.buildDirectory
         .dir("../../build")
