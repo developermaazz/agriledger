@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../app/app_dependencies.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
+import '../../../shared/widgets/app_brand.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -108,40 +109,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 12),
-                    Center(
-                      child: Container(
-                        width: 88,
-                        height: 88,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: cs.surface.withValues(alpha: 0.92),
-                          boxShadow: [
-                            BoxShadow(
-                              color: cs.primary.withValues(alpha: 0.12),
-                              blurRadius: 24,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
-                          border: Border.all(
-                            color: cs.outlineVariant.withValues(alpha: 0.45),
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.eco_rounded,
-                          size: 46,
-                          color: cs.primary,
-                        ),
-                      ),
+                    const Center(
+                      child: AppLogoMark(size: 92),
                     ),
-                    const SizedBox(height: 24),
-                    Text(
-                      context.l10n.appTitle,
-                      textAlign: TextAlign.center,
-                      style: t.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.6,
-                      ),
-                    ),
+                    const SizedBox(height: 22),
+                    const AppBrandTitle(),
                     const SizedBox(height: 10),
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 220),

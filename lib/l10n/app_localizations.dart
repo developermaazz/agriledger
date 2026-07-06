@@ -101,8 +101,20 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Fruit Ledger'**
+  /// **'Agri Ledger'**
   String get appTitle;
+
+  /// No description provided for @appTitleWord1.
+  ///
+  /// In en, this message translates to:
+  /// **'Agri'**
+  String get appTitleWord1;
+
+  /// No description provided for @appTitleWord2.
+  ///
+  /// In en, this message translates to:
+  /// **'Ledger'**
+  String get appTitleWord2;
 
   /// No description provided for @commonAdd.
   ///

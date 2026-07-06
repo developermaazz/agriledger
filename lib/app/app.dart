@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
               final mode = snap.data?.mode ?? ThemeMode.system;
               final locale = snap.data?.locale;
               return MaterialApp(
-                title: 'Fruit Ledger',
+                title: 'Agri Ledger',
                 debugShowCheckedModeBanner: false,
                 navigatorKey: appNavigatorKey,
                 theme: AppTheme.light(),

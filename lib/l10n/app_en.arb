@@ -1,7 +1,9 @@
 {
   "@@locale": "en",
 
-  "appTitle": "Fruit Ledger",
+  "appTitle": "Agri Ledger",
+  "appTitleWord1": "Agri",
+  "appTitleWord2": "Ledger",
 
   "commonAdd": "Add",
   "commonCancel": "Cancel",
