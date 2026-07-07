@@ -1,4 +1,4 @@
-import '../models/cash_entry.dart';
+import 'entities/cash_entry.dart';
 
 /// Recomputes running cash fields. Carry-forward uses end-of-row [balance]
 /// as opening cash for the next row (spreadsheet-style).

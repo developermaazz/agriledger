@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
-import '../../../models/cash_entry.dart';
-import '../../../services/export_service.dart';
+import '../../../core/error/app_error_l10n.dart';
+import '../../../domain/entities/cash_entry.dart';
+import '../../../data/export/export_service.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/pull_to_refresh.dart';
@@ -60,7 +63,9 @@ class MarketCashLedgerScreen extends StatelessWidget {
         icon: const Icon(Icons.add_rounded),
         label: Text(context.l10n.cashEntryButton),
       ),
-      body: RefreshIndicator(
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.contentMaxWidth,
+        child: RefreshIndicator(
         onRefresh: () => cashRepo.refreshCashEntriesFromServer(marketId),
         child: StreamBuilder<List<CashEntry>>(
           stream: cashRepo.watchCashEntries(marketId),
@@ -118,6 +123,7 @@ class MarketCashLedgerScreen extends StatelessWidget {
             );
           },
         ),
+        ),
       ),
     );
   }
@@ -157,7 +163,7 @@ class MarketCashLedgerScreen extends StatelessWidget {
       if (!context.mounted) return;
       AppSnackBar.show(
         context,
-        message: err.toString(),
+        message: appErrorMessage(context, err),
         type: AppSnackType.error,
       );
     }

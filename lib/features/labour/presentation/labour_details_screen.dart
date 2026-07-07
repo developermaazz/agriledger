@@ -4,8 +4,10 @@ import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../domain/record_status.dart';
-import '../../../models/labour_job.dart';
+import '../../../domain/entities/labour_job.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/widgets/detail_metric_tile.dart';
 import '../../../shared/widgets/status_badge.dart';
 
@@ -32,7 +34,9 @@ class LabourDetailsScreen extends StatelessWidget {
         scrolledUnderElevation: 0,
         title: Text(context.l10n.labourDetailAppBarTitle(j.serial)),
       ),
-      body: RefreshIndicator(
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.formMaxWidth,
+        child: RefreshIndicator(
         onRefresh: () =>
             AppDependencies.of(context).labourRepository.refreshFromServer(),
         child: ListView(
@@ -158,6 +162,7 @@ class LabourDetailsScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

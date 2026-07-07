@@ -4,8 +4,10 @@ import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
 import '../../../domain/record_status.dart';
-import '../../../models/shipment.dart';
+import '../../../domain/entities/shipment.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/widgets/status_badge.dart';
 
 class ShipmentDetailsScreen extends StatelessWidget {
@@ -30,7 +32,9 @@ class ShipmentDetailsScreen extends StatelessWidget {
         scrolledUnderElevation: 0,
         title: Text(context.l10n.shipmentDetailAppBarTitle(s.serial)),
       ),
-      body: RefreshIndicator(
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.formMaxWidth,
+        child: RefreshIndicator(
         onRefresh: () =>
             AppDependencies.of(context).shipmentRepository.refreshFromServer(),
         child: ListView(
@@ -186,6 +190,7 @@ class ShipmentDetailsScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

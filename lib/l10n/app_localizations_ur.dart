@@ -354,6 +354,100 @@ class AppLocalizationsUr extends AppLocalizations {
       'فائر اسٹور تک رسائی روکی جا رہی ہے۔ Firebase Console میں `firestore.rules` ڈپلائے کریں (یا ڈویلپمنٹ کے لیے ٹیسٹ موڈ آن کریں)۔';
 
   @override
+  String get errorsNotSignedIn => 'آپ سائن اِن نہیں ہیں۔';
+
+  @override
+  String get errorsRecordLocked =>
+      'یہ مکمل شدہ ریکارڈ میں ترمیم یا حذف نہیں کیا جا سکتا۔';
+
+  @override
+  String get errorsMarketInUse =>
+      'یہ مارکیٹ شپمنٹس میں استعمال ہو رہی ہے۔ پہلے وہ شپمنٹس حذف کریں۔';
+
+  @override
+  String get errorsMarketNotFound => 'وہ مارکیٹ نہیں مل سکی۔';
+
+  @override
+  String get errorsInvalidCredentials => 'ای میل یا پاس ورڈ غلط ہے۔';
+
+  @override
+  String get errorsEmailInUse => 'اس ای میل کے لیے پہلے سے اکاؤنٹ موجود ہے۔';
+
+  @override
+  String get errorsWeakPassword => 'براہِ کرم زیادہ مضبوط پاس ورڈ منتخب کریں۔';
+
+  @override
+  String get errorsInvalidEmail => 'یہ ای میل ایڈریس درست نہیں لگتا۔';
+
+  @override
+  String get errorsUserDisabled => 'یہ اکاؤنٹ غیر فعال کر دیا گیا ہے۔';
+
+  @override
+  String get errorsNetwork =>
+      'نیٹ ورک کی خرابی۔ اپنا کنیکشن چیک کر کے دوبارہ کوشش کریں۔';
+
+  @override
+  String get errorsStorageFailed =>
+      'فائل محفوظ نہیں ہو سکی۔ براہِ کرم دوبارہ کوشش کریں۔';
+
+  @override
+  String get settingsBackendSection => 'ڈویلپر';
+
+  @override
+  String get settingsBackendTitle => 'ڈیٹا بیک اینڈ';
+
+  @override
+  String get settingsBackendSubtitle => 'آپ کا ڈیٹا کہاں محفوظ ہے';
+
+  @override
+  String get backendLocalLabel => 'ڈیوائس پر';
+
+  @override
+  String get backendFirebaseLabel => 'فائربیس (کلاؤڈ)';
+
+  @override
+  String get backendCustomLabel => 'کسٹم';
+
+  @override
+  String get settingsBackendSwitchFailed =>
+      'اس پلیٹ فارم پر بیک اینڈ تبدیل نہیں ہو سکا۔';
+
+  @override
+  String get settingsMigrateTitle => 'ڈیٹا منتقل کریں';
+
+  @override
+  String get settingsMigrateSubtitle =>
+      'تمام ڈیٹا JSON کے طور پر ایکسپورٹ یا امپورٹ کریں';
+
+  @override
+  String get settingsExportLabel => 'ایکسپورٹ';
+
+  @override
+  String get settingsImportLabel => 'امپورٹ';
+
+  @override
+  String get settingsImportDialogTitle => 'ڈیٹا امپورٹ کریں';
+
+  @override
+  String get settingsImportDialogHint => 'ایکسپورٹ شدہ JSON یہاں پیسٹ کریں';
+
+  @override
+  String settingsImportDone(
+    Object cash,
+    Object labour,
+    Object markets,
+    Object shipments,
+  ) {
+    return '$markets مارکیٹس · $shipments شپمنٹس · $labour لیبر · $cash کیش امپورٹ ہو گئے';
+  }
+
+  @override
+  String get settingsImportFailed => 'امپورٹ ناکام — JSON چیک کریں۔';
+
+  @override
+  String get settingsExportFailed => 'ایکسپورٹ ناکام۔';
+
+  @override
   String shipmentsListSubtitle(Object buyer, Object bal) {
     return '$buyer · بقایا $bal';
   }

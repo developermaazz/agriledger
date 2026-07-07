@@ -5,10 +5,13 @@ import 'package:agri_ledger/shared/formatters/money.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../core/error/app_error_l10n.dart';
 import '../../../domain/record_status.dart';
-import '../../../models/market.dart';
-import '../../../models/shipment.dart';
+import '../../../domain/entities/market.dart';
+import '../../../domain/entities/shipment.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 
 class ShipmentFormScreen extends StatefulWidget {
@@ -125,7 +128,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
       if (!mounted) return;
       AppSnackBar.show(
         context,
-        message: e.toString(),
+        message: appErrorMessage(context, e),
         type: AppSnackType.error,
       );
     } finally {
@@ -193,8 +196,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
                           if (!context.mounted) return;
                           AppSnackBar.show(
                             context,
-                            message:
-                                e is StateError ? e.message : e.toString(),
+                            message: appErrorMessage(context, e),
                             type: AppSnackType.error,
                           );
                         }
@@ -203,9 +205,11 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
             ),
         ],
       ),
-      body: StreamBuilder<List<Market>>(
-        stream: marketRepo.watchMarkets(),
-        builder: (context, snap) {
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.formMaxWidth,
+        child: StreamBuilder<List<Market>>(
+          stream: marketRepo.watchMarkets(),
+          builder: (context, snap) {
           if (!snap.hasData) {
             return const Center(child: CircularProgressIndicator.adaptive());
           }
@@ -490,6 +494,7 @@ class _ShipmentFormScreenState extends State<ShipmentFormScreen> {
             ],
           );
         },
+        ),
       ),
     );
   }

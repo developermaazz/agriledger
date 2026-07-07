@@ -3,8 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
-import '../../../models/cash_entry.dart';
+import '../../../core/error/app_error_l10n.dart';
+import '../../../domain/entities/cash_entry.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 import '../../../shared/widgets/section_card.dart';
 
@@ -103,7 +106,7 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
       if (!mounted) return;
       AppSnackBar.show(
         context,
-        message: e.toString(),
+        message: appErrorMessage(context, e),
         type: AppSnackType.error,
       );
     } finally {
@@ -132,9 +135,11 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
               : widget.marketName,
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
-        children: [
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.formMaxWidth,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+          children: [
           if (widget.existing == null)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -276,6 +281,7 @@ class _CashEntryFormScreenState extends State<CashEntryFormScreen> {
             ),
           ),
         ],
+        ),
       ),
     );
   }

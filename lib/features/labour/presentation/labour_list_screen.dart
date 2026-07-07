@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
-import '../../../models/labour_job.dart';
+import '../../../core/error/app_error_l10n.dart';
+import '../../../domain/entities/labour_job.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/pull_to_refresh.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
@@ -67,10 +70,12 @@ class _LabourListScreenState extends State<LabourListScreen> {
         icon: const Icon(Icons.add_rounded),
         label: Text(context.l10n.commonAdd),
       ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.contentMaxWidth,
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
             decoration: BoxDecoration(
               color: cs.surfaceContainerLow,
               border: Border(
@@ -237,6 +242,7 @@ class _LabourListScreenState extends State<LabourListScreen> {
             ),
           ),
         ],
+        ),
       ),
     );
   }
@@ -276,7 +282,7 @@ class _LabourListScreenState extends State<LabourListScreen> {
       if (!mounted) return;
       AppSnackBar.show(
         context,
-        message: e is StateError ? e.message : e.toString(),
+        message: appErrorMessage(context, e),
         type: AppSnackType.error,
       );
     } finally {

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
-import '../services/labour_repository.dart';
-import '../services/market_cash_repository.dart';
-import '../services/market_repository.dart';
-import '../services/serial_meta_repository.dart';
-import '../services/settings_repository.dart';
-import '../services/shipment_repository.dart';
-import '../services/storage_repository.dart';
+import '../core/backend/backend_controller.dart';
+import '../domain/repositories/auth_provider.dart';
+import '../domain/repositories/labour_store.dart';
+import '../domain/repositories/market_cash_store.dart';
+import '../domain/repositories/market_store.dart';
+import '../domain/repositories/serial_meta_store.dart';
+import '../domain/repositories/settings_store.dart';
+import '../domain/repositories/shipment_store.dart';
+import '../domain/repositories/storage_provider.dart';
 
+/// Injects the active backend's data/auth/storage implementations (behind their
+/// backend-agnostic interfaces) plus the device-local settings store into the
+/// widget tree. Screens read these via [AppDependencies.of] and never depend on
+/// a concrete backend.
 class AppDependencies extends InheritedWidget {
   const AppDependencies({
     super.key,
@@ -20,17 +25,21 @@ class AppDependencies extends InheritedWidget {
     required this.marketCashRepository,
     required this.labourRepository,
     required this.storageRepository,
+    required this.backendController,
     required super.child,
   });
 
-  final AuthService authService;
-  final SettingsRepository settingsRepository;
-  final SerialMetaRepository serialMetaRepository;
-  final MarketRepository marketRepository;
-  final ShipmentRepository shipmentRepository;
-  final MarketCashRepository marketCashRepository;
-  final LabourRepository labourRepository;
-  final StorageRepository storageRepository;
+  final AuthProvider authService;
+  final SettingsStore settingsRepository;
+  final SerialMetaStore serialMetaRepository;
+  final MarketStore marketRepository;
+  final ShipmentStore shipmentRepository;
+  final MarketCashStore marketCashRepository;
+  final LabourStore labourRepository;
+  final StorageProvider storageRepository;
+
+  /// Controls runtime switching of the active data backend.
+  final BackendController backendController;
 
   static AppDependencies of(BuildContext context) {
     final scope = context.dependOnInheritedWidgetOfExactType<AppDependencies>();
@@ -49,6 +58,7 @@ class AppDependencies extends InheritedWidget {
         shipmentRepository != oldWidget.shipmentRepository ||
         marketCashRepository != oldWidget.marketCashRepository ||
         labourRepository != oldWidget.labourRepository ||
-        storageRepository != oldWidget.storageRepository;
+        storageRepository != oldWidget.storageRepository ||
+        backendController != oldWidget.backendController;
   }
 }

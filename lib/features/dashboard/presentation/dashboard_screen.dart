@@ -3,13 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
-import '../../../models/cash_activity_line.dart';
-import '../../../models/labour_job.dart';
-import '../../../models/market.dart';
-import '../../../models/shipment.dart';
-import '../../../services/firestore_refresh.dart';
+import '../../../domain/entities/cash_activity_line.dart';
+import '../../../domain/entities/labour_job.dart';
+import '../../../domain/entities/market.dart';
+import '../../../domain/entities/shipment.dart';
+import '../../../data/refresh/refresh_all.dart';
 import '../../../shared/formatters/money.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
 import '../../../shared/widgets/pull_to_refresh.dart';
 
@@ -37,7 +39,9 @@ class DashboardScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(context.l10n.dashboardTitle),
       ),
-      body: StreamBuilder<List<Shipment>>(
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.contentMaxWidth,
+        child: StreamBuilder<List<Shipment>>(
         stream: shipmentsRepo.watchShipments(),
         builder: (context, shipSnap) {
           return StreamBuilder<List<LabourJob>>(
@@ -209,6 +213,7 @@ class DashboardScreen extends StatelessWidget {
             },
           );
         },
+        ),
       ),
     );
   }

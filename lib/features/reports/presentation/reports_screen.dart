@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
-import '../../../services/firestore_refresh.dart';
-import '../../../services/export_service.dart';
+import '../../../data/refresh/refresh_all.dart';
+import '../../../data/export/export_service.dart';
 import '../../../shared/formatters/money.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../date_range_utils.dart';
 
 class ReportsScreen extends StatefulWidget {
@@ -193,14 +195,16 @@ class _ReportsScreenState extends State<ReportsScreen> {
         title: Text(context.l10n.reportsTitle),
         scrolledUnderElevation: 0,
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await _refreshUnderlyingData();
-          if (_result != null && mounted) {
-            await _generate();
-          }
-        },
-        child: ListView(
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.contentMaxWidth,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await _refreshUnderlyingData();
+            if (_result != null && mounted) {
+              await _generate();
+            }
+          },
+          child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
           children: [
@@ -400,6 +404,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
               ),
             ],
           ],
+          ),
         ),
       ),
     );

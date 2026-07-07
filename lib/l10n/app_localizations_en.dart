@@ -353,6 +353,99 @@ class AppLocalizationsEn extends AppLocalizations {
       'Firestore is blocking access. Deploy the provided `firestore.rules` in Firebase Console (or put Firestore in test mode for development).';
 
   @override
+  String get errorsNotSignedIn => 'You\'re not signed in.';
+
+  @override
+  String get errorsRecordLocked =>
+      'This completed record can\'t be edited or deleted.';
+
+  @override
+  String get errorsMarketInUse =>
+      'This market is used in shipments. Delete those shipments first.';
+
+  @override
+  String get errorsMarketNotFound => 'That market could not be found.';
+
+  @override
+  String get errorsInvalidCredentials => 'Incorrect email or password.';
+
+  @override
+  String get errorsEmailInUse => 'An account already exists for that email.';
+
+  @override
+  String get errorsWeakPassword => 'Please choose a stronger password.';
+
+  @override
+  String get errorsInvalidEmail => 'That email address looks invalid.';
+
+  @override
+  String get errorsUserDisabled => 'This account has been disabled.';
+
+  @override
+  String get errorsNetwork =>
+      'Network error. Check your connection and try again.';
+
+  @override
+  String get errorsStorageFailed =>
+      'Couldn\'t save the file. Please try again.';
+
+  @override
+  String get settingsBackendSection => 'Developer';
+
+  @override
+  String get settingsBackendTitle => 'Data backend';
+
+  @override
+  String get settingsBackendSubtitle => 'Where your data is stored';
+
+  @override
+  String get backendLocalLabel => 'On device';
+
+  @override
+  String get backendFirebaseLabel => 'Firebase (cloud)';
+
+  @override
+  String get backendCustomLabel => 'Custom';
+
+  @override
+  String get settingsBackendSwitchFailed =>
+      'Couldn\'t switch backend on this platform.';
+
+  @override
+  String get settingsMigrateTitle => 'Migrate data';
+
+  @override
+  String get settingsMigrateSubtitle => 'Export or import all data as JSON';
+
+  @override
+  String get settingsExportLabel => 'Export';
+
+  @override
+  String get settingsImportLabel => 'Import';
+
+  @override
+  String get settingsImportDialogTitle => 'Import data';
+
+  @override
+  String get settingsImportDialogHint => 'Paste exported JSON here';
+
+  @override
+  String settingsImportDone(
+    Object cash,
+    Object labour,
+    Object markets,
+    Object shipments,
+  ) {
+    return 'Imported $markets markets · $shipments shipments · $labour labour · $cash cash';
+  }
+
+  @override
+  String get settingsImportFailed => 'Import failed — check the JSON.';
+
+  @override
+  String get settingsExportFailed => 'Export failed.';
+
+  @override
   String shipmentsListSubtitle(Object buyer, Object bal) {
     return '$buyer · Outstanding $bal';
   }

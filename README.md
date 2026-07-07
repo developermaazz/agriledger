@@ -1,17 +1,48 @@
-# agri_ledger
+# Agri Ledger
 
-A new agri_ledger
+Shipments, market cash, and labour ledgers in one app. Built with Flutter,
+Material 3, English + Urdu (RTL), light/dark themes.
 
-## Getting Started
+## Runs out-of-the-box (no Firebase needed)
 
-This project is a starting point for a Flutter application.
+The app ships on an **on-device local backend** (SQLite via drift), so it runs
+with zero configuration on every platform — including desktop:
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+flutter pub get
+dart run build_runner build   # generates the drift database code
+flutter run                   # phone, desktop, or web
+```
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+A fresh install seeds sample data and is immediately usable offline.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+> **Web:** the local backend compiles for web via WebAssembly SQLite, but running
+> it needs `sqlite3.wasm` and `drift_worker.js` in `web/` (fetch the pair for the
+> installed drift version — see the [drift web docs](https://drift.simonbinder.eu/web/)).
+> Mobile, desktop, and tests need no extra setup.
+
+## Backends
+
+Data/auth/storage sit behind backend-agnostic interfaces. Choose a backend:
+
+- **Default (local):** nothing to configure.
+- **Firebase:** run with `--dart-define=BACKEND=firebase` (requires the usual
+  FlutterFire/`google-services` setup), or switch at runtime in
+  **Settings → Developer → Data backend**. Data can be moved between backends
+  via **Settings → Developer → Export / Import**.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the bridge design, how to switch
+backends, and how to add a new one (e.g. REST/Supabase).
+
+## Development
+
+```bash
+flutter analyze
+flutter test                          # includes the cross-backend contract suite
+dart run build_runner build           # after changing drift tables
+flutter gen-l10n                       # after editing lib/l10n/*.arb
+```
+
+Tests include a **contract suite** (`test/contract/`) that runs the same
+assertions against both the local and (fake) Firebase backends to prove they are
+interchangeable.

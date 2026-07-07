@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
-import '../../../models/market.dart';
-import '../../../models/shipment.dart';
+import '../../../core/error/app_error_l10n.dart';
+import '../../../domain/entities/market.dart';
+import '../../../domain/entities/shipment.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/pull_to_refresh.dart';
 import '../../../shared/widgets/firestore_error_view.dart';
@@ -76,245 +79,248 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
         icon: const Icon(Icons.add_rounded),
         label: Text(context.l10n.commonAdd),
       ),
-      body: Column(
-        children: [
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: cs.surfaceContainerLow,
-              border: Border(
-                bottom: BorderSide(
-                  color: cs.outlineVariant.withValues(alpha: 0.5),
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.contentMaxWidth,
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: cs.surfaceContainerLow,
+                border: Border(
+                  bottom: BorderSide(
+                    color: cs.outlineVariant.withValues(alpha: 0.5),
+                  ),
                 ),
               ),
-            ),
-            child: SafeArea(
-              bottom: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    TextField(
-                      controller: _search,
-                      textInputAction: TextInputAction.search,
-                      decoration: InputDecoration(
-                        hintText: context.l10n.shipmentsSearchHint,
-                        prefixIcon: Icon(
-                          Icons.search_rounded,
-                          color: cs.onSurfaceVariant,
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextField(
+                        controller: _search,
+                        textInputAction: TextInputAction.search,
+                        decoration: InputDecoration(
+                          hintText: context.l10n.shipmentsSearchHint,
+                          prefixIcon: Icon(
+                            Icons.search_rounded,
+                            color: cs.onSurfaceVariant,
+                          ),
+                          suffixIcon: _search.text.isEmpty
+                              ? null
+                              : IconButton(
+                                  tooltip: MaterialLocalizations.of(context)
+                                      .deleteButtonTooltip,
+                                  onPressed: () {
+                                    _search.clear();
+                                    setState(() {});
+                                  },
+                                  icon: Icon(
+                                    Icons.close_rounded,
+                                    color: cs.onSurfaceVariant,
+                                  ),
+                                ),
+                          filled: true,
+                          fillColor: cs.surface,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 12,
+                          ),
                         ),
-                        suffixIcon: _search.text.isEmpty
-                            ? null
-                            : IconButton(
-                                tooltip: MaterialLocalizations.of(context)
-                                    .deleteButtonTooltip,
-                                onPressed: () {
-                                  _search.clear();
-                                  setState(() {});
-                                },
-                                icon: Icon(
-                                  Icons.close_rounded,
-                                  color: cs.onSurfaceVariant,
+                        onChanged: (_) => setState(() {}),
+                      ),
+                      const SizedBox(height: 14),
+                      StreamBuilder<List<Market>>(
+                        stream: marketRepo.watchMarkets(),
+                        builder: (context, mSnap) {
+                          if (mSnap.hasError) {
+                            return FirestoreErrorView(
+                              error: mSnap.error!,
+                              title: context.l10n.shipmentsUnableToLoadMarkets,
+                            );
+                          }
+                          final markets = mSnap.data ?? [];
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Text(
+                                context.l10n.commonStatus,
+                                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                      color: cs.onSurfaceVariant,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              const SizedBox(height: 8),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    _StatusChip(
+                                      label: context.l10n.commonAll,
+                                      selected: _statusFilter == null,
+                                      onTap: () =>
+                                          setState(() => _statusFilter = null),
+                                    ),
+                                    _StatusChip(
+                                      label: context.l10n.commonPending,
+                                      selected:
+                                          _statusFilter == RecordStatuses.pending,
+                                      onTap: () => setState(
+                                        () => _statusFilter = RecordStatuses.pending,
+                                      ),
+                                    ),
+                                    _StatusChip(
+                                      label: context.l10n.commonCompleted,
+                                      selected: _statusFilter ==
+                                          RecordStatuses.completed,
+                                      onTap: () => setState(
+                                        () => _statusFilter =
+                                            RecordStatuses.completed,
+                                      ),
+                                    ),
+                                    _StatusChip(
+                                      label: context.l10n.commonOverpaid,
+                                      selected:
+                                          _statusFilter == RecordStatuses.overpaid,
+                                      onTap: () => setState(
+                                        () => _statusFilter =
+                                            RecordStatuses.overpaid,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                        filled: true,
-                        fillColor: cs.surface,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 12,
-                        ),
-                      ),
-                      onChanged: (_) => setState(() {}),
-                    ),
-                    const SizedBox(height: 14),
-                    StreamBuilder<List<Market>>(
-                      stream: marketRepo.watchMarkets(),
-                      builder: (context, mSnap) {
-                        if (mSnap.hasError) {
-                          return FirestoreErrorView(
-                            error: mSnap.error!,
-                            title: context.l10n.shipmentsUnableToLoadMarkets,
-                          );
-                        }
-                        final markets = mSnap.data ?? [];
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Text(
-                              context.l10n.commonStatus,
-                              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                    color: cs.onSurfaceVariant,
-                                    fontWeight: FontWeight.w600,
+                              const SizedBox(height: 14),
+                              DropdownButtonFormField<String?>(
+                                // ignore: deprecated_member_use
+                                value: _marketIdFilter,
+                                decoration: InputDecoration(
+                                  labelText: context.l10n.shipmentsMarketLabel,
+                                  prefixIcon: Icon(
+                                    Icons.storefront_outlined,
+                                    color: cs.primary,
+                                    size: 22,
                                   ),
-                            ),
-                            const SizedBox(height: 8),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  _StatusChip(
-                                    label: context.l10n.commonAll,
-                                    selected: _statusFilter == null,
-                                    onTap: () =>
-                                        setState(() => _statusFilter = null),
-                                  ),
-                                  _StatusChip(
-                                    label: context.l10n.commonPending,
-                                    selected:
-                                        _statusFilter == RecordStatuses.pending,
-                                    onTap: () => setState(
-                                      () => _statusFilter = RecordStatuses.pending,
+                                  isDense: true,
+                                ),
+                                borderRadius: BorderRadius.circular(14),
+                                items: [
+                                  DropdownMenuItem(
+                                    value: null,
+                                    child: Text(
+                                      context.l10n.shipmentsMarketFilterAll,
                                     ),
                                   ),
-                                  _StatusChip(
-                                    label: context.l10n.commonCompleted,
-                                    selected: _statusFilter ==
-                                        RecordStatuses.completed,
-                                    onTap: () => setState(
-                                      () => _statusFilter =
-                                          RecordStatuses.completed,
-                                    ),
-                                  ),
-                                  _StatusChip(
-                                    label: context.l10n.commonOverpaid,
-                                    selected:
-                                        _statusFilter == RecordStatuses.overpaid,
-                                    onTap: () => setState(
-                                      () => _statusFilter =
-                                          RecordStatuses.overpaid,
+                                  ...markets.map(
+                                    (m) => DropdownMenuItem(
+                                      value: m.id,
+                                      child: Text(m.name),
                                     ),
                                   ),
                                 ],
+                                onChanged: (v) =>
+                                    setState(() => _marketIdFilter = v),
                               ),
-                            ),
-                            const SizedBox(height: 14),
-                            DropdownButtonFormField<String?>(
-                              // ignore: deprecated_member_use
-                              value: _marketIdFilter,
-                              decoration: InputDecoration(
-                                labelText: context.l10n.shipmentsMarketLabel,
-                                prefixIcon: Icon(
-                                  Icons.storefront_outlined,
-                                  color: cs.primary,
-                                  size: 22,
-                                ),
-                                isDense: true,
-                              ),
-                              borderRadius: BorderRadius.circular(14),
-                              items: [
-                                DropdownMenuItem(
-                                  value: null,
-                                  child: Text(
-                                    context.l10n.shipmentsMarketFilterAll,
-                                  ),
-                                ),
-                                ...markets.map(
-                                  (m) => DropdownMenuItem(
-                                    value: m.id,
-                                    child: Text(m.name),
-                                  ),
-                                ),
-                              ],
-                              onChanged: (v) =>
-                                  setState(() => _marketIdFilter = v),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: _refreshShipmentLists,
-              child: StreamBuilder<List<Shipment>>(
-                stream: shipRepo.watchShipments(),
-                builder: (context, snap) {
-                  if (snap.hasError) {
-                    return MinHeightRefreshContent(
-                      child: FirestoreErrorView(
-                        error: snap.error!,
-                        title: context.l10n.shipmentsUnableToLoad,
-                      ),
-                    );
-                  }
-                  if (!snap.hasData) {
-                    return MinHeightRefreshContent(
-                      child: const Center(
-                        child: CircularProgressIndicator.adaptive(),
-                      ),
-                    );
-                  }
-                  var list = snap.data!;
-                  list = list.where((s) {
-                    if (_statusFilter != null && s.status != _statusFilter) {
-                      return false;
-                    }
-                    if (_marketIdFilter != null &&
-                        s.marketId != _marketIdFilter) {
-                      return false;
-                    }
-                    if (_query.isEmpty) {
-                      return true;
-                    }
-                    final hay = '${s.buyerName} ${s.marketName} ${s.remarks}'
-                        .toLowerCase();
-                    return hay.contains(_query);
-                  }).toList();
-
-                  if (list.isEmpty) {
-                    return MinHeightRefreshContent(
-                      child: EmptyState(
-                        title: context.l10n.shipmentsNoShipmentsTitle,
-                        subtitle: context.l10n.shipmentsNoShipmentsSubtitle,
-                      ),
-                    );
-                  }
-
-                  return ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
-                    itemCount: list.length,
-                    itemBuilder: (context, i) {
-                      final s = list[i];
-                      final locked = s.status == RecordStatuses.completed;
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: _ShipmentCard(
-                          shipment: s,
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => locked
-                                    ? ShipmentDetailsScreen(shipment: s)
-                                    : ShipmentFormScreen(existing: s),
-                              ),
-                            );
-                          },
-                          onLongPress:
-                              locked ? null : () => _confirmDeleteShipment(s.id),
-                          onEdit: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute<void>(
-                                builder: (_) => ShipmentFormScreen(existing: s),
-                              ),
-                            );
-                          },
-                          onDelete: () => _confirmDeleteShipment(s.id),
-                          showMenu: !locked,
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _refreshShipmentLists,
+                child: StreamBuilder<List<Shipment>>(
+                  stream: shipRepo.watchShipments(),
+                  builder: (context, snap) {
+                    if (snap.hasError) {
+                      return MinHeightRefreshContent(
+                        child: FirestoreErrorView(
+                          error: snap.error!,
+                          title: context.l10n.shipmentsUnableToLoad,
                         ),
                       );
-                    },
-                  );
-                },
+                    }
+                    if (!snap.hasData) {
+                      return MinHeightRefreshContent(
+                        child: const Center(
+                          child: CircularProgressIndicator.adaptive(),
+                        ),
+                      );
+                    }
+                    var list = snap.data!;
+                    list = list.where((s) {
+                      if (_statusFilter != null && s.status != _statusFilter) {
+                        return false;
+                      }
+                      if (_marketIdFilter != null &&
+                          s.marketId != _marketIdFilter) {
+                        return false;
+                      }
+                      if (_query.isEmpty) {
+                        return true;
+                      }
+                      final hay = '${s.buyerName} ${s.marketName} ${s.remarks}'
+                          .toLowerCase();
+                      return hay.contains(_query);
+                    }).toList();
+
+                    if (list.isEmpty) {
+                      return MinHeightRefreshContent(
+                        child: EmptyState(
+                          title: context.l10n.shipmentsNoShipmentsTitle,
+                          subtitle: context.l10n.shipmentsNoShipmentsSubtitle,
+                        ),
+                      );
+                    }
+
+                    return ListView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+                      itemCount: list.length,
+                      itemBuilder: (context, i) {
+                        final s = list[i];
+                        final locked = s.status == RecordStatuses.completed;
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: _ShipmentCard(
+                            shipment: s,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => locked
+                                      ? ShipmentDetailsScreen(shipment: s)
+                                      : ShipmentFormScreen(existing: s),
+                                ),
+                              );
+                            },
+                            onLongPress:
+                                locked ? null : () => _confirmDeleteShipment(s.id),
+                            onEdit: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                  builder: (_) => ShipmentFormScreen(existing: s),
+                                ),
+                              );
+                            },
+                            onDelete: () => _confirmDeleteShipment(s.id),
+                            showMenu: !locked,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -354,7 +360,7 @@ class _ShipmentListScreenState extends State<ShipmentListScreen> {
       if (!mounted) return;
       AppSnackBar.show(
         context,
-        message: e is StateError ? e.message : e.toString(),
+        message: appErrorMessage(context, e),
         type: AppSnackType.error,
       );
     } finally {

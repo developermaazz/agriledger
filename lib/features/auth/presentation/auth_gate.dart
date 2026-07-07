@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../domain/value/auth_user.dart';
 import '../../shell/main_shell.dart';
 import 'login_screen.dart';
 
@@ -47,7 +47,7 @@ class _AuthSessionState extends State<_AuthSession> {
   Widget build(BuildContext context) {
     final auth = AppDependencies.of(context).authService;
 
-    return StreamBuilder<User?>(
+    return StreamBuilder<AuthUser?>(
       stream: auth.authStateChanges(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting &&

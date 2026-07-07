@@ -758,6 +758,173 @@ abstract class AppLocalizations {
   /// **'Firestore is blocking access. Deploy the provided `firestore.rules` in Firebase Console (or put Firestore in test mode for development).'**
   String get errorsFirestoreBlocked;
 
+  /// No description provided for @errorsNotSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re not signed in.'**
+  String get errorsNotSignedIn;
+
+  /// No description provided for @errorsRecordLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'This completed record can\'t be edited or deleted.'**
+  String get errorsRecordLocked;
+
+  /// No description provided for @errorsMarketInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'This market is used in shipments. Delete those shipments first.'**
+  String get errorsMarketInUse;
+
+  /// No description provided for @errorsMarketNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'That market could not be found.'**
+  String get errorsMarketNotFound;
+
+  /// No description provided for @errorsInvalidCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect email or password.'**
+  String get errorsInvalidCredentials;
+
+  /// No description provided for @errorsEmailInUse.
+  ///
+  /// In en, this message translates to:
+  /// **'An account already exists for that email.'**
+  String get errorsEmailInUse;
+
+  /// No description provided for @errorsWeakPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please choose a stronger password.'**
+  String get errorsWeakPassword;
+
+  /// No description provided for @errorsInvalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'That email address looks invalid.'**
+  String get errorsInvalidEmail;
+
+  /// No description provided for @errorsUserDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been disabled.'**
+  String get errorsUserDisabled;
+
+  /// No description provided for @errorsNetwork.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Check your connection and try again.'**
+  String get errorsNetwork;
+
+  /// No description provided for @errorsStorageFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save the file. Please try again.'**
+  String get errorsStorageFailed;
+
+  /// No description provided for @settingsBackendSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Developer'**
+  String get settingsBackendSection;
+
+  /// No description provided for @settingsBackendTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Data backend'**
+  String get settingsBackendTitle;
+
+  /// No description provided for @settingsBackendSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where your data is stored'**
+  String get settingsBackendSubtitle;
+
+  /// No description provided for @backendLocalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'On device'**
+  String get backendLocalLabel;
+
+  /// No description provided for @backendFirebaseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Firebase (cloud)'**
+  String get backendFirebaseLabel;
+
+  /// No description provided for @backendCustomLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get backendCustomLabel;
+
+  /// No description provided for @settingsBackendSwitchFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t switch backend on this platform.'**
+  String get settingsBackendSwitchFailed;
+
+  /// No description provided for @settingsMigrateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Migrate data'**
+  String get settingsMigrateTitle;
+
+  /// No description provided for @settingsMigrateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export or import all data as JSON'**
+  String get settingsMigrateSubtitle;
+
+  /// No description provided for @settingsExportLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get settingsExportLabel;
+
+  /// No description provided for @settingsImportLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get settingsImportLabel;
+
+  /// No description provided for @settingsImportDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import data'**
+  String get settingsImportDialogTitle;
+
+  /// No description provided for @settingsImportDialogHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste exported JSON here'**
+  String get settingsImportDialogHint;
+
+  /// No description provided for @settingsImportDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {markets} markets · {shipments} shipments · {labour} labour · {cash} cash'**
+  String settingsImportDone(
+    Object cash,
+    Object labour,
+    Object markets,
+    Object shipments,
+  );
+
+  /// No description provided for @settingsImportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Import failed — check the JSON.'**
+  String get settingsImportFailed;
+
+  /// No description provided for @settingsExportFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Export failed.'**
+  String get settingsExportFailed;
+
   /// No description provided for @shipmentsListSubtitle.
   ///
   /// In en, this message translates to:

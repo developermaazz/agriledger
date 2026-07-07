@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
-import '../../../models/market.dart';
+import '../../../core/error/app_error_l10n.dart';
+import '../../../domain/entities/market.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/pull_to_refresh.dart';
@@ -30,7 +33,9 @@ class MarketPickerScreen extends StatelessWidget {
         icon: const Icon(Icons.add_rounded),
         label: Text(context.l10n.commonAdd),
       ),
-      body: RefreshIndicator(
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.contentMaxWidth,
+        child: RefreshIndicator(
         onRefresh: () =>
             AppDependencies.of(context).marketRepository.refreshFromServer(),
         child: StreamBuilder<List<Market>>(
@@ -92,6 +97,7 @@ class MarketPickerScreen extends StatelessWidget {
           },
         ),
       ),
+      ),
     );
   }
 
@@ -131,11 +137,10 @@ class MarketPickerScreen extends StatelessWidget {
         type: AppSnackType.success,
       );
     } catch (e) {
-      final msg = e is StateError ? e.message : e.toString();
       if (!context.mounted) return;
       AppSnackBar.show(
         context,
-        message: msg,
+        message: appErrorMessage(context, e),
         type: AppSnackType.error,
       );
     }
@@ -178,7 +183,7 @@ class MarketPickerScreen extends StatelessWidget {
       if (!context.mounted) return;
       AppSnackBar.show(
         context,
-        message: e.toString(),
+        message: appErrorMessage(context, e),
         type: AppSnackType.error,
       );
       return;

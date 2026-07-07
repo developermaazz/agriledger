@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
-import '../../../services/firestore_refresh.dart';
-import '../../../services/export_service.dart';
+import '../../../data/refresh/refresh_all.dart';
+import '../../../data/export/export_service.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../reports/presentation/reports_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
 
@@ -20,8 +22,10 @@ class MoreScreen extends StatelessWidget {
         title: Text(context.l10n.moreTitle),
         scrolledUnderElevation: 0,
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.contentMaxWidth,
+        child: RefreshIndicator(
+          onRefresh: () async {
           final d = AppDependencies.of(context);
           await refreshAllUserDataFromServer(
             shipmentRepository: d.shipmentRepository,
@@ -96,6 +100,7 @@ class MoreScreen extends StatelessWidget {
               },
             ),
           ],
+        ),
         ),
       ),
     );

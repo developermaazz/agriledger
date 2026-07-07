@@ -4,9 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../core/error/app_error_l10n.dart';
 import '../../../domain/record_status.dart';
-import '../../../models/labour_job.dart';
+import '../../../domain/entities/labour_job.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 import '../../../shared/widgets/section_card.dart';
 
@@ -120,7 +123,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
       if (!mounted) return;
       AppSnackBar.show(
         context,
-        message: e.toString(),
+        message: appErrorMessage(context, e),
         type: AppSnackType.error,
       );
     } finally {
@@ -238,8 +241,7 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                           if (!context.mounted) return;
                           AppSnackBar.show(
                             context,
-                            message:
-                                e is StateError ? e.message : e.toString(),
+                            message: appErrorMessage(context, e),
                             type: AppSnackType.error,
                           );
                         }
@@ -248,8 +250,10 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
             ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.formMaxWidth,
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
         children: [
           if (widget.existing != null)
             Padding(
@@ -370,7 +374,8 @@ class _LabourFormScreenState extends State<LabourFormScreen> {
                       : context.l10n.commonSave),
             ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../app/app_dependencies.dart';
-import '../../../models/cash_entry.dart';
+import '../../../domain/entities/cash_entry.dart';
 import '../../../shared/l10n/l10n.dart';
+import '../../../shared/responsive/breakpoints.dart';
+import '../../../shared/responsive/max_width_body.dart';
 import '../../../shared/widgets/detail_metric_tile.dart';
 
 class CashEntryDetailsScreen extends StatelessWidget {
@@ -35,11 +37,13 @@ class CashEntryDetailsScreen extends StatelessWidget {
           context.l10n.cashEntryDetailsAppBarTitle(marketName, e.serial),
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () => AppDependencies.of(context)
-            .marketCashRepository
-            .refreshCashEntriesFromServer(marketId),
-        child: ListView(
+      body: MaxWidthBody(
+        maxWidth: Breakpoints.formMaxWidth,
+        child: RefreshIndicator(
+          onRefresh: () => AppDependencies.of(context)
+              .marketCashRepository
+              .refreshCashEntriesFromServer(marketId),
+          child: ListView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
           children: [
@@ -168,6 +172,7 @@ class CashEntryDetailsScreen extends StatelessWidget {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

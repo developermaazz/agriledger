@@ -1,7 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../app/app_dependencies.dart';
+import '../../../core/error/app_error_l10n.dart';
 import '../../../shared/l10n/l10n.dart';
 import '../../../shared/snackbar/app_snackbar.dart';
 import '../../../shared/widgets/app_brand.dart';
@@ -61,16 +61,11 @@ class _LoginScreenState extends State<LoginScreen> {
             : context.l10n.authSignedIn,
         type: AppSnackType.success,
       );
-    } on FirebaseAuthException catch (e) {
-      AppSnackBar.show(
-        context,
-        message: e.message ?? context.l10n.authFailed,
-        type: AppSnackType.error,
-      );
     } catch (e) {
+      if (!mounted) return;
       AppSnackBar.show(
         context,
-        message: e.toString(),
+        message: appErrorMessage(context, e),
         type: AppSnackType.error,
       );
     } finally {

@@ -1,5 +1,5 @@
 import 'package:agri_ledger/domain/cash_ledger_math.dart';
-import 'package:agri_ledger/models/cash_entry.dart';
+import 'package:agri_ledger/domain/entities/cash_entry.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
